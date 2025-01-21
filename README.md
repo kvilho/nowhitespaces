@@ -14,3 +14,6 @@ This application allows employers and employees log work hours. It consists of a
 - Nikolas Kataja https://github.com/bhi049
 - Kasperi Kuusanmäki https://github.com/kapseri
 - Ville Kotilainen https://github.com/villekotilainen
+
+## Backlog Link
+https://app.clickup.com/9012737518/v/l/8ck6xfe-732
