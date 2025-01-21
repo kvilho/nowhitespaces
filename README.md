@@ -8,5 +8,5 @@ This application allows employers and employees log work hours. It consists of a
 - Vilho Karhu https://github.com/kvilho
 - Julius Luhtala https://github.com/juliusluhtala
 - Nikolas Kataja https://github.com/bhi049
-- Kasperi Kuusanmäki
-- Ville Kotilainen
+- Kasperi Kuusanmäki https://github.com/kapseri
+- Ville Kotilainen https://github.com/villekotilainen
