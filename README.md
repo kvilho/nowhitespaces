@@ -5,9 +5,10 @@ Hourbook - Work Hour Management System
 This application is designed to help employers and employees track and manage work hours efficiently. It consists of a Java Spring Boot back-end that handles business logic, database interactions, and APIs, paired with a React front-end for a user-friendly interface. The system aims to streamline time tracking and reporting. 
 
 ## Use cases
-1. Approve Work Hours
+### Approve Work Hours
 
 Actors: Employer
+
 Description: Employers can review and approve work hours submitted by employees.
 
 Preconditions:
@@ -25,6 +26,30 @@ Basic Flow:
 Alternate Flows:
 
 * Employers can filter by employee, date, or project for faster review.
+
+### Edit Work Hours
+
+Actors: Employee
+
+Description: Employees can edit work hour entries that have not yet been approved.
+
+Preconditions:
+
+* Employees are logged in.
+* The entry status is "Pending."
+
+Postconditions:
+
+* System updates the entry with the new details.
+
+Basic Flow:
+
+1. Employee navigates to the "My Work Hours" page.
+2. Selects an entry with "Pending" status.
+3. Updates the relevant fields.
+4. Saves the changes.
+5. System validates and updates the entry in the database.
+
 ## Database
 
 ![alt text](./documents/tietokantakaavio.jpg "Relational diagram")
