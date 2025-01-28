@@ -55,7 +55,7 @@ Basic Flow:
 
 ## Database
 
-![alt text](./documents/tietokantakaavio.jpg "Relational diagram")
+![alt text](./documents/HourbookDiagram.png "Relational diagram")
 
 ## Team Members
 - Vilho Karhu https://github.com/kvilho
