@@ -6,18 +6,6 @@ import jakarta.persistence.*;
 @Table(name="users")
 public class User {
 
-    public User(Long userId, String firstname, String lastname, String email, String password, Role role) {
-        this.userId = userId;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate primary key
     private Long userId;
@@ -33,6 +21,19 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
+
+
+    public User(Long userId, String firstname, String lastname, String email, String password, Role role) {
+        this.userId = userId;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User() {
+    }
 
     // Getters and setters
     public Long getUserId() {
