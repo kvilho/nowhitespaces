@@ -3,6 +3,8 @@ package fi.haagahelia.backend.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,7 +29,7 @@ public class Entry {
     @JoinColumn(name = "organizationId") //many-to-one relationship with Organization
     private Organization organization;
 
-    @JoinColumn(name = "status")
+    @Enumerated(EnumType.STRING) // Store enum as a String in database
     private Status status;
 
     public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, String entryDescription, Status status, User user, Organization organization) {
