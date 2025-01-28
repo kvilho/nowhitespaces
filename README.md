@@ -53,6 +53,20 @@ Basic Flow:
 4. Saves the changes.
 5. System validates and updates the entry in the database.
 
+## User stories
+
+-I want to be able to add my work hours for the day *Restaurant worker 32
+
+-I need to see my worked hours as a list *Construction worker 24
+
+-I would like to see if my employer has approved my hours *Painter 19
+
+-I would like to see a list of my employees hours *Construction Company Owner 41
+
+-I need to be able to approve my workers worked hours *Manager 37
+
+-I want to comment on my employees worked hours *Manager 54
+
 ## Database
 
 ![alt text](./documents/tietokantakaavio.jpg "Relational diagram")
