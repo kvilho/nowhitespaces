@@ -1,10 +1,13 @@
 package fi.haagahelia.backend.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -16,14 +19,13 @@ public class Organization {
 
     private String organizationName;
 
-    @OneToMany
-    @JoinColumn(name = "entryId") // Foreign key to the Entry entity
-    private Entry entry;
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Entry> entries;
 
-    public Organization(Long organizationId, String organizationName, Entry entry) {
+    public Organization(Long organizationId, String organizationName, List<Entry> entries) {
         this.organizationId = organizationId;
         this.organizationName = organizationName;
-        this.entry = entry;
+        this.entries = entries;
     }
 
     public Organization() {
@@ -45,17 +47,17 @@ public class Organization {
         this.organizationName = organizationName;
     }
 
-    public Entry getEntry() {
-        return entry;
+    public List<Entry> getEntries() {
+        return entries;
     }
 
-    public void setEntry(Entry entry) {
-        this.entry = entry;
+    public void setEntry(List<Entry> entries) {
+        this.entries = entries;
     }
 
     @Override
     public String toString() {
         return "Organization [organizationId=" + organizationId + ", organizationName=" + organizationName + ", entry="
-                + entry + "]";
+                + entries + "]";
     }
 }
