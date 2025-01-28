@@ -12,20 +12,11 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Entry {
 
-    // enum for entryStatus
-    
-    enum Status {
-        APPROVED,
-        PENDING,
-        DECLINED
-    }
-    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
     private Long entryId;
     private LocalDateTime entryStart;
     private LocalDateTime entryEnd;
-    private Status entryStatus;
     private String entryDescription;
 
     @ManyToOne
@@ -36,12 +27,15 @@ public class Entry {
     @JoinColumn(name = "organizationId") //many-to-one relationship with Organization
     private Organization organization;
 
-    public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, Status entryStatus, String entryDescription, User user, Organization organization) {
+    @JoinColumn(name = "status")
+    private Status status;
+
+    public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, String entryDescription, Status status, User user, Organization organization) {
         this.entryId = entryId;
         this.entryStart = entryStart;
         this.entryEnd = entryEnd;
-        this.entryStatus = entryStatus;
         this.entryDescription = entryDescription;
+        this.status = status;
         this.user = user;
         this.organization = organization;
     }
@@ -75,12 +69,12 @@ public class Entry {
         this.entryEnd = entryEnd;
     }
 
-    public Status getEntryStatus() {
-        return entryStatus;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setEntryStatus(Status entryStatus) {
-        this.entryStatus = entryStatus;
+    public void setEntryStatus(Status status) {
+        this.status = status;
     }
 
     public String getEntryDescription() {
@@ -110,7 +104,7 @@ public class Entry {
     @Override
     public String toString() {
         return "Entry [entryId=" + entryId + ", entryStart=" + entryStart + ", entryEnd=" + entryEnd + ", entryStatus="
-                + entryStatus + ", entryDescription=" + entryDescription + ", user=" + user + ", organization="
+                + status + ", entryDescription=" + entryDescription + ", user=" + user + ", organization="
                 + organization + "]";
     }
     

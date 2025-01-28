@@ -55,7 +55,7 @@ public class Role {
         return permissions;
     }
 
-    public void setPermissions() {
+    public void setPermissions(Permissions permissions) {
         this.permissions = permissions; 
     }
 
