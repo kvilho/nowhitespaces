@@ -22,6 +22,19 @@ public class User {
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
 
+
+    public User(Long userId, String firstname, String lastname, String email, String password, Role role) {
+        this.userId = userId;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User() {
+    }
+
     // Getters and setters
     public Long getUserId() {
         return userId;
@@ -71,5 +84,9 @@ public class User {
         this.role = role;
     }
 
-    
+    @Override
+    public String toString() {
+        return "User [userId=" + userId + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
+                + ", password=" + password + ", role=" + role + "]";
+    }
 }
