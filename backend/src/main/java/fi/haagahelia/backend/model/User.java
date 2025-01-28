@@ -18,7 +18,7 @@ public class User {
     private String password;
 
     @ManyToOne
-    @JoinColumn(name = "role_id") // Foreign key to the Role entity
+    @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
 
     // Getters and setters
