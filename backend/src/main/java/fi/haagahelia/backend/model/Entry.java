@@ -14,6 +14,8 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Entry {
 
+    // enum for entryStatus
+    
     enum Status {
         APPROVED,
         PENDING,
@@ -21,7 +23,7 @@ public class Entry {
     }
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
     private Long entryId;
     private LocalDateTime entryStart;
     private LocalDateTime entryEnd;
@@ -36,7 +38,7 @@ public class Entry {
     @JoinColumn(name = "organizationId") //many-to-one relationship with Organization
     private Organization organization;
 
-    public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, Status entryStatus, String entryDescription) {
+    public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, Status entryStatus, String entryDescription, User user, Organization organization) {
         this.entryId = entryId;
         this.entryStart = entryStart;
         this.entryEnd = entryEnd;
@@ -48,6 +50,8 @@ public class Entry {
 
     public Entry() {
     }
+
+    // getters n setters 
 
     public Long getEntryId() {
         return entryId;

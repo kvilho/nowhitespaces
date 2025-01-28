@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate primary key
+    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
     private Long userId;
 
     private String firstname;
@@ -70,4 +70,6 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    
 }
