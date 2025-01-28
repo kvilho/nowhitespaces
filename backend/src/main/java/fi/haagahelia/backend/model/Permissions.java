@@ -7,12 +7,12 @@ public class Permissions {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
-    private Long permissonsId;
+    private Long permissionsId;
     
     private String permissionsDescription;
 
-    public Permissions(Long permissonsId, String permissionsDescription) {
-        this.permissonsId = permissonsId;
+    public Permissions(Long permissionsId, String permissionsDescription) {
+        this.permissionsId = permissionsId;
         this.permissionsDescription = permissionsDescription;
     }
 
@@ -20,13 +20,13 @@ public class Permissions {
     }
 
 
-    public Long getPermissonsId() {
-        return permissonsId;
+    public Long getPermissionsId() {
+        return permissionsId;
     }
 
 
-    public void setPermissonsId(Long permissonsId) {
-        this.permissonsId = permissonsId;
+    public void setPermissionsId(Long permissionsId) {
+        this.permissionsId = permissionsId;
     }
 
 
@@ -41,6 +41,6 @@ public class Permissions {
 
     @Override
     public String toString() {
-        return "Permissions [permissonsId=" + permissonsId + ", permissionsDescription=" + permissionsDescription + "]";
+        return "Permissions [permissonsId=" + permissionsId + ", permissionsDescription=" + permissionsDescription + "]";
     }
 }
