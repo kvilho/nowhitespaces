@@ -64,14 +64,4 @@ public class Role {
         return "Role [roleId=" + roleId + ", roleName=" + roleName + ", roleDescription=" + roleDescription
                 + ", permissions=" + permissions + "]";
     }
-
-
-    
-
-    
-
-    
-
-
-
 }

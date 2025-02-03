@@ -109,9 +109,4 @@ public class Entry {
                 + status + ", entryDescription=" + entryDescription + ", user=" + user + ", organization="
                 + organization + "]";
     }
-    
-    
-
-
-
 }
