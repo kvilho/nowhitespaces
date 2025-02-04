@@ -19,13 +19,13 @@ import fi.haagahelia.backend.model.Role;
 import fi.haagahelia.backend.repositories.RoleRepository;
 
 @RestController
-@RequestMapping("/api/role")
+@RequestMapping("/api/roles")
 public class RoleRestController {
     
     @Autowired
     private RoleRepository roleRepository;
 
-    // GET: Get all the roles
+    // GET: Get all roles
     @GetMapping
     public List<Role> getAllRole() {
         return roleRepository.findAll();
