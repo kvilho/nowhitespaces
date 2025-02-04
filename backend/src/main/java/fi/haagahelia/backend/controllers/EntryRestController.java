@@ -33,7 +33,7 @@ public class EntryRestController {
     }
 
     // GET: Get entry by ID
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<Entry> getEntryById (@PathVariable Long id){
         Optional<Entry> entry = entryRepository.findById(id);
         return entry.map(ResponseEntity::ok)
