@@ -32,7 +32,7 @@ public class RoleRestController {
     }
 
     // GET: Get role by ID
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<Role> getRoleById (@PathVariable Long id){
         Optional<Role> role = roleRepository.findById(id);
         return role.map(ResponseEntity::ok)

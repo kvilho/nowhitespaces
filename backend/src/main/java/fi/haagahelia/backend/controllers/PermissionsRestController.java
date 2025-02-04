@@ -32,7 +32,7 @@ public class PermissionsRestController {
     }
 
     // GET: Get permissions by ID
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<Permissions> getPermissionsById (@PathVariable Long id){
         Optional<Permissions> permissions = permissionsRepository.findById(id);
         return permissions.map(ResponseEntity::ok)
