@@ -45,13 +45,13 @@ public class UserRestController {
     
     */
     
-
+    // GET: Get all users
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // GET: Hae yksittäinen käyttäjä ID:n perusteella
+    // GET: Get users by ID
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById (@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -59,14 +59,14 @@ public class UserRestController {
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // POST: Lisää uusi käyttäjä
+    // POST: Add new user
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         User savedUser = userRepository.save(newUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    // PUT: Päivitä olemassa oleva käyttäjä
+    // PUT: Update user by ID
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -87,7 +87,7 @@ public class UserRestController {
         }
     }
 
-    // DELETE: Poista käyttäjä ID:n perusteella
+    // DELETE: Delete user by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (userRepository.existsById(id)) {
@@ -97,5 +97,4 @@ public class UserRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
 }

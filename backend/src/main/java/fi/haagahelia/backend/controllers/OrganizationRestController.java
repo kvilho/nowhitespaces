@@ -25,12 +25,13 @@ public class OrganizationRestController {
     @Autowired
     private  OrganizationRepository organizationRepository;
 
+    // GET: Get all organizations
     @GetMapping
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
     }
 
-    // GET: Hae organisaatio ID:n perusteella
+    // GET: Get organization by ID
     @GetMapping("/{id}")
     public ResponseEntity<Organization> getOrganization(@PathVariable Long id) {
         Optional<Organization> organization = organizationRepository.findById(id);
@@ -38,14 +39,14 @@ public class OrganizationRestController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-     // POST: Lisää uusi organisaatio
+     // POST: Add new organization
     @PostMapping
     public ResponseEntity<Organization> createOrganization(@RequestBody Organization newOrganization) {
         Organization savedOrganization = organizationRepository.save(newOrganization);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedOrganization);
     }
     
-    // PUT: Päivitä olemassa oleva organisaatio
+    // PUT: Update organization by ID
     @PutMapping("/{id}")
     public ResponseEntity<Organization> updateOrganization(@PathVariable Long id, @RequestBody Organization organizationDetails) {
         Optional<Organization> optionalOrganization = organizationRepository.findById(id);
@@ -61,7 +62,7 @@ public class OrganizationRestController {
         }
     }
 
-    // DELETE: Poista organisaatio ID:n perusteella
+    // DELETE: Delete organization by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
         if (organizationRepository.existsById(id)) {
@@ -71,6 +72,4 @@ public class OrganizationRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-    
-
 }
