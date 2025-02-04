@@ -2,6 +2,8 @@ package fi.haagahelia.backend.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,13 +21,13 @@ public class Organization {
 
     private String organizationName;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Entry> entries;
 
-    public Organization(Long organizationId, String organizationName, List<Entry> entries) {
+    public Organization(Long organizationId, String organizationName) {
         this.organizationId = organizationId;
         this.organizationName = organizationName;
-        this.entries = entries;
     }
 
     public Organization() {

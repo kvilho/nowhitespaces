@@ -15,16 +15,14 @@ public class Role {
     @JoinColumn(name = "permissionsId")
     private Permissions permissions;
 
-    public Role(Long roleId, String roleName, String roleDescription, Permissions permissions) {
+    public Role(Long roleId, String roleName, String roleDescription) {
         this.roleId = roleId;
         this.roleName = roleName;
         this.roleDescription = roleDescription;
-        this.permissions = permissions;
     }
 
     public Role() {
     }
-
 
     // Getters and setters
     public Long getRoleId() {
