@@ -9,6 +9,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
     private Long userId;
+    
+    @Column(unique = true) // Ensure username is unique
+    private String userName;
 
     private String firstname;
     private String lastname;
@@ -18,17 +21,22 @@ public class User {
 
     private String password;
 
+    @Column(unique = true) // Ensure phone number is unique (like you ;))
+    private String phone;
+
     @ManyToOne
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
 
 
-    public User(Long userId, String firstname, String lastname, String email, String password, Role role) {
+    public User(Long userId, String userName, String firstname, String lastname, String email, String password, String phone, Role role) {
         this.userId = userId;
+        this.userName = userName;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.phone = phone;
         this.role = role;
     }
 
@@ -42,6 +50,15 @@ public class User {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getFirstname() {
@@ -76,6 +93,14 @@ public class User {
         this.password = password;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public Role getRole() {
         return role;
     }
@@ -86,7 +111,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
-                + ", password=" + password + ", role=" + role + "]";
+        return "User [userId=" + userId + ", userName=" + userName +", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
+                + ", password=" + password + ", phone=" + phone + ", role=" + role + "]";
     }
 }
