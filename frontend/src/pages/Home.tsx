@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Typography } from "@mui/material";
+import Calendar from "./components/Calendar"
 
 const Home: React.FC = () => {
   return (
