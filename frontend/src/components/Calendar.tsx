@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from "index.css"
 
 const Calendar: React.FC = () => {
     return (
@@ -54,6 +55,31 @@ const Calendar: React.FC = () => {
                     <span>29</span>
                     <span>30</span>
                     <span>31</span>
+                </div>
+            </div>
+            <div className="entry">
+                <div className="entry-popup">
+                    <div className="time-input">
+                        <div className="entry-popup-time">Time</div>
+                        <input type="number" name='hours' min={0} max={24} className="hours" />
+                        <input type="number" name='minutes' min={0} max={60} className="minutes" />
+                    </div>
+                    <textarea placeholder='Enter a description (max 60 letters)'></textarea>
+                    <button className="entry-popup-btn">Add Entry</button>
+                    <button className="close-entry-popup">
+                    <i className="bx bx-x"></i>
+                    </button>
+                </div>
+                <div className="entry">
+                    <div className="entry-date-wrapper">
+                        <div className="entry-date">May 15, 2024</div>
+                        <div className="entry-time">10:00</div>
+                    </div>
+                    <div className="entry-text">Description</div>
+                    <div className="entry-buttons">
+                        <i className="bx bxs-edit-alt"></i>
+                        <i className="bx bxs-message-alt-x"></i>
+                    </div>
                 </div>
             </div>
         </div>
