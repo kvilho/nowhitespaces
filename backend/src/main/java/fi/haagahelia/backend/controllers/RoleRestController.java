@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.haagahelia.backend.model.Role;
 import fi.haagahelia.backend.repositories.RoleRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -26,12 +28,16 @@ public class RoleRestController {
     private RoleRepository roleRepository;
 
     // GET: Get all roles
+    @Schema(description = "Get all roles")
+    @Tag(name = "roles")
     @GetMapping
     public List<Role> getAllRole() {
         return roleRepository.findAll();
     }
 
     // GET: Get role by ID
+    @Schema(description = "Get role by ID")
+    @Tag(name = "roles")
     @GetMapping("/{id}")
     public ResponseEntity<Role> getRoleById (@PathVariable Long id){
         Optional<Role> role = roleRepository.findById(id);
@@ -40,6 +46,8 @@ public class RoleRestController {
     }
 
     // POST: Add new roles
+    @Schema(description = "Add new roles")
+    @Tag(name = "roles")
     @PostMapping
     public ResponseEntity<Role> createRole(@RequestBody Role newRole) {
         Role savedRole = roleRepository.save(newRole);
@@ -47,6 +55,8 @@ public class RoleRestController {
     }
 
     // PUT: Update role by ID
+    @Schema(description = "Update role by ID")
+    @Tag(name = "roles")
     @PutMapping("/{id}")
     public ResponseEntity<Role> updateRole(@PathVariable Long id, @RequestBody Role roleDetails) {
         Optional<Role> optionalRole = roleRepository.findById(id);
@@ -64,6 +74,8 @@ public class RoleRestController {
     }
 
     // DELETE: Delete role by ID
+    @Schema(description = "Delete role by ID")
+    @Tag(name = "roles")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
         if (roleRepository.existsById(id)) {

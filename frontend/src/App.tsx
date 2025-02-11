@@ -23,7 +23,6 @@ const App: React.FC = () => {
         <Box sx={{ paddingTop: "64px" }}>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
           </Routes>
         </Box>

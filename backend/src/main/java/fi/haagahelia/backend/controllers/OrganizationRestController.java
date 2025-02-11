@@ -17,21 +17,28 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.repositories.OrganizationRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/organizations")
 public class OrganizationRestController {
-    
+
     @Autowired
     private  OrganizationRepository organizationRepository;
 
     // GET: Get all organizations
+    
+    @Schema(description = "Get all organizations") 
+    @Tag(name = "organizations")
     @GetMapping
     public List<Organization> getAllOrganizations() {
         return organizationRepository.findAll();
     }
 
     // GET: Get organization by ID
+    @Schema(description = "Get organization by ID") 
+    @Tag(name = "organizations")
     @GetMapping("/{id}")
     public ResponseEntity<Organization> getOrganization(@PathVariable Long id) {
         Optional<Organization> organization = organizationRepository.findById(id);
@@ -40,6 +47,8 @@ public class OrganizationRestController {
     }
 
      // POST: Add new organization
+    @Schema(description = "Add new organization") 
+    @Tag(name = "organizations")
     @PostMapping
     public ResponseEntity<Organization> createOrganization(@RequestBody Organization newOrganization) {
         Organization savedOrganization = organizationRepository.save(newOrganization);
@@ -48,6 +57,8 @@ public class OrganizationRestController {
     
     // PUT: Update organization by ID
     @PutMapping("/{id}")
+    @Schema(description = "Update organization by ID")
+    @Tag(name = "organizations")
     public ResponseEntity<Organization> updateOrganization(@PathVariable Long id, @RequestBody Organization organizationDetails) {
         Optional<Organization> optionalOrganization = organizationRepository.findById(id);
 
@@ -63,6 +74,8 @@ public class OrganizationRestController {
     }
 
     // DELETE: Delete organization by ID
+    @Schema(description = "Delete organization by ID")
+    @Tag(name = "organizations")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrganization(@PathVariable Long id) {
         if (organizationRepository.existsById(id)) {
