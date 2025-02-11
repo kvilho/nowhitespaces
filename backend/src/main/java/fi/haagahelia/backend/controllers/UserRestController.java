@@ -73,11 +73,11 @@ public class UserRestController {
 
         if (optionalUser.isPresent()) {
             User existingUser = optionalUser.get();
-            existingUser.setUserName(userDetails.getUserName());
+            existingUser.setUsername(userDetails.getUsername());
             existingUser.setFirstname(userDetails.getFirstname());
             existingUser.setLastname(userDetails.getLastname());
             existingUser.setEmail(userDetails.getEmail());
-            existingUser.setPassword(userDetails.getPassword());
+            existingUser.setPasswordHash(userDetails.getPasswordHash());
             existingUser.setPhone(userDetails.getPhone());
 
             User updatedUser = userRepository.save(existingUser);
