@@ -1,5 +1,7 @@
 package fi.haagahelia.backend;
 
+import java.security.KeyStore.Entry;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -9,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 
 import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.model.Role;
+import fi.haagahelia.backend.model.Roles;
 import fi.haagahelia.backend.repositories.OrganizationRepository;
 import fi.haagahelia.backend.repositories.RoleRepository;
 import fi.haagahelia.backend.repositories.UserRepository;
@@ -38,8 +41,10 @@ public class BackendApplication {
 			organizationRepository.save(organization2);
 
 			// Role
-			Role role1 = new Role(null, "Admin", "Administrator");
+			Role role1 = new Role(null, "Employer", "Employer", Roles.EMPLOYER);
 			roleRepository.save(role1);
+			Role role2 = new Role(null, "Employee", "Employee", Roles.EMPLOYEE);
+			roleRepository.save(role2);
 
 			log.info("Sample data created successfully.");
 		};

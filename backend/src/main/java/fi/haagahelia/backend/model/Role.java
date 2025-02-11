@@ -15,10 +15,14 @@ public class Role {
     @JoinColumn(name = "permissionsId")
     private Permissions permissions;
 
-    public Role(Long roleId, String roleName, String roleDescription) {
+    @Enumerated(EnumType.STRING) // Store enum as a String in database
+    private Roles roles;
+
+    public Role(Long roleId, String roleName, String roleDescription, Roles roles) {
         this.roleId = roleId;
         this.roleName = roleName;
         this.roleDescription = roleDescription;
+        this.roles = roles;
     }
 
     public Role() {
@@ -55,6 +59,14 @@ public class Role {
 
     public void setPermissions(Permissions permissions) {
         this.permissions = permissions; 
+    }
+
+    public Roles getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Roles roles) {
+        this.roles = roles;
     }
 
     @Override
