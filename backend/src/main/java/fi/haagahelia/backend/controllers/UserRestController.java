@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.UserRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /* 
 import fi.haagahelia.backend.repositories.RoleRepository;
@@ -46,12 +48,16 @@ public class UserRestController {
     */
     
     // GET: Get all users
+    @Schema (description = "Get all users")
+    @Tag(name = "users")    
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     // GET: Get users by ID
+    @Schema(description = "Get user by ID")
+    @Tag(name = "users")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById (@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -60,6 +66,8 @@ public class UserRestController {
     }
 
     // POST: Add new user
+    @Schema(description = "Add new user")
+    @Tag(name = "users")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         User savedUser = userRepository.save(newUser);
@@ -67,6 +75,8 @@ public class UserRestController {
     }
 
     // PUT: Update user by ID
+    @Schema(description = "Update user by ID")
+    @Tag(name = "users")
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -88,6 +98,8 @@ public class UserRestController {
     }
 
     // DELETE: Delete user by ID
+    @Schema(description = "Delete user by ID")
+    @Tag(name = "users")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (userRepository.existsById(id)) {

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import fi.haagahelia.backend.model.Entry;
 import fi.haagahelia.backend.repositories.EntryRepository;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +29,16 @@ public class EntryRestController {
     private EntryRepository entryRepository;
 
     // GET: Get all the entries
+    @Schema (description = "Get all entries")
+    @Tag    (name = "entries")
     @GetMapping
     public List<Entry> getAllEntries() {
         return entryRepository.findAll();
     }
 
     // GET: Get entry by ID
+    @Schema(description = "Get entry by ID")
+    @Tag(name = "entries")
     @GetMapping("/{id}")
     public ResponseEntity<Entry> getEntryById (@PathVariable Long id){
         Optional<Entry> entry = entryRepository.findById(id);
@@ -41,6 +47,8 @@ public class EntryRestController {
     }
 
     // POST: Add new entry
+    @Schema(description = "Add new entry")
+    @Tag(name = "entries")
     @PostMapping
     public ResponseEntity<Entry> createEntry(@RequestBody Entry newEntry) {
         Entry savedEntry = entryRepository.save(newEntry);
@@ -48,6 +56,8 @@ public class EntryRestController {
     }
 
     // PUT: Update entry by ID
+    @Schema(description = "Update entry by ID")
+    @Tag(name = "entries")
     @PutMapping("/{id}")
     public ResponseEntity<Entry> updateEntry(@PathVariable Long id, @RequestBody Entry entryDetails) {
         Optional<Entry> optionalEntry = entryRepository.findById(id);
@@ -66,6 +76,8 @@ public class EntryRestController {
     }
     
     // DELETE: Delete entry by ID
+    @Schema(description = "Delete entry by ID")
+    @Tag(name = "entries")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEntry(@PathVariable Long id) {
         if (entryRepository.existsById(id)) {
