@@ -1,16 +1,16 @@
 package fi.haagahelia.backend.services;
-
+/*
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.User.UserBuilder;
-
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.UserRepository;
+*/
 
-public class CustomUserDetailsService implements UserDetailsService {
-
+public class CustomUserDetailsService {
+    /*
     @Autowired
     private UserRepository userRepository;
 
@@ -26,5 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         return builder.build();
     }
+    */
 
 }
