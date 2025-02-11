@@ -8,8 +8,8 @@ const Home: React.FC = () => {
     <Container>
       <Typography variant="h3" mt={5}>
         Welcome to the Home Page
-       <Calendar/>
       </Typography>
+      <Calendar/>
     </Container>
   );
 };
