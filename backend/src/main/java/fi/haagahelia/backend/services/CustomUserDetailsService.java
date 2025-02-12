@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         fi.haagahelia.backend.model.User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        System.out.println("Loaded user: " + user.getEmail() + " with roles: " + user.getRole());
+        System.out.println("Loaded user: " + user.getEmail() + " with roles: " + user.getRole().getRoleName());
 
         UserBuilder builder = User.withUsername(user.getEmail())
                 .password(user.getPasswordHash())

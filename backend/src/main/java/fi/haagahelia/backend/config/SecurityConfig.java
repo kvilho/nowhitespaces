@@ -43,9 +43,12 @@ public class SecurityConfig {
 			.anyRequest().authenticated()
 		)
 		.formLogin(formlogin -> formlogin
-			.loginPage("/login").permitAll()
+            // .loginPage("/login") // Custom login page
+			// .defaultSuccessUrl("/homepage", true) // Redirect after successful login
+            .permitAll()
 		)
 		.logout(logout -> logout
+            // .logoutSuccessUrl("/") // Redirect after logout 
 			.permitAll()
 		);	
 		return http.build();
