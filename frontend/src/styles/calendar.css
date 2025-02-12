@@ -115,6 +115,11 @@
     padding: 3rem 0;
 }
 
+.time-input input[type='number']::-webkit-outer-spin-button,
+.time-input input[type='number']::-webkit-inner-spin-button {
+    appearance: none;
+}
+
 .entry-popup {
     position: absolute;
     top: 50%; /* Center vertically */
@@ -131,6 +136,7 @@
     align-items: center;
     row-gap: 2rem;
     z-index: 1000; /* Ensure it's above other elements */
+    display: none;
 }
 
 .time-input {
