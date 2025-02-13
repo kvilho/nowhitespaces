@@ -136,7 +136,6 @@
     align-items: center;
     row-gap: 2rem;
     z-index: 1000; /* Ensure it's above other elements */
-    display: none;
 }
 
 .time-input {
