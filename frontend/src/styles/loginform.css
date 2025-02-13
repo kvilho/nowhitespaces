@@ -11,7 +11,8 @@
     width: 300px;
 }
 
-.login-field {
+/* General Input Field Styling */
+.input-field {
     display: flex;
     align-items: center;
     position: relative;
@@ -41,6 +42,7 @@
     box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
 }
 
+/* Icon Positioning */
 .icon {
     position: absolute;
     left: 1rem;
@@ -49,10 +51,16 @@
     height: 1.5rem;
 }
 
-.password-input {
-    padding-left: 3rem;
+/* Specific Adjustments */
+.text-input {
+    padding-left: 3rem; /* Ensure space for the icon */
 }
 
+.password-input {
+    padding-left: 3rem; /* Ensure space for the icon */
+}
+
+/* Button Styling */
 .login-button {
     padding: 10px;
     background-color: blue;
