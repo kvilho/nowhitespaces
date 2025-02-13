@@ -1,5 +1,6 @@
 .calendar-app {
-    width: 60%;
+    width: 90%;
+    height: 860px;
     min-width: 90vmin;
     background-color: #1e242d;
     padding: 3rem;

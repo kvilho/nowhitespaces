@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/main.css";
 import "../styles/calendar.css"; // Import the calendar CSS file
 
 // Define types for entry data
