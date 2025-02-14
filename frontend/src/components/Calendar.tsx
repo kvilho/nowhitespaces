@@ -5,7 +5,8 @@ import "../styles/calendar.css"; // Import the calendar CSS file
 interface CalendarEntry {
   id: number;
   date: Date;
-  time: string;
+  startTime: string;
+  endTime: string;
   text: string;
 }
 
@@ -22,10 +23,8 @@ const Calendar: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(currentDate);
   const [showEntryPopup, setShowEntryPopup] = useState<boolean>(false);
   const [entries, setEntries] = useState<CalendarEntry[]>([]);
-  const [entryTime, setEntryTime] = useState<{ hours: string; minutes: string }>({
-    hours: "00",
-    minutes: "00",
-  });
+  const [startTime, setStartTime] = useState<string>("08:00");
+  const [endTime, setEndTime] = useState<string>("16:00");
   const [entryText, setEntryText] = useState<string>("");
   const [editEntry, setEditEntry] = useState<CalendarEntry | null>(null);
 
@@ -57,7 +56,8 @@ const Calendar: React.FC = () => {
     if (clickedDate >= today || isSameDay(clickedDate, today)) {
       setSelectedDate(clickedDate);
       setShowEntryPopup(true);
-      setEntryTime({ hours: "00", minutes: "00" });
+      setStartTime("08:00");
+      setEndTime("16:00");
       setEntryText("");
       setEditEntry(null);
     }
@@ -67,7 +67,8 @@ const Calendar: React.FC = () => {
     const newEntry: CalendarEntry = {
       id: editEntry ? editEntry.id : Date.now(),
       date: selectedDate,
-      time: `${entryTime.hours.padStart(2, "0")}:${entryTime.minutes.padStart(2, "0")}`,
+      startTime,
+      endTime,
       text: entryText,
     };
 
@@ -84,7 +85,8 @@ const Calendar: React.FC = () => {
     updatedEntries.sort((a, b) => a.date.getTime() - b.date.getTime());
 
     setEntries(updatedEntries);
-    setEntryTime({ hours: "00", minutes: "00" });
+    setStartTime("08:00");
+    setEndTime("16:00");
     setEntryText("");
     setShowEntryPopup(false);
     setEditEntry(null);
@@ -92,10 +94,8 @@ const Calendar: React.FC = () => {
 
   const handleEditEvent = (entry: CalendarEntry) => {
     setSelectedDate(new Date(entry.date));
-    setEntryTime({
-      hours: entry.time.split(":")[0],
-      minutes: entry.time.split(":")[1],
-    });
+    setStartTime(entry.startTime);
+    setEndTime(entry.endTime);
     setEntryText(entry.text);
     setEditEntry(entry);
     setShowEntryPopup(true);
@@ -145,28 +145,26 @@ const Calendar: React.FC = () => {
         </div>
       </div>
 
-      {/* Entry Popup */}
+      {/* Entry Popup - Now contains Start & End Time Inputs */}
       {showEntryPopup && (
         <div className="entry-popup">
+          <h2>Work Hours</h2>
           <div className="time-input">
-            <div className="entry-popup-time">Time</div>
+            <label>Start Time</label>
             <input
-              type="number"
-              name="hours"
-              min={0}
-              max={24}
-              className="hours"
-              value={entryTime.hours}
-              onChange={(e) => setEntryTime({ ...entryTime, hours: e.target.value })}
+              type="time"
+              className="time-input-field"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
             />
+          </div>
+          <div className="time-input">
+            <label>End Time</label>
             <input
-              type="number"
-              name="minutes"
-              min={0}
-              max={60}
-              className="minutes"
-              value={entryTime.minutes}
-              onChange={(e) => setEntryTime({ ...entryTime, minutes: e.target.value })}
+              type="time"
+              className="time-input-field"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
           <textarea
@@ -179,7 +177,7 @@ const Calendar: React.FC = () => {
             }}
           />
           <button className="entry-popup-btn" onClick={handleEntrySubmit}>
-            {editEntry ? "Update entry" : "Add entry"}
+            {editEntry ? "Update Entry" : "Add Entry"}
           </button>
           <button className="close-entry-popup" onClick={() => setShowEntryPopup(false)}>
             <i className="bx bx-x"></i>
@@ -192,7 +190,7 @@ const Calendar: React.FC = () => {
         <div className="entry" key={entry.id}>
           <div className="entry-date-wrapper">
             <div className="entry-date">{`${monthsOfYear[entry.date.getMonth()]} ${entry.date.getDate()}, ${entry.date.getFullYear()}`}</div>
-            <div className="entry-time">{entry.time}</div>
+            <div className="entry-time">{entry.startTime} - {entry.endTime}</div>
           </div>
           <div className="entry-text">{entry.text}</div>
           <div className="entry-buttons">
