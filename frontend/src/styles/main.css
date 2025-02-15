@@ -4,35 +4,46 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: "Comfortaa", sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: #f5f5f5; /* Light gray background */
 }
 
-/* Container for the home page */
+/* Main Home Container */
 .home-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh; /* Takes full viewport height */
+  flex-direction: row;  /* Align items horizontally */
+  justify-content: space-between; /* Space between calendar and future content */
+  align-items: flex-start;
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
 }
 
-/* Title styling */
-.home-title {
-  margin-bottom: 20px;
-  font-weight: bold;
+/* Left Section: Calendar */
+.calendar-section {
+  flex: 1; /* Take up available space */
+  max-width: 600px; /* Prevent it from stretching too much */
+}
+
+/* Right Section: Placeholder for future content */
+.content-section {
+  flex: 1; /* Take up available space */
+  background: #ffffff; /* White background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: #333; /* Dark gray */
+  max-width: 500px;
 }
 
-/* Wrapper to center the calendar */
-.calendar-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 800px; /* Ensures it doesn’t stretch too much */
+.content-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.content-text {
+  font-size: 16px;
+  color: #555;
 }
