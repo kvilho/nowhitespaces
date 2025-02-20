@@ -5,10 +5,10 @@
 }
 
 .home-content {
-    max-width: 1800px;
+    max-width: 1400px; /* Reduced from 1800px */
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 350px;
+    grid-template-columns: minmax(auto, 800px) 350px; /* Added max-width to calendar section */
     gap: 2rem;
     height: 100%;
 }
@@ -16,6 +16,8 @@
 .calendar-section {
     display: flex;
     justify-content: center;
+    max-width: 800px; /* Added max-width */
+    width: 100%;
 }
 
 .content-section {

@@ -1,30 +1,57 @@
-import React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import '../styles/navbar.css';
 
 const Navbar: React.FC = () => {
-  return (
-    <AppBar position="fixed" sx={{ top: 0, left: 0, width: "100%", zIndex: 1100}}>
-      <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          HourBook
-        </Typography>
-        <Button color="inherit" component={Link} to="/">
-          Home
-        </Button>
-        <Button color="inherit" component={Link} to="/login">
-          Login
-        </Button>
-        <Button color="inherit" component={Link} to="/profile">
-          Profile
-        </Button>
-        <Button color="inherit" component={Link} to="/users">
-          Users
-        </Button>
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const location = useLocation();
 
-      </Toolbar>
-    </AppBar>
-  );
+    const isActive = (path: string) => {
+        return location.pathname === path ? 'active' : '';
+    };
+
+    return (
+        <nav className="navbar">
+            <div className="navbar-container">
+                <Link to="/" className="navbar-brand">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19,4H18V2H16V4H8V2H6V4H5A2,2 0 0,0 3,6V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V6A2,2 0 0,0 19,4M19,20H5V10H19V20M19,8H5V6H19V8Z" />
+                    </svg>
+                    HourBook
+                </Link>
+
+                <button 
+                    className="mobile-menu-button"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                        <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+                    </svg>
+                </button>
+
+                <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
+                    <Link to="/" className={`nav-link ${isActive('/')}`}>
+                        Home
+                    </Link>
+                    <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
+                        Profile
+                    </Link>
+                    <Link to="/users" className={`nav-link ${isActive('/users')}`}>
+                        Users
+                    </Link>
+                    
+                    <div className="profile-section">
+                        <button className="profile-button">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
+                            </svg>
+                            <span>Account</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
 };
 
 export default Navbar;
