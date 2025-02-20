@@ -51,16 +51,12 @@ const Calendar: React.FC = () => {
 
   const handleDayClick = (day: number) => {
     const clickedDate = new Date(currentYear, currentMonth, day);
-    const today = new Date();
-
-    if (clickedDate >= today || isSameDay(clickedDate, today)) {
-      setSelectedDate(clickedDate);
-      setShowEntryPopup(true);
-      setStartTime("08:00");
-      setEndTime("16:00");
-      setEntryText("");
-      setEditEntry(null);
-    }
+    setSelectedDate(clickedDate);
+    setShowEntryPopup(true);
+    setStartTime("08:00");
+    setEndTime("16:00");
+    setEntryText("");
+    setEditEntry(null);
   };
 
   const handleEntrySubmit = () => {

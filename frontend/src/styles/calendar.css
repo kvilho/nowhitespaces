@@ -13,7 +13,7 @@
 
 /* CALENDAR HEADER */
 .heading {
-    font-size: 2rem;
+    font-size: 1.75rem;
     color: #1976d2;
     font-weight: 600;
     margin-bottom: 0.75rem;
@@ -24,63 +24,56 @@
 .navigate-date {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0.5rem 1rem;
     background-color: #f8f9fa;
-    border-radius: 0.5rem;
-    margin-bottom: 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
 }
 
-.navigate-date h2 {
-    font-size: 1.5rem;
+.Month, .Year {
+    font-size: 1.25rem;
     color: #2c3e50;
     font-weight: 500;
 }
 
-.Year {
-    color: #666;
-    margin-left: 0.5rem;
-}
-
 .buttons {
-    margin-left: auto;
     display: flex;
     gap: 0.5rem;
 }
 
 .buttons i {
-    width: 2.5rem;
-    height: 2.5rem;
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 1.2rem;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #ffffff;
     color: #1976d2;
     cursor: pointer;
     transition: all 0.2s ease;
+    border: 1px solid #e0e0e0;
 }
 
 .buttons i:hover {
     background-color: #1976d2;
     color: #ffffff;
-    border-color: #1976d2;
 }
 
 /* WEEKDAYS ROW */
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 0.25rem;
-    padding: 0.25rem;
     gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
 }
 
 .weekdays span {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #666;
+    color: #64748b;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -150,39 +143,44 @@
 .time-input label {
     display: block;
     font-size: 0.9rem;
-    color: #666;
+    color: #64748b;
     margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
 .time-input input {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-size: 1rem;
     color: #2c3e50;
-    transition: border-color 0.2s ease;
+    transition: all 0.2s ease;
+    background-color: #f8f9fa;
 }
 
 .time-input input:focus {
     border-color: #1976d2;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
 .entry-popup textarea {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-size: 1rem;
     min-height: 100px;
     margin-bottom: 1rem;
     resize: vertical;
+    background-color: #f8f9fa;
 }
 
 .entry-popup textarea:focus {
     border-color: #1976d2;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 
 .entry-popup-btn {
@@ -191,11 +189,11 @@
     background-color: #1976d2;
     color: #ffffff;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .entry-popup-btn:hover {
@@ -209,91 +207,96 @@
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: #666;
+    color: #64748b;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
 }
 
 .close-entry-popup:hover {
-    color: #1976d2;
+    background-color: #f8f9fa;
+    color: #ef4444;
 }
 
 /* ENTRIES LIST */
 .entry {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 0.75rem;
     padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #e0e0e0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin: 0.5rem 0;
+    transition: all 0.2s ease;
 }
 
 .entry:hover {
-    transform: translateY(-2px);
+    border-color: #1976d2;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .entry-date-wrapper {
-    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .entry-date {
     font-size: 0.9rem;
-    color: #666;
+    color: #64748b;
+    font-weight: 500;
 }
 
 .entry-time {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: #1976d2;
     font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    background-color: #e3f2fd;
+    border-radius: 0.5rem;
 }
 
 .entry-text {
     color: #2c3e50;
     font-size: 0.95rem;
     line-height: 1.5;
-    padding: 0.75rem;
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    margin: 0.5rem 0;
+    margin-bottom: 0.75rem;
 }
 
 .entry-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
 }
 
 .entry-buttons i {
-    font-size: 1.2rem;
-    color: #666;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #64748b;
     cursor: pointer;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .entry-buttons i:hover {
-    color: #1976d2;
+    background-color: #1976d2;
+    color: #ffffff;
 }
 
 /* Responsive adjustments */
-@media (max-width: 1200px) {
-    .home-content {
-        grid-template-columns: minmax(auto, 700px) 300px;
-    }
-}
-
-@media (max-width: 992px) {
-    .home-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .calendar-app {
-        max-width: 700px;
-        margin: 0 auto;
-    }
-}
-
-@media (max-width: 576px) {
+@media (max-width: 768px) {
     .calendar-app {
         padding: 1rem;
     }
@@ -302,5 +305,11 @@
         width: 2rem;
         height: 2rem;
         font-size: 0.8rem;
+    }
+
+    .entry-popup {
+        width: 90%;
+        max-width: 400px;
+        padding: 1.5rem;
     }
 }

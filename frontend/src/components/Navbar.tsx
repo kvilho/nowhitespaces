@@ -39,6 +39,9 @@ const Navbar: React.FC = () => {
                     <Link to="/users" className={`nav-link ${isActive('/users')}`}>
                         Users
                     </Link>
+                    <Link to="/login" className={`nav-link ${isActive('/login')}`}>
+                        Login
+                    </Link>
                     
                     <div className="profile-section">
                         <button className="profile-button">
