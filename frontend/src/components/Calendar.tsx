@@ -26,6 +26,7 @@ const Calendar: React.FC = () => {
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
   useEffect(() => {
     fetchEntries();
@@ -171,7 +172,7 @@ const Calendar: React.FC = () => {
           ))}
         </div>
         <div className="days">
-          {[...Array(firstDayOfMonth).keys()].map((_, index) => (
+          {[...Array(adjustedFirstDay).keys()].map((_, index) => (
             <span key={`empty-${index}`} />
           ))}
           {[...Array(daysInMonth).keys()].map((day) => (
