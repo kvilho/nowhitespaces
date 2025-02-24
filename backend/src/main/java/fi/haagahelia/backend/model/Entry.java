@@ -10,16 +10,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 @Entity
 public class Entry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long entryId;
     private LocalDateTime entryStart;
     private LocalDateTime entryEnd;
     private String entryDescription;
+    private String entryStatus;
 
     @ManyToOne
     @JoinColumn(name = "userId") //many-to-one relationship with User
@@ -31,6 +33,9 @@ public class Entry {
 
     @Enumerated(EnumType.STRING) // Store enum as a String in database
     private Status status;
+
+    @Transient  // This means the field won't be persisted to database
+    private Long userId;
 
     public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, String entryDescription, Status status, User user, Organization organization) {
         this.entryId = entryId;
@@ -101,6 +106,14 @@ public class Entry {
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override
