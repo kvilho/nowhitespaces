@@ -20,19 +20,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.CrossOrigin;
+
+import fi.haagahelia.backend.model.User;
+import fi.haagahelia.backend.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/api/entries")
+@CrossOrigin(origins = "http://localhost:5173")
 public class EntryRestController {
 
     @Autowired
     private EntryRepository entryRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     // GET: Get all the entries
-    @Schema (description = "Get all entries")
-    @Tag    (name = "entries")
+    @Schema(description = "Get all entries with optional month/year filter")
+    @Tag(name = "entries")
     @GetMapping
-    public List<Entry> getAllEntries() {
+    public List<Entry> getAllEntries(
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
+        if (month != null && year != null) {
+            // Add method to repository to filter by month and year
+            return entryRepository.findByMonthAndYear(month, year);
+        }
         return entryRepository.findAll();
     }
 
@@ -51,8 +66,20 @@ public class EntryRestController {
     @Tag(name = "entries")
     @PostMapping
     public ResponseEntity<Entry> createEntry(@RequestBody Entry newEntry) {
-        Entry savedEntry = entryRepository.save(newEntry);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedEntry);
+        try {
+            // Find the user first
+            Optional<User> user = userRepository.findById(newEntry.getUserId());
+            if (user.isPresent()) {
+                newEntry.setUser(user.get());  // Set the actual user entity
+                Entry savedEntry = entryRepository.save(newEntry);
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedEntry);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            System.err.println("Error saving entry: " + e.getMessage());
+            throw e;
+        }
     }
 
     // PUT: Update entry by ID

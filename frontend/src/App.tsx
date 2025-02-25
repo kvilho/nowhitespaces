@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile"
+import UsersPage from "./pages/UsersPage";
 
 const theme = createTheme({
   palette: {
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/users" element={<UsersPage />} />
           </Routes>
         </Box>
       </Router>
