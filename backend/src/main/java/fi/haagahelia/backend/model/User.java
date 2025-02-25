@@ -7,58 +7,47 @@ import jakarta.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) // Auto-generate primary key
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, updatable = false)
+	private Long id;
     
-    @Column(unique = true) // Ensure username is unique
-    private String userName;
+    @Column(name = "username", nullable = false, unique = true)
+	private String username;
 
     private String firstname;
     private String lastname;
 
-    @Column(unique = true) // Ensure email is unique
-    private String email;
+    @Column(name = "email", nullable = false, unique = true)
+	private String email;
 
-    private String password;
+    @Column(name = "password", nullable = false)
+	private String passwordHash;
 
-    @Column(unique = true) // Ensure phone number is unique (like you ;))
+    @Column(name = "phone", unique = true) // Ensure phone number is unique (like you ;))
     private String phone;
 
     @ManyToOne
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "organizationId")
+    private Organization organization;
 
-    public User(Long userId, String userName, String firstname, String lastname, String email, String password, String phone, Role role) {
-        this.userId = userId;
-        this.userName = userName;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.phone = phone;
-        this.role = role;
+    public Long getId() {
+        return id;
     }
 
-    public User() {
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    // Getters and setters
-    public Long getUserId() {
-        return userId;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstname() {
@@ -85,12 +74,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public String getPhone() {
@@ -108,10 +97,51 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+    
+    public User() {
+    }
+
+    public User(String username, String email, String passwordHash, Role role, Organization organization) {
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.organization = organization;
+
+    }
+
+    public User(String username, String firstname, String lastname, String email, String passwordHash, String phone,
+            Role role, Organization organization) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.phone = phone;
+        this.role = role;
+        this.organization = organization;
+    }
+
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 
     @Override
     public String toString() {
-        return "User [userId=" + userId + ", userName=" + userName +", firstname=" + firstname + ", lastname=" + lastname + ", email=" + email
-                + ", password=" + password + ", phone=" + phone + ", role=" + role + "]";
+        return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
+                + ", email=" + email + ", phone=" + phone + ", role=" + role + ", organization=" + organization + "]";
     }
+
+    
+    
+
+    
 }
+
+
+    
