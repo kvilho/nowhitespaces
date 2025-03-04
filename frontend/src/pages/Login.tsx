@@ -1,16 +1,25 @@
 import { useState } from 'react';
-import { Paper, Typography } from '@mui/material';
+import { IconButton, Paper, Typography } from '@mui/material';
 import "../styles/loginform.css";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+
+    const [showPassword, setShowPassword] = useState(false);
+
+        const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
 
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
         // Handle login logic here
         console.log('Username:', username);
         console.log('Password:', password);
+
+        
     };
 
     return (
@@ -46,10 +55,13 @@ const Login: React.FC = () => {
                         <input
                             className='input password-input'
                             placeholder='Password'
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        <button onClick={togglePasswordVisibility} className="password-toggle">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </button>
                     </div>
 
                     <button type="submit" className="login-button">
