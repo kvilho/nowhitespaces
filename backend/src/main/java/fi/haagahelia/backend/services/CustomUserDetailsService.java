@@ -1,3 +1,4 @@
+/*
 package fi.haagahelia.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,3 +29,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         return builder.build();
     }
 }
+*/
