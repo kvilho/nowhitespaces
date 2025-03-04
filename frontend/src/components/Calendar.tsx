@@ -54,14 +54,6 @@ const Calendar: React.FC = () => {
     setCurrentYear((prevYear) => (currentMonth === 11 ? prevYear + 1 : prevYear));
   };
 
-  const isSameDay = (date1: Date, date2: Date): boolean => {
-    return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
-    );
-  };
-
   const handleDayClick = (day: number) => {
     const clickedDate = new Date(currentYear, currentMonth, day);
     setSelectedDate(clickedDate);
@@ -146,12 +138,6 @@ const Calendar: React.FC = () => {
         }
     }
     setDeleteConfirmation({ show: false, entryId: null });
-  };
-
-  const formatDateArray = (dateArray: number[]) => {
-    if (!Array.isArray(dateArray)) return dateArray; // If it's already a string, return as is
-    const [year, month, day, hour, minute] = dateArray;
-    return new Date(year, month - 1, day, hour, minute).toISOString();
   };
 
   return (

@@ -1,4 +1,3 @@
-import React from "react";
 import { Typography, Paper } from "@mui/material";
 import Calendar from "../components/Calendar";
 import "../styles/home.css";
