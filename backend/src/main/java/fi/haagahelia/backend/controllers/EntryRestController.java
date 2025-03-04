@@ -28,7 +28,7 @@ import fi.haagahelia.backend.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/api/entries")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class EntryRestController {
 
     @Autowired

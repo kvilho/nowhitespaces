@@ -34,7 +34,7 @@ const Calendar: React.FC = () => {
 
   const fetchEntries = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/entries?month=${currentMonth + 1}&year=${currentYear}`);
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries?month=${currentMonth + 1}&year=${currentYear}`);
       if (!response.ok) throw new Error('Failed to fetch entries');
       const data = await response.json();
       console.log('Fetched entries:', data);  // Debug log
@@ -78,8 +78,8 @@ const Calendar: React.FC = () => {
 
     try {
         const url = editEntry 
-            ? `http://localhost:8080/api/entries/${editEntry.entryId}`
-            : 'http://localhost:8080/api/entries';
+            ? `${import.meta.env.VITE_BACKEND_URL}/api/entries/${editEntry.entryId}`
+            : `${import.meta.env.VITE_BACKEND_URL}/api/entries`;
             
         const response = await fetch(url, {
             method: editEntry ? 'PUT' : 'POST',
@@ -128,7 +128,7 @@ const Calendar: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.entryId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/entries/${deleteConfirmation.entryId}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/entries/${deleteConfirmation.entryId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) throw new Error('Failed to delete entry');
