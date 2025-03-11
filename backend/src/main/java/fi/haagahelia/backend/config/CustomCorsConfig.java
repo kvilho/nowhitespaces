@@ -15,7 +15,10 @@ public class CustomCorsConfig {
     public CorsConfigurationSource getCorsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173")); // Specify allowed origin(s)
+        config.setAllowedOrigins(List.of(
+            "http://localhost:5173", 
+            "https://hourbook-hourbook.2.rahtiapp.fi/", 
+            "https://hourbook-frontend-hourbook.2.rahtiapp.fi/")); // Specify allowed origin(s)
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE")); 
         config.setAllowedHeaders(List.of("*")); // Limit to required headers
         config.setAllowCredentials(true);
