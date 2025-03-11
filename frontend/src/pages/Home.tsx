@@ -16,6 +16,12 @@ const Home: React.FC = () => {
     }
   };
 
+  const isButtonVisible = () => {
+    const now = new Date();
+    const currentHour = now.getUTCHours() + 2;
+    return currentHour >= 16 && currentHour < 21;
+  };
+
   return (
     <div className="home-container">
       {/* Main content wrapper */}
@@ -57,14 +63,16 @@ const Home: React.FC = () => {
           </Paper>
         </div>
       </div>
-      <Button
-        variant="contained"
-        color="primary"
-        style={{ position: "fixed", bottom: 16, right: 16 }}
-        onClick={handleLocationRequest}
-      >
-        Free time?
-      </Button>
+      {isButtonVisible() && (
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ position: "fixed", bottom: 16, right: 16 }}
+          onClick={handleLocationRequest}
+        >
+          Free time?
+        </Button>
+      )}
     </div>
   );
 };
