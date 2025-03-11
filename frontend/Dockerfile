@@ -1,23 +1,10 @@
-FROM maven:3.9.8-eclipse-temurin-21 AS build
+FROM node:20 AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
 COPY . .
-RUN mvn clean package -DskipTests
-
-FROM openjdk:21-jdk-slim
-COPY --from=build /target/quizzer-0.0.1-SNAPSHOT.jar quizzer.jar
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","quizzer.jar"]
-
-FROM eclipse-temurin:17-jdk-focal as builder
-WORKDIR /opt/app
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN chmod +x ./mvnw
-RUN ./mvnw dependency:go-offline
-COPY ./src ./src
-RUN ./mvnw clean install -DskipTests
-RUN find ./target -type f -name '*.jar' -exec cp {} /opt/app/app.jar \; -
-quit
-FROM eclipse-temurin:17-jre-alpine
-COPY --from=builder /opt/app/*.jar /opt/app/
-EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
+RUN npm run build
+FROM nginx:1.25
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
