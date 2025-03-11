@@ -17,9 +17,11 @@ import fi.haagahelia.backend.services.CustomUserDetailsService;
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final CustomCorsConfig customCorsConfig;
 
-    public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, CustomCorsConfig customCorsConfig) {
         this.customUserDetailsService = customUserDetailsService;
+        this.customCorsConfig = customCorsConfig;
     }
 
     @Bean
@@ -39,10 +41,11 @@ public class SecurityConfig {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
 		http
-            .cors(null)
+            .cors(cors -> cors.configurationSource(customCorsConfig.getCorsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/css/**", "/h2-console/**", "/api/**").permitAll()
+            .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
 			.anyRequest().authenticated()
 		)
 		.formLogin(formlogin -> formlogin
