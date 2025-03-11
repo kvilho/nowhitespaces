@@ -39,6 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
 		http
+            .cors(null)
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/css/**", "/h2-console/**", "/api/**").permitAll()
