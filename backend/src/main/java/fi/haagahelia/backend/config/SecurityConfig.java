@@ -1,4 +1,3 @@
-/*
 package fi.haagahelia.backend.config;
 
 import org.springframework.context.annotation.Bean;
@@ -40,6 +39,7 @@ public class SecurityConfig {
 	public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
 		http
+            .cors(null)
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
 			.requestMatchers("/css/**", "/h2-console/**", "/api/**").permitAll()
@@ -57,4 +57,3 @@ public class SecurityConfig {
 		return http.build();
 	}
 }
-*/
