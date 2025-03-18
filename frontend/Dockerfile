@@ -20,6 +20,7 @@ RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx && \
     mkdir -p /etc/nginx/html/ && chmod 777 /etc/nginx/html/ && \
     # comment user directive as master process is run as user in OpenShift anyhow
     sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
+
 # Copy React build to nginx HTML directory 
 COPY --from=build /app/dist /usr/share/nginx/html/
 # Copy nginx-configuration file 
@@ -27,4 +28,7 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html/
 EXPOSE 8080
+
+# Add a command to start nginx in the foreground
+CMD ["nginx", "-g", "daemon off;"]
 USER nginx:root
