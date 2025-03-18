@@ -1,16 +1,16 @@
-# Use an official Node runtime as a parent image
+# Build stage
 FROM node:19-alpine AS build
-# Set the working directory to /app
 WORKDIR /app
-# Copy the package.json and package-lock.json to the container
+# Copy package files
 COPY package*.json ./
-# Install dependencies
-RUN npm ci
-# Copy the rest of the application code to the container
+# Install ALL dependencies (including dev dependencies)
+RUN npm install
+# Copy source
 COPY . .
-# Build the React app
+# Build the app
 RUN npm run build
 
+# Production stage
 FROM nginx:alpine
 # Support running as arbitrary user which belongs to the root group
 # Note that users are not allowed to listen on privileged ports (< 1024)
@@ -21,9 +21,9 @@ RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx && \
     # comment user directive as master process is run as user in OpenShift anyhow
     sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 
-# Copy React build to nginx HTML directory 
+# Copy built static files
 COPY --from=build /app/dist /usr/share/nginx/html/
-# Copy nginx-configuration file 
+# Copy nginx config
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/share/nginx/html/
