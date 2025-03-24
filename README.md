@@ -62,6 +62,25 @@ Basic Flow:
 
 ![alt text](./documents/HourbookDiagram.png "Relational diagram")
 
+## 🚀 Deployment
+
+The application consists of a Spring Boot backend and a Vite-based frontend.
+
+### 🛠 Backend (Spring Boot)
+
+✅ Deployed and running at:
+
+🔗 [https://hourbook-hourbook.2.rahtiapp.fi/](https://hourbook-hourbook.2.rahtiapp.fi/)
+
+The backend provides the core REST API used by the application.  
+See [📚 REST API Documentation](#-rest-api-documentation) for available endpoints and usage.
+
+### 🎨 Frontend (Vite)
+
+⚠️ Deployment in progress...
+
+The frontend will be linked here once deployed.
+
 ## 📚 REST API Documentation
 
 This application provides a RESTful API for managing:
