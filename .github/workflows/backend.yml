@@ -26,6 +26,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+        cache-dependency-path: |
+          **/pom.xml
+          **/src/main/**/pom.xml
+          **/src/test/**/pom.xml
         
     - name: Build with Maven
       run: ./mvnw package -DskipTests
