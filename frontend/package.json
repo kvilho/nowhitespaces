@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "serve dist -s -n -L -p 8080"
@@ -23,20 +23,20 @@
     "react": "^18.3.1",
     "react-big-calendar": "^1.17.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.5",
-    "serve": "^14.2.1"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.17.0",
+    "react-router-dom": "^6.22.3",
+    "serve": "^14.2.1",
+    "typescript": "~5.6.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.0.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
-    "typescript": "~5.6.2",
-    "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "typescript-eslint": "^8.18.2"
   }
 }

@@ -4,13 +4,18 @@
 set -e
 
 echo "---> Installing application source..."
-cp -Rf /tmp/src/. /opt/app-root/src/
+cp -Rf /tmp/src/. ./
 
 echo "---> Installing dependencies..."
-cd /opt/app-root/src
 npm install
 
-echo "---> Building your application..."
+echo "---> Building application..."
 npm run build
+
+echo "---> Pruning development dependencies..."
+npm prune --production
+
+echo "---> Fix directory permissions..."
+fix-permissions ./
 
 echo "---> Build completed" 
