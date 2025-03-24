@@ -10,7 +10,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "serve dist -s -n -L -p 8080"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -22,7 +23,8 @@
     "react": "^18.3.1",
     "react-big-calendar": "^1.17.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.1.5"
+    "react-router-dom": "^7.1.5",
+    "serve": "^14.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

@@ -9,10 +9,10 @@ curl -o /etc/yum.repos.d/nginx.repo https://nginx.org/packages/rhel/9/x86_64/ngi
 microdnf install -y nginx
 
 echo "---> Installing application source..."
-cp -Rf /tmp/src/. /tmp/app-root/src/
+cp -Rf /tmp/src/. /opt/app-root/src/
 
 echo "---> Installing dependencies..."
-cd /tmp/app-root/src
+cd /opt/app-root/src
 npm install
 
 echo "---> Building your application..."
