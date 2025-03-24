@@ -1,4 +1,3 @@
-// workflow test 2
 package fi.haagahelia.backend.controllers;
 
 import java.util.List;
