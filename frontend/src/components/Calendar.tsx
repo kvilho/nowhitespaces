@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
 import { Entry } from "../types/Entry"; // Import the Entry type
+import config from '../config';
 
 const Calendar: React.FC = () => {
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -34,7 +35,7 @@ const Calendar: React.FC = () => {
 
   const fetchEntries = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/entries?month=${currentMonth + 1}&year=${currentYear}`);
+      const response = await fetch(`${config.apiUrl}/entries?month=${currentMonth + 1}&year=${currentYear}`);
       if (!response.ok) throw new Error('Failed to fetch entries');
       const data = await response.json();
       console.log('Fetched entries:', data);  // Debug log
@@ -78,8 +79,8 @@ const Calendar: React.FC = () => {
 
     try {
         const url = editEntry 
-            ? `http://localhost:8080/api/entries/${editEntry.entryId}`
-            : 'http://localhost:8080/api/entries';
+            ? `${config.apiUrl}/entries/${editEntry.entryId}`
+            : `${config.apiUrl}/entries`;
             
         const response = await fetch(url, {
             method: editEntry ? 'PUT' : 'POST',
@@ -128,7 +129,7 @@ const Calendar: React.FC = () => {
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.entryId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/entries/${deleteConfirmation.entryId}`, {
+            const response = await fetch(`${config.apiUrl}/entries/${deleteConfirmation.entryId}`, {
                 method: 'DELETE'
             });
             if (!response.ok) throw new Error('Failed to delete entry');
