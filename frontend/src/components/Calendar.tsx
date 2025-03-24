@@ -3,6 +3,17 @@ import "../styles/calendar.css"; // Import the calendar CSS file
 import { Entry } from "../types/Entry"; // Import the Entry type
 import config from '../config';
 
+// Common headers for all requests
+const headers = {
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+};
+
+const fetchConfig = {
+  credentials: 'include' as RequestCredentials,
+  headers: headers,
+};
+
 const Calendar: React.FC = () => {
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const monthsOfYear = [
@@ -35,10 +46,16 @@ const Calendar: React.FC = () => {
 
   const fetchEntries = async () => {
     try {
-      const response = await fetch(`${config.apiUrl}/entries?month=${currentMonth + 1}&year=${currentYear}`);
+      const response = await fetch(
+        `${config.apiUrl}/api/entries?month=${currentMonth + 1}&year=${currentYear}`,
+        {
+          ...fetchConfig,
+          method: 'GET',
+        }
+      );
       if (!response.ok) throw new Error('Failed to fetch entries');
       const data = await response.json();
-      console.log('Fetched entries:', data);  // Debug log
+      console.log('Fetched entries:', data);
       setEntries(data);
     } catch (error) {
       console.error('Error fetching entries:', error);
@@ -67,41 +84,39 @@ const Calendar: React.FC = () => {
 
   const handleEntrySubmit = async () => {
     const entryData = {
-        entryStart: `${selectedDate.toISOString().split('T')[0]}T${startTime}:00`,
-        entryEnd: `${selectedDate.toISOString().split('T')[0]}T${endTime}:00`,
-        userId: 1,
-        entryDescription: entryText,
-        status: "PENDING",
-        user: {
-            id: 1
-        }
+      entryStart: `${selectedDate.toISOString().split('T')[0]}T${startTime}:00`,
+      entryEnd: `${selectedDate.toISOString().split('T')[0]}T${endTime}:00`,
+      userId: 1,
+      entryDescription: entryText,
+      status: "PENDING",
+      user: {
+        id: 1
+      }
     };
 
     try {
-        const url = editEntry 
-            ? `${config.apiUrl}/entries/${editEntry.entryId}`
-            : `${config.apiUrl}/entries`;
+      const url = editEntry 
+        ? `${config.apiUrl}/api/entries/${editEntry.entryId}`
+        : `${config.apiUrl}/api/entries`;
             
-        const response = await fetch(url, {
-            method: editEntry ? 'PUT' : 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(entryData)
-        });
+      const response = await fetch(url, {
+        ...fetchConfig,
+        method: editEntry ? 'PUT' : 'POST',
+        body: JSON.stringify(entryData)
+      });
 
-        if (!response.ok) {
-            const errorData = await response.text();
-            console.error('Server error:', errorData);
-            throw new Error('Failed to save entry');
-        }
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Server error:', errorData);
+        throw new Error('Failed to save entry');
+      }
         
-        await fetchEntries();  // Refresh the entries list
-        setShowEntryPopup(false);
-        setEntryText("");
-        setEditEntry(null);  // Reset edit state
+      await fetchEntries();
+      setShowEntryPopup(false);
+      setEntryText("");
+      setEditEntry(null);
     } catch (error) {
-        console.error('Error saving entry:', error);
+      console.error('Error saving entry:', error);
     }
   };
 
@@ -128,15 +143,19 @@ const Calendar: React.FC = () => {
 
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.entryId) {
-        try {
-            const response = await fetch(`${config.apiUrl}/entries/${deleteConfirmation.entryId}`, {
-                method: 'DELETE'
-            });
-            if (!response.ok) throw new Error('Failed to delete entry');
-            await fetchEntries();
-        } catch (error) {
-            console.error('Error deleting entry:', error);
-        }
+      try {
+        const response = await fetch(
+          `${config.apiUrl}/api/entries/${deleteConfirmation.entryId}`,
+          {
+            ...fetchConfig,
+            method: 'DELETE',
+          }
+        );
+        if (!response.ok) throw new Error('Failed to delete entry');
+        await fetchEntries();
+      } catch (error) {
+        console.error('Error deleting entry:', error);
+      }
     }
     setDeleteConfirmation({ show: false, entryId: null });
   };
