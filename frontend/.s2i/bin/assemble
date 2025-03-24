@@ -3,11 +3,6 @@
 # Exit on any error
 set -e
 
-echo "---> Installing nginx..."
-# Install nginx
-curl -o /etc/yum.repos.d/nginx.repo https://nginx.org/packages/rhel/9/x86_64/nginx-release-rhel-9-1.el9.ngx.noarch.rpm
-microdnf install -y nginx
-
 echo "---> Installing application source..."
 cp -Rf /tmp/src/. /opt/app-root/src/
 
@@ -17,19 +12,5 @@ npm install
 
 echo "---> Building your application..."
 npm run build
-
-echo "---> Configuring nginx..."
-# Create necessary directories
-mkdir -p /var/lib/nginx/tmp/client_body
-mkdir -p /var/cache/nginx
-chmod -R 777 /var/lib/nginx
-chmod -R 777 /var/cache/nginx
-
-# Copy built files to nginx html directory
-mkdir -p /usr/share/nginx/html
-cp -R dist/* /usr/share/nginx/html/
-
-# Copy nginx configuration
-cp nginx.conf /etc/nginx/conf.d/default.conf
 
 echo "---> Build completed" 

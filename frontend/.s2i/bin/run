@@ -1,14 +1,5 @@
 #!/bin/bash
 set -e
 
-# Ensure nginx directories exist and have proper permissions
-mkdir -p /var/lib/nginx/tmp/client_body
-mkdir -p /var/cache/nginx
-chmod -R 777 /var/lib/nginx
-chmod -R 777 /var/cache/nginx
-
-echo "---> Starting nginx..."
-exec nginx -g "daemon off;"
-
 cd /opt/app-root/src
 npm start 
