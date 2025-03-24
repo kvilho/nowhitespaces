@@ -81,6 +81,72 @@ See [📚 REST API Documentation](#-rest-api-documentation) for available endpoi
 
 The frontend will be linked here once deployed.
 
+## 📘 Project Documentation
+
+### 🛠 Technologies Used
+
+#### Frontend
+- **Language:** TypeScript
+- **Framework:** React (with Vite)
+- **Key Libraries:**
+  - `react-router-dom` – Client-side routing
+  - `@mui/material` – Material UI component library
+  - `@emotion/react`, `@emotion/styled` – Styling support
+  - `date-fns` – Date utility library
+  - `react-big-calendar` – Calendar and scheduling
+
+#### Backend
+- **Language:** Java
+- **Framework:** Spring Boot
+- **Key Frameworks/Libraries:**
+  - `Spring Security` – Authentication and authorization
+  - `Spring Data JPA` – ORM and database operations
+
+---
+
+### 📁 Project Structure
+
+#### Frontend
+
+#### Backend
+
+## ⚙️ Setup Instructions
+
+To run the project locally, follow the steps below for both frontend and backend.
+
+### 🔧 Prerequisites
+
+Make sure you have the following installed on your system:
+
+- [Node.js](https://nodejs.org/) (version 18 or higher)
+- [Java JDK 17](https://jdk.java.net/17/)
+- [Maven](https://maven.apache.org/)
+- [Git](https://git-scm.com/)
+
+---
+
+### 🎨 Frontend Setup (React + TypeScript with Vite)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+After running, the frontend will be available at:
+🌐 http://localhost:5173
+
+### 🛠 Backend Setup (Spring Boot)
+
+```bash
+cd backend
+./mvnw package
+./mvnw spring-boot:run
+```
+
+Once started, the backend will be available at:
+🌐 http://localhost:8080
+
 ## 📚 REST API Documentation
 
 This application provides a RESTful API for managing:
