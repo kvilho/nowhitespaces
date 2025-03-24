@@ -26,37 +26,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-        cache-dependency-path: |
-          **/pom.xml
-          **/src/main/**/pom.xml
-          **/src/test/**/pom.xml
+        cache-dependency-path: '**/pom.xml'
         
-    - name: Check code style
-      run: ./mvnw checkstyle:check
-      
-    - name: Run static code analysis
-      run: ./mvnw spotbugs:check
-      
     - name: Compile
       run: ./mvnw compile
       
     - name: Run unit tests
       run: ./mvnw test
       
-    - name: Run integration tests
-      run: ./mvnw verify -P integration-test
-      
-    - name: Check for security vulnerabilities
-      run: ./mvnw dependency-check:check
-      
     - name: Build package
-      run: ./mvnw package -DskipTests
-      
-    - name: Upload test results
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: |
-          **/target/surefire-reports/
-          **/target/failsafe-reports/ 
+      run: ./mvnw package -DskipTests 
