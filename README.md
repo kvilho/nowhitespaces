@@ -77,6 +77,8 @@ See [📚 REST API Documentation](#-rest-api-documentation) for available endpoi
 
 ### 🎨 Frontend (Vite)
 
+✅ Deployed and running at:
+
 🔗 [https://hourbook-frontend-hourbook.2.rahtiapp.fi/](https://hourbook-frontend-hourbook.2.rahtiapp.fi/)
 
 ## 📘 Project Documentation
