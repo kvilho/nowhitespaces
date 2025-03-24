@@ -1,4 +1,4 @@
-# No White Spaces
+# nowhitespaces
 
 [![Backend CI](https://github.com/kvilho/nowhitespaces/actions/workflows/backend.yml/badge.svg)](https://github.com/kvilho/nowhitespaces/actions/workflows/backend.yml)
 [![Frontend CI](https://github.com/kvilho/nowhitespaces/actions/workflows/frontend.yml/badge.svg)](https://github.com/kvilho/nowhitespaces/actions/workflows/frontend.yml)
