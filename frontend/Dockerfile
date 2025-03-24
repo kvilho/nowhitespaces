@@ -11,8 +11,8 @@ RUN npm install --legacy-peer-deps
 # Copy source files
 COPY . .
 
-# Build the application
-RUN npm run build
+# Build the application in production mode
+RUN npm run build:prod
 
 # Production image
 FROM node:18-alpine
