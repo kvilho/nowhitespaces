@@ -1,3 +1,4 @@
 NODE_ENV=production
 NPM_RUN=start
-NPM_CONFIG_PREFIX=/opt/app-root 
+NPM_CONFIG_PREFIX=/opt/app-root/src/.npm-global
+PATH=/opt/app-root/src/.npm-global/bin:/opt/app-root/src/node_modules/.bin:/opt/app-root/src/.npm-global/bin:/opt/app-root/src/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin 
