@@ -1,3 +1,8 @@
+# No White Spaces
+
+[![Backend CI](https://github.com/bhi049/nowhitespaces/actions/workflows/backend.yml/badge.svg)](https://github.com/bhi049/nowhitespaces/actions/workflows/backend.yml)
+[![Frontend CI](https://github.com/bhi049/nowhitespaces/actions/workflows/frontend.yml/badge.svg)](https://github.com/bhi049/nowhitespaces/actions/workflows/frontend.yml)
+
 # Hourbook
 Hourbook - Work Hour Management System
 
