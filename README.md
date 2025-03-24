@@ -62,6 +62,43 @@ Basic Flow:
 
 ![alt text](./documents/HourbookDiagram.png "Relational diagram")
 
+## 📚 REST API Documentation
+
+This application provides a RESTful API for managing:
+
+- `users`
+- `roles`
+- `permissions`
+- `organizations`
+- `entries`
+
+The API is fully documented and testable via Swagger.
+
+### 🔗 Swagger Documentation
+
+- **Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
+- **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+Using Swagger UI, you can:
+- Browse and test all endpoints interactively
+- View input and output schemas
+- Inspect validation rules and error responses
+
+---
+
+### 🧭 Endpoint Overview
+
+| Resource        | GET (/{id}, list) | POST | PUT /{id} | DELETE /{id} |
+|----------------|-------------------|------|-----------|---------------|
+| `/users`       | ✅                | ✅   | ✅        | ✅            |
+| `/roles`       | ✅                | ✅   | ✅        | ✅            |
+| `/permissions` | ✅                | ✅   | ✅        | ✅            |
+| `/organizations` | ✅              | ✅   | ✅        | ✅            |
+| `/entries`     | ✅                | ✅   | ✅        | ✅            |
+
+---
+
+
 ## Team Members
 - Vilho Karhu https://github.com/kvilho
 - Julius Luhtala https://github.com/juliusluhtala
