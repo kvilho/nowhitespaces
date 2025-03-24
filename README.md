@@ -77,9 +77,7 @@ See [📚 REST API Documentation](#-rest-api-documentation) for available endpoi
 
 ### 🎨 Frontend (Vite)
 
-⚠️ Deployment in progress...
-
-The frontend will be linked here once deployed.
+🔗 [https://hourbook-frontend-hourbook.2.rahtiapp.fi/](https://hourbook-frontend-hourbook.2.rahtiapp.fi/)
 
 ## 📘 Project Documentation
 
