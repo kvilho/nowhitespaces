@@ -2,16 +2,20 @@ import React, { useState, useEffect } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
 import { Entry } from "../types/Entry"; // Import the Entry type
 import config from '../config';
+import AuthService from '../services/authService';
 
 // Common headers for all requests
-const headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
+const getHeaders = () => {
+  const token = AuthService.getInstance().getToken();
+  return {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    ...(token ? { 'Authorization': `Basic ${token}` } : {}),
+  };
 };
 
 const fetchConfig = {
   credentials: 'include' as RequestCredentials,
-  headers: headers,
 };
 
 const Calendar: React.FC = () => {
@@ -51,9 +55,17 @@ const Calendar: React.FC = () => {
         {
           ...fetchConfig,
           method: 'GET',
+          headers: getHeaders(),
         }
       );
-      if (!response.ok) throw new Error('Failed to fetch entries');
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Handle unauthorized access
+          window.location.href = '/login';
+          return;
+        }
+        throw new Error('Failed to fetch entries');
+      }
       const data = await response.json();
       console.log('Fetched entries:', data);
       setEntries(data);
@@ -102,7 +114,8 @@ const Calendar: React.FC = () => {
       const response = await fetch(url, {
         ...fetchConfig,
         method: editEntry ? 'PUT' : 'POST',
-        body: JSON.stringify(entryData)
+        body: JSON.stringify(entryData),
+        headers: getHeaders(),
       });
 
       if (!response.ok) {
@@ -149,6 +162,7 @@ const Calendar: React.FC = () => {
           {
             ...fetchConfig,
             method: 'DELETE',
+            headers: getHeaders(),
           }
         );
         if (!response.ok) throw new Error('Failed to delete entry');
