@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Exit on any error
+set -e
+
+echo "---> Installing application source..."
+cp -Rf /tmp/src/. ./
+
+echo "---> Installing dependencies..."
+# Ensure we use the correct npm version
+npm install -g npm@10.2.4
+
+echo "---> Installing application dependencies..."
+npm ci --production=false
+
+echo "---> Building application..."
+npm run build
+
+echo "---> Pruning development dependencies..."
+npm prune --production
+
+echo "---> Fix directory permissions..."
+fix-permissions ./
+
+echo "---> Build completed" 

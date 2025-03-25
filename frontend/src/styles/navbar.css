@@ -159,3 +159,17 @@
         background: linear-gradient(to right, #1565c0, #0d47a1);
     }
 }
+
+.logout-button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+}
+
+.logout-button:hover {
+    color: #ff4081;
+}
