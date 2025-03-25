@@ -26,7 +26,7 @@ const Home: React.FC = () => {
   const isButtonVisible = () => {
     const now = new Date();
     const currentHour = now.getUTCHours() + 2;
-    return currentHour >= 16 && currentHour < 21;
+    return currentHour >= 6 && currentHour < 21;
   };
 
   return (
