@@ -161,9 +161,9 @@
 }
 
 .logout-button {
+    color: rgba(255, 255, 255, 0.9);
     background: none;
     border: none;
-    color: inherit;
     font-size: inherit;
     cursor: pointer;
     padding: 0.5rem 1rem;

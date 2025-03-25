@@ -292,7 +292,7 @@ const Calendar: React.FC = () => {
                 <div className="entry-date">
                   {new Date(Array.isArray(entry.entryStart) 
                     ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]).toLocaleDateString()
-                    : entry.entryStart).toLocaleDateString()}
+                    : entry.entryStart).toLocaleDateString("en-GB")}
                 </div>
                 <div className="entry-time">
                   {Array.isArray(entry.entryStart) 
