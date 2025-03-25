@@ -8,7 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-//import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.model.Role;
@@ -31,8 +31,8 @@ public class BackendApplication {
     public CommandLineRunner createStarterData(
         UserRepository userRepository,
         OrganizationRepository organizationRepository,
-        RoleRepository roleRepository
-        // PasswordEncoder passwordEncoder  // Commented out
+        RoleRepository roleRepository,
+        PasswordEncoder passwordEncoder
     ) {
         return (args) -> {
             log.info("Creating initial data...");
@@ -48,6 +48,7 @@ public class BackendApplication {
             roleRepository.save(role1);
             Role role2 = new Role(null, "Employee", "Employee", Roles.EMPLOYEE);
             roleRepository.save(role2);
+
 
             // User
             User user1 = new User();
@@ -65,6 +66,7 @@ public class BackendApplication {
             user2.setRole(role2);
             user2.setOrganization(organization2);
             userRepository.save(user2);
+
 
             log.info("Sample data created successfully.");
         };

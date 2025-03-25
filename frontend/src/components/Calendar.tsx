@@ -50,6 +50,7 @@ const Calendar: React.FC = () => {
 
   const fetchEntries = async () => {
     try {
+
       const response = await fetch(
         `${config.apiUrl}/api/entries?month=${currentMonth + 1}&year=${currentYear}`,
         {
@@ -66,6 +67,7 @@ const Calendar: React.FC = () => {
         }
         throw new Error('Failed to fetch entries');
       }
+
       const data = await response.json();
       console.log('Fetched entries:', data);
       setEntries(data);
@@ -107,6 +109,7 @@ const Calendar: React.FC = () => {
     };
 
     try {
+
       const url = editEntry 
         ? `${config.apiUrl}/api/entries/${editEntry.entryId}`
         : `${config.apiUrl}/api/entries`;
@@ -156,6 +159,7 @@ const Calendar: React.FC = () => {
 
   const handleDeleteConfirm = async () => {
     if (deleteConfirmation.entryId) {
+
       try {
         const response = await fetch(
           `${config.apiUrl}/api/entries/${deleteConfirmation.entryId}`,
@@ -170,6 +174,7 @@ const Calendar: React.FC = () => {
       } catch (error) {
         console.error('Error deleting entry:', error);
       }
+
     }
     setDeleteConfirmation({ show: false, entryId: null });
   };

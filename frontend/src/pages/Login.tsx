@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import { Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "../styles/loginform.css";
@@ -11,6 +12,7 @@ const Login: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const authService = AuthService.getInstance();
+
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -26,6 +28,7 @@ const Login: React.FC = () => {
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+
     };
 
     return (
@@ -73,6 +76,7 @@ const Login: React.FC = () => {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
+
                         <button
                             type="button"
                             className="password-toggle"
@@ -95,6 +99,7 @@ const Login: React.FC = () => {
                                     </>
                                 )}
                             </svg>
+
                         </button>
                     </div>
 
