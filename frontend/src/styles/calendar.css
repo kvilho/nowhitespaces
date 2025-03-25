@@ -376,3 +376,130 @@
 .delete-cancel-btn:hover {
     background-color: #5a6268;
 }
+
+.calendar-container {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.home-container.dark-mode .calendar-container {
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+/* Add any additional dark mode styles for calendar-specific elements */
+.home-container.dark-mode .calendar-header {
+  color: #ffffff;
+}
+
+.home-container.dark-mode .calendar-day {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .calendar-day:hover {
+  background-color: #3a3a3a;
+}
+
+.home-container.dark-mode .calendar-app {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.home-container.dark-mode .navigate-date {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .buttons i {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+.home-container.dark-mode .buttons i:hover {
+  background-color: #444;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .weekdays span {
+  color: #aaaaaa;
+}
+
+.home-container.dark-mode .days span {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .days span:hover {
+  background-color: #444;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .current-day {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.5);
+}
+
+.home-container.dark-mode .entry-popup {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+.home-container.dark-mode .entry-popup input,
+.home-container.dark-mode .entry-popup textarea {
+  background-color: #444;
+  color: #ffffff;
+  border: 1px solid #555;
+}
+
+.home-container.dark-mode .entry-popup input:focus,
+.home-container.dark-mode .entry-popup textarea:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.3);
+}
+
+.home-container.dark-mode .entry-popup-btn {
+  background-color: #1976d2;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .entry-popup-btn:hover {
+  background-color: #1565c0;
+}
+
+.home-container.dark-mode .close-entry-popup {
+  color: #ffffff;
+}
+
+.home-container.dark-mode .close-entry-popup:hover {
+  background-color: #444;
+  color: #ef4444;
+}
+
+.home-container.dark-mode .entries-list {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .entry {
+  background-color: #444;
+  color: #ffffff;
+  border: 1px solid #555;
+}
+
+.home-container.dark-mode .entry-status {
+  background-color: #444;
+  color: #ffffff;
+}
+
+.home-container.dark-mode .Month,
+.home-container.dark-mode .Year {
+  color: #ffffff;
+}

@@ -1,8 +1,15 @@
-import { Typography, Paper, Button } from "@mui/material";
+import { Typography, Paper, Button, Switch, FormControlLabel } from "@mui/material";
+import { useState } from "react";
 import Calendar from "../components/Calendar";
 import "../styles/home.css";
 
 const Home: React.FC = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode((prevMode) => !prevMode);
+  };
+
   // Function to handle location request and open maps
   const handleLocationRequest = () => {
     if (navigator.geolocation) {
@@ -23,7 +30,12 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="home-container">
+    <div className={`home-container ${darkMode ? "dark-mode" : ""}`}>
+      <FormControlLabel
+        control={<Switch checked={darkMode} onChange={toggleDarkMode} />}
+        label="Dark Mode"
+        style={{ position: "fixed", top: 66, right: 16 }}
+      />
       {/* Main content wrapper */}
       <div className="home-content">
         {/* Left side: Calendar */}
@@ -32,36 +44,7 @@ const Home: React.FC = () => {
         </div>
 
         {/* Right side: Additional content */}
-        <div className="content-section">
-          <Paper elevation={3} className="content-paper">
-            <Typography variant="h5" className="content-title">
-              Additional Content
-            </Typography>
-            <div className="content-body">
-              <Typography variant="body1">
-                Welcome to HourBook! Track your working hours efficiently.
-              </Typography>
-              
-              {/* Placeholder for future features */}
-              <div className="features-grid">
-                <Paper elevation={2} className="feature-card">
-                  <Typography variant="h6">Statistics</Typography>
-                  <Typography variant="body2">View your working hour statistics</Typography>
-                </Paper>
-                
-                <Paper elevation={2} className="feature-card">
-                  <Typography variant="h6">Reports</Typography>
-                  <Typography variant="body2">Generate detailed work reports</Typography>
-                </Paper>
-                
-                <Paper elevation={2} className="feature-card">
-                  <Typography variant="h6">Settings</Typography>
-                  <Typography variant="body2">Customize your preferences</Typography>
-                </Paper>
-              </div>
-            </div>
-          </Paper>
-        </div>
+       
       </div>
       {isButtonVisible() && (
         <Button
