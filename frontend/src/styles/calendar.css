@@ -503,3 +503,25 @@
 .home-container.dark-mode .Year {
   color: #ffffff;
 }
+
+.has-entry {
+    background-color: #63b0fd; /* Highlight color */
+    border-radius: 50%;
+    font-weight: bold;
+    color: rgb(255, 255, 255) !important;
+  }
+
+.has-entry:hover {
+    background-color: #1565c0 !important;
+}
+
+/* Highlight days with entries in dark mode */
+.home-container.dark-mode .has-entry {
+    background-color: #63b0fd !important; /* Dark mode highlight */
+    color: white !important;
+}
+
+.home-container.dark-mode .has-entry:hover {
+    background-color: #1565c0 !important; /* Slightly darker on hover */
+}
+    

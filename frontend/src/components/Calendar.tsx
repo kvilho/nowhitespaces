@@ -197,25 +197,46 @@ const Calendar: React.FC = () => {
           ))}
         </div>
         <div className="days">
-          {[...Array(adjustedFirstDay).keys()].map((_, index) => (
-            <span key={`empty-${index}`} />
-          ))}
-          {[...Array(daysInMonth).keys()].map((day) => (
-            <span
-              key={day + 1}
-              className={
-                day + 1 === currentDate.getDate() &&
-                currentMonth === currentDate.getMonth() &&
-                currentYear === currentDate.getFullYear()
-                  ? "current-day"
-                  : ""
-              }
-              onClick={() => handleDayClick(day + 1)}
-            >
-              {day + 1}
-            </span>
-          ))}
-        </div>
+  {[...Array(adjustedFirstDay).keys()].map((_, index) => (
+    <span key={`empty-${index}`} />
+  ))}
+  {[...Array(daysInMonth).keys()].map((day) => {
+    const formattedDate = new Date(currentYear, currentMonth, day + 1)
+      .toISOString()
+      .split("T")[0];
+
+      const hasEntry = entries.some((entry) => {
+        let entryDate;
+        
+        if (Array.isArray(entry.entryStart)) {
+          
+          entryDate = new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]);
+        } else {
+         
+          entryDate = new Date(entry.entryStart);
+        }
+      
+        const formattedEntryDate = entryDate.toISOString().split("T")[0];
+      
+        return formattedEntryDate === formattedDate;
+      });
+
+    return (
+      <span
+        key={day + 1}
+        className={`${day + 1 === currentDate.getDate() &&
+          currentMonth === currentDate.getMonth() &&
+          currentYear === currentDate.getFullYear()
+          ? "current-day"
+          : ""
+        } ${hasEntry ? "has-entry" : ""}`}
+        onClick={() => handleDayClick(day + 1)}
+      >
+        {day + 1}
+      </span>
+    );
+  })}
+</div>
       </div>
 
       {/* Entry Popup - Now contains Start & End Time Inputs */}
