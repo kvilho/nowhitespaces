@@ -28,7 +28,13 @@ import fi.haagahelia.backend.repositories.UserRepository;
 
 @RestController
 @RequestMapping("/api/entries")
-@CrossOrigin(origins = "*")
+
+@CrossOrigin(
+    origins = {"http://localhost:5173", "https://hourbook-frontend-hourbook.2.rahtiapp.fi"},
+    allowCredentials = "true",
+    maxAge = 3600
+)
+
 public class EntryRestController {
 
     @Autowired

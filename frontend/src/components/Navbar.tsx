@@ -1,13 +1,27 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import '../styles/navbar.css';
+import AuthService from '../services/authService';
 
 const Navbar: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
+    const navigate = useNavigate();
+    const authService = AuthService.getInstance();
+
+    useEffect(() => {
+        setIsAuthenticated(authService.isAuthenticated());
+    }, [location.pathname]);
 
     const isActive = (path: string) => {
         return location.pathname === path ? 'active' : '';
+    };
+
+    const handleLogout = () => {
+        authService.logout();
+        setIsAuthenticated(false);
+        navigate('/login');
     };
 
     return (
@@ -30,25 +44,32 @@ const Navbar: React.FC = () => {
                 </button>
 
                 <div className={`nav-links ${isMenuOpen ? 'show' : ''}`}>
-                    <Link to="/" className={`nav-link ${isActive('/')}`}>
-                        Home
-                    </Link>
-                    <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
-                        Profile
-                    </Link>
-                    <Link to="/users" className={`nav-link ${isActive('/users')}`}>
-                        Users
-                    </Link>
-                    <Link to="/login" className={`nav-link ${isActive('/login')}`}>
-                        Login
-                    </Link>
+                    {isAuthenticated ? (
+                        <>
+                            <Link to="/" className={`nav-link ${isActive('/')}`}>
+                                Home
+                            </Link>
+                            <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
+                                Profile
+                            </Link>
+                            <Link to="/users" className={`nav-link ${isActive('/users')}`}>
+                                Users
+                            </Link>
+                            <button onClick={handleLogout} className="nav-link logout-button">
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <Link to="/login" className={`nav-link ${isActive('/login')}`}>
+                            Login
+                        </Link>
+                    )}
                     
                     <div className="profile-section">
                         <button className="profile-button">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M12,4A4,4 0 0,1 16,8A4,4 0 0,1 12,12A4,4 0 0,1 8,8A4,4 0 0,1 12,4M12,14C16.42,14 20,15.79 20,18V20H4V18C4,15.79 7.58,14 12,14Z" />
                             </svg>
-                            <span>Account</span>
                         </button>
                     </div>
                 </div>

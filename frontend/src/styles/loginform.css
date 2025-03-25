@@ -38,9 +38,11 @@
 /* Input Fields */
 .input-field {
     position: relative;
-    width: 100%;
+
     display: flex;
     align-items: center;
+    margin-bottom: 1rem;
+
 }
 
 .input {
@@ -159,4 +161,26 @@
     .login-title {
         font-size: 1.75rem !important;
     }
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.password-toggle:hover {
+    color: #1976d2;
+}
+
+.eye-icon {
+    width: 20px;
+    height: 20px;
 }
