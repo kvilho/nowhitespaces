@@ -26,7 +26,7 @@
     display: flex;
     justify-content: center;
     max-width: 800px; /* Added max-width */
-    width: 100%;
+    width: 100%;  
 }
 
 .content-section {
@@ -118,3 +118,4 @@
         padding: 1rem;
     }
 }
+

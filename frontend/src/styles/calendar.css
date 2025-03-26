@@ -40,9 +40,9 @@
 .entries-list {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 5px;
     overflow-y: auto;
-    max-height: calc(3 * (130px + 1rem)); /* Height of 3 entries plus gaps */
+    max-height: 420px; /* Limit height of entries list */
     padding-right: 0.5rem; /* Space for scrollbar */
 }
 
@@ -70,11 +70,31 @@
     border: 1px solid #e0e0e0;
     border-radius: 6px;
     background: #f8f9fa;
-    min-height: 130px; /* Fixed height for each entry */
+    min-height: flex; /* Ensure enough height for content and buttons */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative; /* Ensure child elements stay within the container */
 }
+
+.entry-buttons {
+    display: flex; 
+    gap: 0.5rem; 
+    justify-content: flex-end; /* Align buttons to the right */
+    align-items: center;
+    margin-top: auto; /* Push buttons to the bottom of the container */
+    flex-wrap: nowrap; /* Prevent buttons from wrapping */
+}
+
+.entry-buttons i:hover {
+    color: #1976d2;
+}
+
+.bxs-message-alt-x:hover {
+    color: #dc3545 !important;
+}
+
+
 
 /* Dark mode scrollbar */
 .home-container.dark-mode .entries-list::-webkit-scrollbar-track {
@@ -333,26 +353,6 @@
     margin: 0.5rem 0;
 }
 
-.entry-buttons {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-
-.entry-buttons i {
-    cursor: pointer;
-    padding: 0.25rem;
-    color: #666;
-    transition: color 0.2s;
-}
-
-.entry-buttons i:hover {
-    color: #1976d2;
-}
-
-.bxs-message-alt-x:hover {
-    color: #dc3545 !important;
-}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -437,7 +437,9 @@
     background-color: #5a6268;
 }
 
-/* Add any additional dark mode styles for calendar-specific elements */
+
+/* Dark mode styles */
+
 .home-container.dark-mode .calendar-header {
   color: #ffffff;
 }
@@ -552,7 +554,7 @@
 }
 
 .has-entry {
-    background-color: #63b0fd; /* Highlight color */
+    background-color: #63b0fd;
     border-radius: 50%;
     font-weight: bold;
     color: rgb(255, 255, 255) !important;
@@ -564,12 +566,12 @@
 
 /* Highlight days with entries in dark mode */
 .home-container.dark-mode .has-entry {
-    background-color: #63b0fd !important; /* Dark mode highlight */
+    background-color: #63b0fd !important; 
     color: white !important;
 }
 
 .home-container.dark-mode .has-entry:hover {
-    background-color: #1565c0 !important; /* Slightly darker on hover */
+    background-color: #1565c0 !important; 
 }
 
 /* Responsive layout */
@@ -670,9 +672,20 @@
 .home-container.dark-mode .entry {
     background-color: #262626;
     border: 1px solid #333;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
 }
+/*
+.entry {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #f8f9fa;
+    min-height: flex; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative; 
+*/
 
 .home-container.dark-mode .entry-date {
     color: #bbb;
@@ -812,4 +825,25 @@
 .home-container.dark-mode .delete-cancel-btn:hover {
     background-color: #444;
 }
-    
+
+.sort-dropdown {
+  margin-right: 0;
+  margin-left: auto;
+  padding: 5px;
+  font-size: 14px;
+  display: block;
+  color: #1976d2;
+}
+
+.home-container.dark-mode .sort-dropdown {
+    background-color: #262626;
+    color: #63b0fd;
+}
+
+.entries-list-container h3 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px; 
+}
+

@@ -42,8 +42,6 @@ const Home: React.FC = () => {
         <div className="calendar-section">
           <Calendar />
         </div>
-
-        {/* Right side: Additional content */}
        
       </div>
       {isButtonVisible() && (

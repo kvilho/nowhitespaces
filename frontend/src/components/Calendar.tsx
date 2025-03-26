@@ -39,6 +39,7 @@ const Calendar: React.FC = () => {
     show: false,
     entryId: null
   });
+  const [sortMethod, setSortMethod] = useState<string>("date-asc");
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
@@ -87,7 +88,8 @@ const Calendar: React.FC = () => {
   };
 
   const handleDayClick = (day: number) => {
-    const clickedDate = new Date(currentYear, currentMonth, day);
+    
+    const clickedDate = new Date(Date.UTC(currentYear, currentMonth, day));
     setSelectedDate(clickedDate);
     setShowEntryPopup(true);
     setStartTime("08:00");
@@ -97,42 +99,46 @@ const Calendar: React.FC = () => {
   };
 
   const handleEntrySubmit = async () => {
+    // Format the date without timezone offset
+    const formattedDate = `${selectedDate.getUTCFullYear()}-${(selectedDate.getUTCMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${selectedDate.getUTCDate().toString().padStart(2, "0")}`;
+  
     const entryData = {
-      entryStart: `${selectedDate.toISOString().split('T')[0]}T${startTime}:00`,
-      entryEnd: `${selectedDate.toISOString().split('T')[0]}T${endTime}:00`,
+      entryStart: `${formattedDate}T${startTime}:00`,
+      entryEnd: `${formattedDate}T${endTime}:00`,
       userId: 1,
       entryDescription: entryText,
       status: "PENDING",
       user: {
-        id: 1
-      }
+        id: 1,
+      },
     };
-
+  
     try {
-
-      const url = editEntry 
+      const url = editEntry
         ? `${config.apiUrl}/api/entries/${editEntry.entryId}`
         : `${config.apiUrl}/api/entries`;
-            
+  
       const response = await fetch(url, {
         ...fetchConfig,
-        method: editEntry ? 'PUT' : 'POST',
+        method: editEntry ? "PUT" : "POST",
         body: JSON.stringify(entryData),
         headers: getHeaders(),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.text();
-        console.error('Server error:', errorData);
-        throw new Error('Failed to save entry');
+        console.error("Server error:", errorData);
+        throw new Error("Failed to save entry");
       }
-        
+  
       await fetchEntries();
       setShowEntryPopup(false);
       setEntryText("");
       setEditEntry(null);
     } catch (error) {
-      console.error('Error saving entry:', error);
+      console.error("Error saving entry:", error);
     }
   };
 
@@ -179,6 +185,55 @@ const Calendar: React.FC = () => {
     setDeleteConfirmation({ show: false, entryId: null });
   };
 
+  const sortEntries = (entries: Entry[]) => {
+    switch (sortMethod) {
+      case "date-asc": // Sort by date in ascending order
+        return [...entries].sort((a, b) => {
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateA.getTime() - dateB.getTime();
+        });
+      case "date-desc": // Sort by date in descending order
+        return [...entries].sort((a, b) => {
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateB.getTime() - dateA.getTime();
+        });
+      case "status":
+        return [...entries].sort((a, b) => {
+          // First sort by status
+          const statusComparison = a.status.localeCompare(b.status);
+          if (statusComparison !== 0) {
+            return statusComparison;
+          }
+          // If statuses are the same, sort by date
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateA.getTime() - dateB.getTime();
+        });
+      case "description": // Sort by description
+        return [...entries].sort((a, b) => a.entryDescription.localeCompare(b.entryDescription));
+      default:
+        return entries;
+    }
+  };
+
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSortMethod(e.target.value);
+  };
+
   return (
     <div className="calendar-app">
       <div className="calendar-container">
@@ -201,30 +256,30 @@ const Calendar: React.FC = () => {
             <span key={`empty-${index}`} />
           ))}
           {[...Array(daysInMonth).keys()].map((day) => {
-            const formattedDate = new Date(currentYear, currentMonth, day + 1)
+            const formattedDate = new Date(Date.UTC(currentYear, currentMonth, day + 1))
               .toISOString()
-              .split("T")[0];
+              .split("T")[0]; // Ensure the date is treated as UTC
 
             const hasEntry = entries.some((entry) => {
               let entryDate;
-              
+
               if (Array.isArray(entry.entryStart)) {
-                entryDate = new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]);
+                entryDate = new Date(Date.UTC(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]));
               } else {
-                entryDate = new Date(entry.entryStart);
+                entryDate = new Date(entry.entryStart + "Z"); // Treat string dates as UTC
               }
-            
+
               const formattedEntryDate = entryDate.toISOString().split("T")[0];
-            
+
               return formattedEntryDate === formattedDate;
             });
 
             return (
               <span
                 key={day + 1}
-                className={`${day + 1 === currentDate.getDate() &&
-                  currentMonth === currentDate.getMonth() &&
-                  currentYear === currentDate.getFullYear()
+                className={`${day + 1 === currentDate.getUTCDate() &&
+                  currentMonth === currentDate.getUTCMonth() &&
+                  currentYear === currentDate.getUTCFullYear()
                   ? "current-day"
                   : ""
                 } ${hasEntry ? "has-entry" : ""}`}
@@ -238,25 +293,41 @@ const Calendar: React.FC = () => {
       </div>
 
       <div className="entries-list-container">
-        <h3>All Entries</h3>
+        <h3>
+          All Entries
+          <select
+            className="sort-dropdown"
+            value={sortMethod}
+            onChange={handleSortChange}
+          >
+            <option value="date-asc">Date (Ascending)</option>
+            <option value="date-desc">Date (Descending)</option>
+            <option value="status">Status</option>
+            <option value="description">Description</option>
+          </select>
+        </h3>
         <div className="entries-list">
-          {entries.map((entry) => (
+          {sortEntries(entries).map((entry) => (
             <div key={entry.entryId} className="entry">
               <div className="entry-date-wrapper">
                 <div>
                   <div className="entry-date">
-                    {new Date(Array.isArray(entry.entryStart) 
-                      ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]).toLocaleDateString()
-                      : entry.entryStart).toLocaleDateString()}
+                    {Array.isArray(entry.entryStart)
+                      ? new Date(Date.UTC(
+                          entry.entryStart[0],
+                          entry.entryStart[1] - 1,
+                          entry.entryStart[2]
+                        )).toLocaleDateString()
+                      : new Date(entry.entryStart).toLocaleDateString()}
                   </div>
                   <div className="entry-time">
-                    {Array.isArray(entry.entryStart) 
+                    {Array.isArray(entry.entryStart)
                       ? `${entry.entryStart[3]}:${entry.entryStart[4].toString().padStart(2, '0')}`
-                      : new Date(entry.entryStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                      : new Date(entry.entryStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     } - 
                     {Array.isArray(entry.entryEnd)
                       ? `${entry.entryEnd[3]}:${entry.entryEnd[4].toString().padStart(2, '0')}`
-                      : new Date(entry.entryEnd).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                      : new Date(entry.entryEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     }
                   </div>
                 </div>

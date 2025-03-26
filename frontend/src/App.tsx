@@ -22,7 +22,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <Router>
         <Navbar />
-        <Box sx={{ paddingTop: "64px" }}>
+        <Box sx={{ paddingTop: "0px" }}>
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={
