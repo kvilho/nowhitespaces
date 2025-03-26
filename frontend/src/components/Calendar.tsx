@@ -181,7 +181,7 @@ const Calendar: React.FC = () => {
 
   return (
     <div className="calendar-app">
-      <div className="calendar">
+      <div className="calendar-container">
         <h1 className="heading">Calendar</h1>
         <div className="navigate-date">
           <h2 className="Month">{monthsOfYear[currentMonth]}</h2>
@@ -197,46 +197,82 @@ const Calendar: React.FC = () => {
           ))}
         </div>
         <div className="days">
-  {[...Array(adjustedFirstDay).keys()].map((_, index) => (
-    <span key={`empty-${index}`} />
-  ))}
-  {[...Array(daysInMonth).keys()].map((day) => {
-    const formattedDate = new Date(currentYear, currentMonth, day + 1)
-      .toISOString()
-      .split("T")[0];
+          {[...Array(adjustedFirstDay).keys()].map((_, index) => (
+            <span key={`empty-${index}`} />
+          ))}
+          {[...Array(daysInMonth).keys()].map((day) => {
+            const formattedDate = new Date(currentYear, currentMonth, day + 1)
+              .toISOString()
+              .split("T")[0];
 
-      const hasEntry = entries.some((entry) => {
-        let entryDate;
-        
-        if (Array.isArray(entry.entryStart)) {
-          
-          entryDate = new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]);
-        } else {
-         
-          entryDate = new Date(entry.entryStart);
-        }
-      
-        const formattedEntryDate = entryDate.toISOString().split("T")[0];
-      
-        return formattedEntryDate === formattedDate;
-      });
+            const hasEntry = entries.some((entry) => {
+              let entryDate;
+              
+              if (Array.isArray(entry.entryStart)) {
+                entryDate = new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]);
+              } else {
+                entryDate = new Date(entry.entryStart);
+              }
+            
+              const formattedEntryDate = entryDate.toISOString().split("T")[0];
+            
+              return formattedEntryDate === formattedDate;
+            });
 
-    return (
-      <span
-        key={day + 1}
-        className={`${day + 1 === currentDate.getDate() &&
-          currentMonth === currentDate.getMonth() &&
-          currentYear === currentDate.getFullYear()
-          ? "current-day"
-          : ""
-        } ${hasEntry ? "has-entry" : ""}`}
-        onClick={() => handleDayClick(day + 1)}
-      >
-        {day + 1}
-      </span>
-    );
-  })}
-</div>
+            return (
+              <span
+                key={day + 1}
+                className={`${day + 1 === currentDate.getDate() &&
+                  currentMonth === currentDate.getMonth() &&
+                  currentYear === currentDate.getFullYear()
+                  ? "current-day"
+                  : ""
+                } ${hasEntry ? "has-entry" : ""}`}
+                onClick={() => handleDayClick(day + 1)}
+              >
+                {day + 1}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="entries-list-container">
+        <h3>All Entries</h3>
+        <div className="entries-list">
+          {entries.map((entry) => (
+            <div key={entry.entryId} className="entry">
+              <div className="entry-date-wrapper">
+                <div>
+                  <div className="entry-date">
+                    {new Date(Array.isArray(entry.entryStart) 
+                      ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]).toLocaleDateString()
+                      : entry.entryStart).toLocaleDateString()}
+                  </div>
+                  <div className="entry-time">
+                    {Array.isArray(entry.entryStart) 
+                      ? `${entry.entryStart[3]}:${entry.entryStart[4].toString().padStart(2, '0')}`
+                      : new Date(entry.entryStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    } - 
+                    {Array.isArray(entry.entryEnd)
+                      ? `${entry.entryEnd[3]}:${entry.entryEnd[4].toString().padStart(2, '0')}`
+                      : new Date(entry.entryEnd).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                    }
+                  </div>
+                </div>
+                <div className="entry-status">{entry.status}</div>
+              </div>
+              <div className="entry-text">{entry.entryDescription}</div>
+              <div className="entry-buttons">
+                <i className="bx bxs-edit-alt" onClick={() => handleEditEvent(entry)}></i>
+                <i className="bx bxs-message-alt-x" onClick={() => handleDeleteClick(entry.entryId)}></i>
+              </div>
+            </div>
+          ))}
+          {entries.length === 0 && (
+            <div className="no-entries">No entries yet</div>
+          )}
+        </div>
       </div>
 
       {/* Entry Popup - Now contains Start & End Time Inputs */}
@@ -302,43 +338,6 @@ const Calendar: React.FC = () => {
             </div>
         </div>
       )}
-
-      {/* Entries List - Show all entries */}
-      <div className="entries-list">
-        <h3>All Entries</h3>
-        {entries.map((entry) => (
-          <div key={entry.entryId} className="entry">
-            <div className="entry-date-wrapper">
-              <div>
-                <div className="entry-date">
-                  {new Date(Array.isArray(entry.entryStart) 
-                    ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2]).toLocaleDateString()
-                    : entry.entryStart).toLocaleDateString()}
-                </div>
-                <div className="entry-time">
-                  {Array.isArray(entry.entryStart) 
-                    ? `${entry.entryStart[3]}:${entry.entryStart[4].toString().padStart(2, '0')}`
-                    : new Date(entry.entryStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                  } - 
-                  {Array.isArray(entry.entryEnd)
-                    ? `${entry.entryEnd[3]}:${entry.entryEnd[4].toString().padStart(2, '0')}`
-                    : new Date(entry.entryEnd).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                  }
-                </div>
-              </div>
-              <div className="entry-status">{entry.status}</div>
-            </div>
-            <div className="entry-text">{entry.entryDescription}</div>
-            <div className="entry-buttons">
-              <i className="bx bxs-edit-alt" onClick={() => handleEditEvent(entry)}></i>
-              <i className="bx bxs-message-alt-x" onClick={() => handleDeleteClick(entry.entryId)}></i>
-            </div>
-          </div>
-        ))}
-        {entries.length === 0 && (
-          <div className="no-entries">No entries yet</div>
-        )}
-      </div>
     </div>
   );
 };

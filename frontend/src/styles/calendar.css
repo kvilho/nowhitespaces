@@ -1,14 +1,92 @@
 /* --- MAIN CALENDAR CONTAINER --- */
 .calendar-app {
     width: 100%;
-    max-width: 800px;
+    max-width: 1600px; /* Increased max-width for larger screens */
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.calendar-container {
+    flex: 1;
     background-color: #ffffff;
     padding: 1.5rem;
     border-radius: 1rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    min-width: 600px; /* Minimum width for calendar */
+}
+
+/* ENTRIES LIST CONTAINER */
+.entries-list-container {
+    flex: 1;
+    background-color: #ffffff;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    min-width: 400px;
+    height: fit-content;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.entries-list-container h3 {
+    font-size: 1.5rem;
+    color: #1976d2;
+    margin-bottom: 1rem;
+}
+
+.entries-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    overflow-y: auto;
+    max-height: calc(3 * (130px + 1rem)); /* Height of 3 entries plus gaps */
+    padding-right: 0.5rem; /* Space for scrollbar */
+}
+
+/* Customize scrollbar */
+.entries-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.entries-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.entries-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.entries-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.entry {
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background: #f8f9fa;
+    min-height: 130px; /* Fixed height for each entry */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Dark mode scrollbar */
+.home-container.dark-mode .entries-list::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+
+.home-container.dark-mode .entries-list::-webkit-scrollbar-thumb {
+    background: #444;
+}
+
+.home-container.dark-mode .entries-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 /* CALENDAR HEADER */
@@ -224,28 +302,10 @@
 }
 
 /* ENTRIES LIST */
-.entries-list {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
 .entry-date {
     font-size: 0.9rem;
     color: #666;
     margin-bottom: 0.25rem;
-}
-
-.entry {
-    padding: 1rem;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background: #f8f9fa;
 }
 
 .entry-date-wrapper {
@@ -375,19 +435,6 @@
 
 .delete-cancel-btn:hover {
     background-color: #5a6268;
-}
-
-.calendar-container {
-  background-color: #ffffff;
-  color: #000000;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.home-container.dark-mode .calendar-container {
-  background-color: #1e1e1e;
-  color: #ffffff;
 }
 
 /* Add any additional dark mode styles for calendar-specific elements */
@@ -523,5 +570,246 @@
 
 .home-container.dark-mode .has-entry:hover {
     background-color: #1565c0 !important; /* Slightly darker on hover */
+}
+
+/* Responsive layout */
+@media (max-width: 1200px) {
+    .calendar-app {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .calendar-container,
+    .entries-list-container {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+/* Dark mode styles for containers */
+.home-container.dark-mode .calendar-container,
+.home-container.dark-mode .entries-list-container {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.home-container.dark-mode .heading {
+    color: #63b0fd;
+}
+
+.home-container.dark-mode .entries-list-container h3 {
+    color: #63b0fd;
+}
+
+.home-container.dark-mode .navigate-date {
+    background-color: #262626;
+    border: 1px solid #333;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.home-container.dark-mode .Month,
+.home-container.dark-mode .Year {
+    color: #ffffff;
+}
+
+.home-container.dark-mode .buttons i {
+    background-color: #333;
+    color: #63b0fd;
+    border: none;
+}
+
+.home-container.dark-mode .buttons i:hover {
+    background-color: #444;
+    color: #ffffff;
+}
+
+.home-container.dark-mode .weekdays span {
+    color: #888;
+}
+
+.home-container.dark-mode .days span {
+    color: #ffffff;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.home-container.dark-mode .days span:hover {
+    background-color: #333;
+    color: #ffffff;
+}
+
+.home-container.dark-mode .days span:empty {
+    background-color: transparent;
+}
+
+.home-container.dark-mode .current-day {
+    background-color: #63b0fd !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(99, 176, 253, 0.3);
+}
+
+.home-container.dark-mode .has-entry {
+    background-color: #1e4976 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 4px rgba(30, 73, 118, 0.2);
+}
+
+.home-container.dark-mode .has-entry:hover {
+    background-color: #2a5a8a !important;
+    box-shadow: 0 2px 8px rgba(42, 90, 138, 0.3);
+}
+
+/* Entries list */
+.home-container.dark-mode .entries-list-container h3 {
+    color: #63b0fd;
+    margin-bottom: 1.5rem;
+}
+
+.home-container.dark-mode .entry {
+    background-color: #262626;
+    border: 1px solid #333;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.home-container.dark-mode .entry-date {
+    color: #bbb;
+}
+
+.home-container.dark-mode .entry-time {
+    color: #63b0fd;
+}
+
+.home-container.dark-mode .entry-status {
+    background-color: #1e4976;
+    color: #ffffff;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+}
+
+.home-container.dark-mode .entry-text {
+    color: #ffffff;
+    margin: 0.75rem 0;
+}
+
+.home-container.dark-mode .entry-buttons i {
+    color: #888;
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.home-container.dark-mode .entry-buttons i:hover {
+    color: #63b0fd;
+    background-color: #333;
+}
+
+.home-container.dark-mode .entry-buttons i.bxs-message-alt-x:hover {
+    color: #ff4444 !important;
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+/* Scrollbar */
+.home-container.dark-mode .entries-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.home-container.dark-mode .entries-list::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 4px;
+}
+
+.home-container.dark-mode .entries-list::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.home-container.dark-mode .entries-list::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Entry popup in dark mode */
+.home-container.dark-mode .entry-popup {
+    background-color: #262626;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+.home-container.dark-mode .entry-popup h2 {
+    color: #63b0fd;
+}
+
+.home-container.dark-mode .time-input label {
+    color: #bbb;
+}
+
+.home-container.dark-mode .time-input input,
+.home-container.dark-mode .entry-popup textarea {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #ffffff;
+}
+
+.home-container.dark-mode .time-input input:focus,
+.home-container.dark-mode .entry-popup textarea:focus {
+    border-color: #63b0fd;
+    box-shadow: 0 0 0 3px rgba(99, 176, 253, 0.1);
+}
+
+.home-container.dark-mode .entry-popup-btn {
+    background-color: #63b0fd;
+    color: #ffffff;
+    border: none;
+}
+
+.home-container.dark-mode .entry-popup-btn:hover {
+    background-color: #2a5a8a;
+}
+
+.home-container.dark-mode .close-entry-popup {
+    color: #888;
+}
+
+.home-container.dark-mode .close-entry-popup:hover {
+    background-color: rgba(255, 68, 68, 0.1);
+    color: #ff4444;
+}
+
+/* Delete confirmation popup in dark mode */
+.home-container.dark-mode .delete-popup-overlay {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.home-container.dark-mode .delete-popup {
+    background-color: #262626;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+.home-container.dark-mode .delete-popup h3 {
+    color: #ffffff;
+}
+
+.home-container.dark-mode .delete-popup p {
+    color: #bbb;
+}
+
+.home-container.dark-mode .delete-confirm-btn {
+    background-color: #dc3545;
+    border: none;
+}
+
+.home-container.dark-mode .delete-confirm-btn:hover {
+    background-color: #c82333;
+}
+
+.home-container.dark-mode .delete-cancel-btn {
+    background-color: #333;
+    border: none;
+}
+
+.home-container.dark-mode .delete-cancel-btn:hover {
+    background-color: #444;
 }
     
