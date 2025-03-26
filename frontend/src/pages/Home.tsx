@@ -1,15 +1,12 @@
-import { Typography, Paper, Button, Switch, FormControlLabel } from "@mui/material";
-import { useState } from "react";
+import { Typography, Paper, Button } from "@mui/material";
 import Calendar from "../components/Calendar";
 import "../styles/home.css";
 
-const Home: React.FC = () => {
-  const [darkMode, setDarkMode] = useState(false);
+interface HomeProps {
+  darkMode: boolean;
+}
 
-  const toggleDarkMode = () => {
-    setDarkMode((prevMode) => !prevMode);
-  };
-
+const Home: React.FC<HomeProps> = ({ darkMode }) => {
   // Function to handle location request and open maps
   const handleLocationRequest = () => {
     if (navigator.geolocation) {
@@ -31,11 +28,6 @@ const Home: React.FC = () => {
 
   return (
     <div className={`home-container ${darkMode ? "dark-mode" : ""}`}>
-      <FormControlLabel
-        control={<Switch checked={darkMode} onChange={toggleDarkMode} />}
-        label="Dark Mode"
-        style={{ position: "fixed", top: 66, right: 16 }}
-      />
       {/* Main content wrapper */}
       <div className="home-content">
         {/* Left side: Calendar */}
