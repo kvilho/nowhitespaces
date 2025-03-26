@@ -52,9 +52,6 @@ const Navbar: React.FC = () => {
                             <Link to="/profile" className={`nav-link ${isActive('/profile')}`}>
                                 Profile
                             </Link>
-                            <Link to="/users" className={`nav-link ${isActive('/users')}`}>
-                                Users
-                            </Link>
                             <button onClick={handleLogout} className="nav-link logout-button">
                                 Logout
                             </button>
