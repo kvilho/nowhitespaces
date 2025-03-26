@@ -29,7 +29,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <Router>
         <Navbar darkMode={darkMode} onDarkModeChange={handleDarkModeChange} />
-        <Box sx={{ paddingTop: "0px" }}>
+        <div className="main-content">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={
@@ -43,7 +43,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             } />
           </Routes>
-        </Box>
+        </div>
       </Router>
     </ThemeProvider>
   );
