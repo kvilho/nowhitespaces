@@ -166,6 +166,20 @@ body {
     min-width: 200px;
     z-index: 1000;
     padding: 0.5rem;
+    transform-origin: top;
+    animation: slideDown 0.2s ease forwards;
+    opacity: 0;
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
 .dropdown-item {
