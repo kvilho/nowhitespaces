@@ -160,9 +160,9 @@ body {
     top: 100%;
     right: 0;
     margin-top: 0.5rem;
-    background: white;
+    background: linear-gradient(to right, #1976d2, #1565c0);
     border-radius: 0.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     min-width: 200px;
     z-index: 1000;
     padding: 0.5rem;
@@ -171,7 +171,7 @@ body {
 .dropdown-item {
     display: block;
     padding: 0.75rem 1rem;
-    color: #333;
+    color: #ffffff;
     text-decoration: none;
     transition: background-color 0.2s ease;
     width: 100%;
@@ -183,7 +183,7 @@ body {
 }
 
 .dropdown-item:hover {
-    background-color: #f5f5f5;
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .dropdown-item:first-child {
@@ -204,7 +204,7 @@ body {
 
     .settings-dropdown,
     .profile-dropdown {
-        background: #1e1e1e;
+        background: linear-gradient(to right, #1565c0, #0d47a1);
     }
 
     .dropdown-item {
@@ -212,7 +212,7 @@ body {
     }
 
     .dropdown-item:hover {
-        background-color: #2d2d2d;
+        background-color: rgba(255, 255, 255, 0.1);
     }
 
     .settings-dropdown .MuiFormControlLabel-label {
@@ -310,7 +310,7 @@ body {
 .dark-mode-text {
     font-size: 0.95rem;
     font-weight: 500;
-    color: #333;
+    color: #ffffff;
 }
 
 .switch {
@@ -425,4 +425,14 @@ body {
 /* Adjust dropdown item padding for the switch */
 .dropdown-item .dark-mode-container {
     padding: 0.25rem 0.5rem;
+}
+
+/* Dark mode dropdown styles */
+body.dark-mode .settings-dropdown,
+body.dark-mode .profile-dropdown {
+    background: linear-gradient(to right, #1565c0, #0d47a1);
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
