@@ -85,13 +85,26 @@ body {
 .nav-link.active::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -0.5rem;
     left: 50%;
     transform: translateX(-50%);
     width: 24px;
     height: 3px;
     background-color: #ffffff;
     border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+/* Shared animation for active indicators */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1);
+    }
 }
 
 /* Profile section */
@@ -112,11 +125,29 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .profile-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
+}
+
+.profile-button.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.profile-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
 }
 
 .profile-button svg {
@@ -141,11 +172,29 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .settings-button:hover {
     background-color: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.3);
+}
+
+.settings-button.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.settings-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
 }
 
 .settings-button svg {

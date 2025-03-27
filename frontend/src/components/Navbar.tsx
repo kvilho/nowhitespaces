@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
                             </Link>
                             <div className="settings-section" ref={settingsRef}>
                                 <button 
-                                    className="settings-button"
+                                    className={`settings-button ${isSettingsOpen ? 'active' : ''}`}
                                     onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                                 >
                                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -117,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
                             </div>
                             <div className="profile-section" ref={dropdownRef}>
                                 <button 
-                                    className="profile-button"
+                                    className={`profile-button ${isDropdownOpen ? 'active' : ''}`}
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                                 >
                                     <svg viewBox="0 0 24 24" fill="currentColor">
