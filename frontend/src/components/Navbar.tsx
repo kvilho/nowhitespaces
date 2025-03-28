@@ -74,6 +74,9 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
                             <Link to="/" className={`nav-link ${isActive('/')}`}>
                                 Home
                             </Link>
+                            <Link to="/projects" className={`nav-link ${isActive('/projects')}`}>
+                                Projects
+                            </Link>
                             <div className="settings-section" ref={settingsRef}>
                                 <button 
                                     className={`settings-button ${isSettingsOpen ? 'active' : ''}`}
