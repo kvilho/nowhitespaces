@@ -1,5 +1,0 @@
-#!/bin/bash
-set -e
-
-cd /opt/app-root/src
-npm start 
