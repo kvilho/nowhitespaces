@@ -5,9 +5,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import fi.haagahelia.backend.model.User;
+import fi.haagahelia.backend.model.Project;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface ProjectRepository extends JpaRepository<Project, Long> {
+    Optional<Project> findByProjectCode(String projectCode);
 }

@@ -1,7 +1,10 @@
 package fi.haagahelia.backend.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,22 +16,31 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long projectId;
+
     private String projectName;
+
+    @Column(length = 6, nullable = false)
     private String projectCode; // 6 numbers code for the project
-    private int createdBy; // user id of the creator
+
+    private int createdBy; // user id of the creator to be added later
+
     private LocalDateTime createdAt;
+
     private String projectDescription;
+
+    private List<ProjectMember> members = new ArrayList<>();
 
     // constructors
     public Project() {}
 
-    public Project(Long projectId, String projectName, String projectCode, int createdBy, LocalDateTime createdAt, String projectDescription) {
+    public Project(Long projectId, String projectName, String projectCode, int createdBy, LocalDateTime createdAt, String projectDescription, List<ProjectMember> members) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectCode = projectCode;
         this.createdBy = createdBy;
         this.createdAt = createdAt;
         this.projectDescription = projectDescription;
+        this.members = members;
     }
 
     // getters and setters
@@ -80,10 +92,17 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
+    public List<ProjectMember> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<ProjectMember> members) {
+        this.members = members;
+    }
     @Override
     public String toString() {
         return "Project [projectId=" + projectId + ", projectName=" + projectName + ", projectCode=" + projectCode
                 + ", createdBy=" + createdBy + ", createdAt=" + createdAt + ", projectDescription=" + projectDescription
-                + "]";
+                + ", members=" + members + "]";
     }
 }

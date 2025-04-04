@@ -1,5 +1,8 @@
 package fi.haagahelia.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -33,6 +36,9 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "organizationId")
     private Organization organization;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ProjectMember> projectMembers = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -131,17 +137,17 @@ public class User {
         this.organization = organization;
     }
 
+    public List<ProjectMember> getProjectMembers() {
+        return projectMembers;
+    }
+
+    public void setProjectMembers(List<ProjectMember> projectMembers) {
+        this.projectMembers = projectMembers;
+    }
+    
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
-                + ", email=" + email + ", phone=" + phone + ", role=" + role + ", organization=" + organization + "]";
+                + ", email=" + email + ", phone=" + phone + ", role=" + role + ", organization=" + organization + ", projectMembers=" + projectMembers + "]";
     }
-
-    
-    
-
-    
-}
-
-
-    
+}    
