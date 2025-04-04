@@ -3,32 +3,48 @@ import { useState } from 'react';
 import { Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "../styles/loginform.css";
-import AuthService from '../services/authService';
+import authService from '../services/authService';
+import type { AuthResponse } from '../services/authService';
 
 const Login: React.FC = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const authService = AuthService.getInstance();
-
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
+        setIsLoading(true);
         
         try {
-            await authService.login(username, password);
-            navigate('/'); // Redirect to home page after successful login
-        } catch (err) {
-            setError('Invalid username or password');
+            const response = await authService.login({ email, password });
+            if (response.token) {
+                // Successfully logged in
+                navigate('/');
+            } else {
+                setError('Login failed. Please try again.');
+            }
+        } catch (err: any) {
+            console.error('Login error:', err);
+            if (err.response?.status === 401 || err.response?.status === 400) {
+                setError('Invalid email or password');
+            } else if (err.response?.data) {
+                setError(err.response.data);
+            } else if (err.message === 'Network Error') {
+                setError('Unable to connect to the server. Please try again later.');
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
-
     };
 
     return (
@@ -48,18 +64,19 @@ const Login: React.FC = () => {
                         </Typography>
                     )}
 
-                    {/* Username Field with Icon */}
+                    {/* Email Field with Icon */}
                     <div className='input-field'>
                         <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12c2.485 0 4.5-2.015 4.5-4.5S14.485 3 12 3 7.5 5.015 7.5 7.5 9.515 12 12 12zm0 2.25c-3.735 0-6.75 3.015-6.75 6.75h13.5c0-3.735-3.015-6.75-6.75-6.75z"></path>
                         </svg>
                         <input
                             className='input text-input'
-                            placeholder='Username'
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder='Email'
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
@@ -75,12 +92,14 @@ const Login: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
 
                         <button
                             type="button"
                             className="password-toggle"
                             onClick={togglePasswordVisibility}
+                            disabled={isLoading}
                         >
                             <svg
                                 className="eye-icon"
@@ -99,12 +118,15 @@ const Login: React.FC = () => {
                                     </>
                                 )}
                             </svg>
-
                         </button>
                     </div>
 
-                    <button type="submit" className="login-button">
-                        Sign In
+                    <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
                 </form>
             </Paper>

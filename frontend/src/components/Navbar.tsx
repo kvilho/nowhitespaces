@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Switch, FormControlLabel } from '@mui/material';
 import '../styles/navbar.css';
-import AuthService from '../services/authService';
+import authService from '../services/authService';
 
 interface NavbarProps {
     darkMode: boolean;
@@ -16,7 +16,6 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const authService = AuthService.getInstance();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const settingsRef = useRef<HTMLDivElement>(null);
 

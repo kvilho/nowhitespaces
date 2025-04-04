@@ -49,12 +49,11 @@ public class BackendApplication {
             Role role2 = new Role(null, "Employee", "Employee", Roles.EMPLOYEE);
             roleRepository.save(role2);
 
-
             // User
             User user1 = new User();
             user1.setUsername("employer");
             user1.setEmail("employer@gmail.com");
-            user1.setPasswordHash("employer");  // In production, this should be hashed
+            user1.setPasswordHash(passwordEncoder.encode("employer"));  // Encode the password
             user1.setRole(role1);
             user1.setOrganization(organization1);
             userRepository.save(user1);
@@ -62,11 +61,10 @@ public class BackendApplication {
             User user2 = new User();
             user2.setUsername("employee");
             user2.setEmail("employee@gmail.com");
-            user2.setPasswordHash("employee");  // In production, this should be hashed
+            user2.setPasswordHash(passwordEncoder.encode("employee"));  // Encode the password
             user2.setRole(role2);
             user2.setOrganization(organization2);
             userRepository.save(user2);
-
 
             log.info("Sample data created successfully.");
         };

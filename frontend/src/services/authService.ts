@@ -1,84 +1,52 @@
-import config from '../config';
+import axios from 'axios';
 
-interface LoginResponse {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
+
+export interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+export interface AuthResponse {
     token: string;
-    user: {
-        username: string;
-        role: string;
-    };
+    email: string;
+    role: string;
 }
 
 class AuthService {
-    private static instance: AuthService;
-    private token: string | null = null;
-
-    private constructor() {
-        // Check if there's a stored token
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            this.token = storedToken;
+    async login(credentials: LoginCredentials): Promise<AuthResponse> {
+        const response = await axios.post(`${API_URL}/auth/login`, credentials);
+        if (response.data.token) {
+            localStorage.setItem('user', JSON.stringify(response.data));
         }
+        return response.data;
     }
 
-    public static getInstance(): AuthService {
-        if (!AuthService.instance) {
-            AuthService.instance = new AuthService();
+    logout(): void {
+        localStorage.removeItem('user');
+    }
+
+    getCurrentUser(): AuthResponse | null {
+        const userStr = localStorage.getItem('user');
+        if (userStr) {
+            return JSON.parse(userStr);
         }
-        return AuthService.instance;
+        return null;
     }
 
-    public async login(username: string, password: string): Promise<LoginResponse> {
-        try {
-            console.log('Attempting login with:', { username, password });
-            
-            // For demo purposes, we'll use a simple token based on the username
-            // In a real application, this would be handled by the backend
-            if (username === 'employer' && password === 'employer') {
-                console.log('Login successful for employer');
-                const token = btoa('employer:employer');
-                this.token = token;
-                localStorage.setItem('token', token);
-                return {
-                    token,
-                    user: {
-                        username: 'employer',
-                        role: 'EMPLOYER'
-                    }
-                };
-            } else if (username === 'employee' && password === 'employee') {
-                console.log('Login successful for employee');
-                const token = btoa('employee:employee');
-                this.token = token;
-                localStorage.setItem('token', token);
-                return {
-                    token,
-                    user: {
-                        username: 'employee',
-                        role: 'EMPLOYEE'
-                    }
-                };
-            } else {
-                console.log('Invalid credentials:', { username, password });
-                throw new Error('Invalid credentials');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            throw error;
-        }
+    getToken(): string | null {
+        const user = this.getCurrentUser();
+        return user ? user.token : null;
     }
 
-    public logout(): void {
-        this.token = null;
-        localStorage.removeItem('token');
+    isAuthenticated(): boolean {
+        return !!this.getToken();
     }
 
-    public getToken(): string | null {
-        return this.token;
-    }
-
-    public isAuthenticated(): boolean {
-        return !!this.token;
+    getRole(): string | null {
+        const user = this.getCurrentUser();
+        return user ? user.role : null;
     }
 }
 
-export default AuthService; 
+export default new AuthService(); 

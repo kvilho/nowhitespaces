@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
 import { Entry } from "../types/Entry"; // Import the Entry type
 import config from '../config';
-import AuthService from '../services/authService';
+import authService from '../services/authService';
+import axiosInstance from '../utils/axiosConfig';
 
 // Common headers for all requests
 const getHeaders = () => {
-  const token = AuthService.getInstance().getToken();
+  const token = authService.getToken();
   return {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    ...(token ? { 'Authorization': `Basic ${token}` } : {}),
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   };
 };
 
