@@ -1,13 +1,7 @@
 package fi.haagahelia.backend.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 public class ProjectMember {
@@ -25,10 +19,10 @@ public class ProjectMember {
     private User user;
 
     private String role;
-    
+
     private LocalDateTime joinedAt;
-    
-    // constructors
+
+    // Constructors
     public ProjectMember() {}
 
     public ProjectMember(long projectMemberId, Project project, User user, String role, LocalDateTime joinedAt) {
@@ -39,6 +33,7 @@ public class ProjectMember {
         this.joinedAt = joinedAt;
     }
 
+    // Getters and Setters
     public long getProjectMemberId() {
         return projectMemberId;
     }
@@ -78,17 +73,4 @@ public class ProjectMember {
     public void setJoinedAt(LocalDateTime joinedAt) {
         this.joinedAt = joinedAt;
     }
-    
-    // getters and setters
-    @Override
-    public String toString() {
-        return "ProjectMember{" +
-                "projectMemberId=" + projectMemberId +
-                ", project=" + project +
-                ", user=" + user +
-                ", role='" + role + '\'' +
-                ", joinedAt=" + joinedAt +
-                '}';
-    }
-    
 }

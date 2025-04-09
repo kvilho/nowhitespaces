@@ -9,6 +9,8 @@ import fi.haagahelia.backend.model.ProjectMember;
 
 @Repository
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
-    List<ProjectMember> findByProjectId(Long projectId);
+    // Use the correct property name: project.projectId
+    List<ProjectMember> findByProject_ProjectId(Long projectId);
+
     List<ProjectMember> findByUserId(Long userId);
 }

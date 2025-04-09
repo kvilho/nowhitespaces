@@ -1,12 +1,11 @@
 package fi.haagahelia.backend.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,8 +14,22 @@ import java.util.function.Function;
 
 @Component
 public class JwtUtil {
+
     private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; // 5 hours
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
+    private Key key;
+
+    @PostConstruct
+    public void init() {
+        // Load the secret key from the environment variable
+        String secretKey = System.getenv("JWT_SECRET_KEY");
+        if (secretKey == null || secretKey.isEmpty()) {
+            throw new IllegalStateException("Environment variable JWT_SECRET_KEY is not set!");
+        }
+
+        // Create the signing key
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -32,11 +45,23 @@ public class JwtUtil {
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token has expired", e);
+        } catch (UnsupportedJwtException e) {
+            throw new RuntimeException("Unsupported JWT token", e);
+        } catch (MalformedJwtException e) {
+            throw new RuntimeException("Malformed JWT token", e);
+        } catch (SignatureException e) {
+            throw new RuntimeException("Invalid JWT signature", e);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("JWT claims string is empty", e);
+        }
     }
 
     private Boolean isTokenExpired(String token) {
@@ -62,4 +87,4 @@ public class JwtUtil {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
-} 
+}

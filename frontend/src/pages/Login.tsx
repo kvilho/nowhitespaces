@@ -1,10 +1,8 @@
 import { useState } from 'react';
-
 import { Paper, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "../styles/loginform.css";
 import authService from '../services/authService';
-import type { AuthResponse } from '../services/authService';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -18,15 +16,11 @@ const Login: React.FC = () => {
         event.preventDefault();
         setError('');
         setIsLoading(true);
-        
+
         try {
-            const response = await authService.login({ email, password });
-            if (response.token) {
-                // Successfully logged in
-                navigate('/');
-            } else {
-                setError('Login failed. Please try again.');
-            }
+            // Use authService to handle login
+            await authService.login(email, password);
+            navigate('/'); // Redirect to home on successful login
         } catch (err: any) {
             console.error('Login error:', err);
             if (err.response?.status === 401 || err.response?.status === 400) {
@@ -64,9 +58,9 @@ const Login: React.FC = () => {
                         </Typography>
                     )}
 
-                    {/* Email Field with Icon */}
+                    {/* Email Field */}
                     <div className='input-field'>
-                        <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12c2.485 0 4.5-2.015 4.5-4.5S14.485 3 12 3 7.5 5.015 7.5 7.5 9.515 12 12 12zm0 2.25c-3.735 0-6.75 3.015-6.75 6.75h13.5c0-3.735-3.015-6.75-6.75-6.75z"></path>
                         </svg>
                         <input
@@ -80,9 +74,9 @@ const Login: React.FC = () => {
                         />
                     </div>
 
-                    {/* Password Field with Icon and Toggle */}
+                    {/* Password Field */}
                     <div className='input-field'>
-                        <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" strokeLinejoin="round" strokeLinecap="round"></path>
                         </svg>
                         <input
@@ -94,7 +88,6 @@ const Login: React.FC = () => {
                             required
                             disabled={isLoading}
                         />
-
                         <button
                             type="button"
                             className="password-toggle"

@@ -54,16 +54,23 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
+            // Enable CORS with custom configuration
             .cors(cors -> cors.configurationSource(customCorsConfig.getCorsConfigurationSource()))
+            // Disable CSRF since we're using JWT
             .csrf(csrf -> csrf.disable())
+            // Set session management to stateless
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            // Define authorization rules
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/**", "/h2-console/**", "/api/users/register").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/auth/**", "/h2-console/**", "/api/users/register").permitAll() // Public endpoints
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
+                .anyRequest().authenticated() // All other endpoints require authentication
             )
+            // Add the authentication provider
             .authenticationProvider(authenticationProvider())
+            // Add the JWT authentication filter before the UsernamePasswordAuthenticationFilter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            // Disable frame options for H2 console
             .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
 
         return http.build();

@@ -1,14 +1,9 @@
 package fi.haagahelia.backend.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 @Entity
 public class Project {
@@ -20,20 +15,23 @@ public class Project {
     private String projectName;
 
     @Column(length = 6, nullable = false)
-    private String projectCode; // 6 numbers code for the project
+    private String projectCode;
 
-    private int createdBy; // user id of the creator to be added later
+    @ManyToOne
+    @JoinColumn(name = "createdBy")
+    private User createdBy;
 
     private LocalDateTime createdAt;
 
     private String projectDescription;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectMember> members = new ArrayList<>();
 
-    // constructors
+    // Constructors, getters, and setters
     public Project() {}
 
-    public Project(Long projectId, String projectName, String projectCode, int createdBy, LocalDateTime createdAt, String projectDescription, List<ProjectMember> members) {
+    public Project(Long projectId, String projectName, String projectCode, User createdBy, LocalDateTime createdAt, String projectDescription, List<ProjectMember> members) {
         this.projectId = projectId;
         this.projectName = projectName;
         this.projectCode = projectCode;
@@ -43,7 +41,6 @@ public class Project {
         this.members = members;
     }
 
-    // getters and setters
     public Long getProjectId() {
         return projectId;
     }
@@ -68,11 +65,11 @@ public class Project {
         this.projectCode = projectCode;
     }
 
-    public int getCreatedBy() {
+    public User getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(int createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -98,11 +95,5 @@ public class Project {
 
     public void setMembers(List<ProjectMember> members) {
         this.members = members;
-    }
-    @Override
-    public String toString() {
-        return "Project [projectId=" + projectId + ", projectName=" + projectName + ", projectCode=" + projectCode
-                + ", createdBy=" + createdBy + ", createdAt=" + createdAt + ", projectDescription=" + projectDescription
-                + ", members=" + members + "]";
     }
 }

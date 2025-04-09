@@ -1,52 +1,42 @@
-import axios from 'axios';
+import axiosInstance from "./axiosConfig";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080/api';
-
-export interface LoginCredentials {
-    email: string;
-    password: string;
-}
-
-export interface AuthResponse {
-    token: string;
-    email: string;
-    role: string;
-}
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 class AuthService {
-    async login(credentials: LoginCredentials): Promise<AuthResponse> {
-        const response = await axios.post(`${API_URL}/auth/login`, credentials);
-        if (response.data.token) {
-            localStorage.setItem('user', JSON.stringify(response.data));
-        }
-        return response.data;
+  // Login method
+  async login(email: string, password: string) {
+    const response = await axiosInstance.post("/auth/login", { email, password });
+    if (response.data.token) {
+      // Store the token in localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("email", response.data.email);
+      localStorage.setItem("role", response.data.role);
     }
+    return response.data;
+  }
 
-    logout(): void {
-        localStorage.removeItem('user');
-    }
+  // Logout method
+  logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+  }
 
-    getCurrentUser(): AuthResponse | null {
-        const userStr = localStorage.getItem('user');
-        if (userStr) {
-            return JSON.parse(userStr);
-        }
-        return null;
-    }
+  // Get the current user's token
+  getToken() {
+    return localStorage.getItem("token");
+  }
 
-    getToken(): string | null {
-        const user = this.getCurrentUser();
-        return user ? user.token : null;
-    }
+  // Check if the user is authenticated
+  isAuthenticated() {
+    return !!this.getToken();
+  }
 
-    isAuthenticated(): boolean {
-        return !!this.getToken();
-    }
+  // Get the user's role from localStorage
+  getRole(): string | null {
+    return localStorage.getItem("role");
+  }
 
-    getRole(): string | null {
-        const user = this.getCurrentUser();
-        return user ? user.role : null;
-    }
 }
 
-export default new AuthService(); 
+export default new AuthService();

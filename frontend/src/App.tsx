@@ -2,11 +2,11 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { CssBaseline, Box } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile"
+import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
 import ProtectedRoute from "./components/ProtectedRoute";
 
