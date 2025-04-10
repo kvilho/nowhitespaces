@@ -4,8 +4,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Project {
 
     @Id
@@ -17,15 +19,17 @@ public class Project {
     @Column(length = 6, nullable = false)
     private String projectCode;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "createdBy")
+    @JsonIgnoreProperties({"projectMembers", "passwordHash"})
     private User createdBy;
 
     private LocalDateTime createdAt;
 
     private String projectDescription;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("project")
     private List<ProjectMember> members = new ArrayList<>();
 
     // Constructors, getters, and setters

@@ -13,19 +13,40 @@ public class CustomCorsConfig {
 
     @Bean
     public CorsConfigurationSource getCorsConfigurationSource() {
-
         CorsConfiguration config = new CorsConfiguration();
+        
+        // Allow both development and production origins
         config.setAllowedOrigins(List.of(
             "http://localhost:5173", 
-            "https://hourbook-hourbook.2.rahtiapp.fi/", 
-            "https://hourbook-frontend-hourbook.2.rahtiapp.fi/")); // Specify allowed origin(s)
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "OPTIONS", "DELETE")); 
-        config.setAllowedHeaders(List.of("*")); // Limit to required headers
+            "http://localhost:3000",
+            "https://hourbook-hourbook.2.rahtiapp.fi", 
+            "https://hourbook-frontend-hourbook.2.rahtiapp.fi"
+        ));
+        
+        // Allow all common HTTP methods
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        
+        // Allow all headers
+        config.setAllowedHeaders(List.of("*"));
+        
+        // Allow credentials
         config.setAllowCredentials(true);
-        config.setExposedHeaders(List.of("*")); // Expose only if required
+        
+        // Expose necessary headers
+        config.setExposedHeaders(List.of(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin",
+            "Access-Control-Allow-Origin",
+            "Access-Control-Allow-Credentials"
+        ));
+        
+        // Set max age for preflight requests
+        config.setMaxAge(3600L);
                 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Apply to all paths, adjust if needed
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
