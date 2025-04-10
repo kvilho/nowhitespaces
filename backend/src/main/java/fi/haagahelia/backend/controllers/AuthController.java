@@ -52,7 +52,8 @@ public class AuthController {
             String role = userDetails.getAuthorities().stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
-                .orElse("ROLE_USER");
+                .map(auth -> auth.startsWith("ROLE_") ? auth.substring(5) : auth)
+                .orElse("USER");
 
             return ResponseEntity.ok(new AuthResponse(token, userDetails.getUsername(), role));
         } catch (BadCredentialsException e) {

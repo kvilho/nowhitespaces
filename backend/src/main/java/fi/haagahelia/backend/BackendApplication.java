@@ -28,45 +28,49 @@ public class BackendApplication {
     }
 
     @Bean
-    public CommandLineRunner createStarterData(
-        UserRepository userRepository,
-        OrganizationRepository organizationRepository,
-        RoleRepository roleRepository,
-        PasswordEncoder passwordEncoder
-    ) {
-        return (args) -> {
-            log.info("Creating initial data...");
+    public CommandLineRunner initializeData(
+            UserRepository userRepository, 
+            RoleRepository roleRepository,
+            OrganizationRepository organizationRepository,
+            PasswordEncoder passwordEncoder) {
+        return args -> {
+            // Create default organization
+            Organization org = new Organization();
+            org.setOrganizationName("Default Organization");
+            organizationRepository.save(org);
 
-            // Organization
-            Organization organization1 = new Organization(null, "PajaRy");
-            organizationRepository.save(organization1);
-            Organization organization2 = new Organization(null, "Hirvi and the Headlights");
-            organizationRepository.save(organization2);
+            // Create roles
+            Role employeeRole = new Role();
+            employeeRole.setRoleName("ROLE_USER");
+            employeeRole.setRoleDescription("Employee role");
+            roleRepository.save(employeeRole);
 
-            // Role
-            Role role1 = new Role(null, "Employer", "Employer", Roles.EMPLOYER);
-            roleRepository.save(role1);
-            Role role2 = new Role(null, "Employee", "Employee", Roles.EMPLOYEE);
-            roleRepository.save(role2);
+            Role employerRole = new Role();
+            employerRole.setRoleName("ROLE_ADMIN");
+            employerRole.setRoleDescription("Employer role");
+            roleRepository.save(employerRole);
 
-            // User
-            User user1 = new User();
-            user1.setUsername("employer");
-            user1.setEmail("employer@gmail.com");
-            user1.setPasswordHash(passwordEncoder.encode("employer"));  // Encode the password
-            user1.setRole(role1);
-            user1.setOrganization(organization1);
-            userRepository.save(user1);
+            // Create default user
+            User defaultUser = new User();
+            defaultUser.setUsername("employee");
+            defaultUser.setEmail("employee@test.com");
+            defaultUser.setPasswordHash(passwordEncoder.encode("employee"));
+            defaultUser.setRole(employeeRole);
+            defaultUser.setOrganization(org);
+            defaultUser.setFirstname("Test");
+            defaultUser.setLastname("Employee");
+            userRepository.save(defaultUser);
 
-            User user2 = new User();
-            user2.setUsername("employee");
-            user2.setEmail("employee@gmail.com");
-            user2.setPasswordHash(passwordEncoder.encode("employee"));  // Encode the password
-            user2.setRole(role2);
-            user2.setOrganization(organization2);
-            userRepository.save(user2);
-
-            log.info("Sample data created successfully.");
+            // Create admin user
+            User adminUser = new User();
+            adminUser.setUsername("admin");
+            adminUser.setEmail("admin@test.com");
+            adminUser.setPasswordHash(passwordEncoder.encode("admin"));
+            adminUser.setRole(employerRole);
+            adminUser.setOrganization(org);
+            adminUser.setFirstname("Admin");
+            adminUser.setLastname("User");
+            userRepository.save(adminUser);
         };
     }
 }

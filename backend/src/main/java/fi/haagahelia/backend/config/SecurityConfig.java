@@ -64,6 +64,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/auth/**", "/h2-console/**", "/api/users/register").permitAll() // Public endpoints
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
+                // Role-based authorization
+                .requestMatchers("/api/admin/**").hasRole("EMPLOYER")
+                .requestMatchers("/api/projects/**").hasAnyRole("EMPLOYER", "EMPLOYEE")
+                .requestMatchers("/api/organizations/**").hasRole("EMPLOYER")
+                .requestMatchers("/api/users/**").hasAnyRole("EMPLOYER", "EMPLOYEE")
                 .anyRequest().authenticated() // All other endpoints require authentication
             )
             // Add the authentication provider

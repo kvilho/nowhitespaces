@@ -16,15 +16,16 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60 * 1000; // 5 hours
+    private static final String DEFAULT_DEV_KEY = "dev_jwt_secret_key_2024_hourbook_development_only";
 
     private Key key;
 
     @PostConstruct
     public void init() {
-        // Load the secret key from the environment variable
+        // Load the secret key from the environment variable or use default for development
         String secretKey = System.getenv("JWT_SECRET_KEY");
         if (secretKey == null || secretKey.isEmpty()) {
-            throw new IllegalStateException("Environment variable JWT_SECRET_KEY is not set!");
+            secretKey = DEFAULT_DEV_KEY;
         }
 
         // Create the signing key

@@ -2,6 +2,7 @@ package fi.haagahelia.backend.security;
 
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -9,8 +10,13 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    private final String secretKey = "your-secret-key"; // Replace with a secure key
-    private final long validityInMilliseconds = 3600000; // 1 hour
+    private static final String DEFAULT_DEV_KEY = "dev_jwt_secret_key_2024_hourbook_development_only";
+    
+    @Value("${JWT_SECRET_KEY:" + DEFAULT_DEV_KEY + "}")
+    private String secretKey;
+
+    @Value("${JWT_TOKEN_VALIDITY:3600000}")
+    private long validityInMilliseconds;
 
     public String createToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
