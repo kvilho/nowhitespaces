@@ -1,6 +1,7 @@
 package fi.haagahelia.backend.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,13 @@ public class ProjectService {
             code = String.valueOf((int) (Math.random() * 900000) + 100000); // 6 digit code
         } while (projectRepository.findByProjectCode(code).isPresent()); // Check if code already exists 
         return code;
+    }
+    
+    public List<Project> getUserProjects(User user) {
+        List<ProjectMember> projectMembers = projectMemberRepository.findByUserId(user.getId());
+        return projectMembers.stream()
+                .map(ProjectMember::getProject)
+                .distinct()  // Ensure no duplicate projects
+                .toList();
     }
 }

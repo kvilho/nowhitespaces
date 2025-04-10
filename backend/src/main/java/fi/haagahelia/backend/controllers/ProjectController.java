@@ -16,6 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
@@ -27,6 +30,26 @@ public class ProjectController {
 
     public ProjectController(ProjectService projectService) {
         this.projectService = projectService;
+    }
+
+    @GetMapping("/my-projects")
+    public ResponseEntity<List<Project>> getMyProjects(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        logger.debug("Getting projects for user: {}", currentUser != null ? currentUser.getUsername() : "null");
+        
+        if (currentUser == null) {
+            logger.warn("No authenticated user found");
+            return ResponseEntity.status(403).build();
+        }
+        
+        try {
+            User user = currentUser.getUser();
+            List<Project> projects = projectService.getUserProjects(user);
+            logger.debug("Found {} projects for user", projects.size());
+            return ResponseEntity.ok(projects);
+        } catch (Exception e) {
+            logger.error("Error getting user projects", e);
+            return ResponseEntity.status(500).build();
+        }
     }
 
     @PostMapping("/create")

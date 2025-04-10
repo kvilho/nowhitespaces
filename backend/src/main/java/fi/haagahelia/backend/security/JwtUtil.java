@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import fi.haagahelia.backend.model.User;
 
 import jakarta.annotation.PostConstruct;
 import java.security.Key;
@@ -71,6 +72,12 @@ public class JwtUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        if (userDetails instanceof CustomUserDetails) {
+            CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
+            User user = customUserDetails.getUser();
+            claims.put("userId", user.getId());
+            claims.put("role", user.getRole().getRoleName());
+        }
         return createToken(claims, userDetails.getUsername());
     }
 

@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Profile;
 
 import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.model.Role;
@@ -28,49 +29,71 @@ public class BackendApplication {
     }
 
     @Bean
+    @Profile("dev") // Only run in dev profile
     public CommandLineRunner initializeData(
             UserRepository userRepository, 
             RoleRepository roleRepository,
             OrganizationRepository organizationRepository,
             PasswordEncoder passwordEncoder) {
         return args -> {
-            // Create default organization
-            Organization org = new Organization();
-            org.setOrganizationName("Default Organization");
-            organizationRepository.save(org);
+            log.info("Initializing development data...");
 
-            // Create roles
-            Role employeeRole = new Role();
-            employeeRole.setRoleName("ROLE_USER");
-            employeeRole.setRoleDescription("Employee role");
-            roleRepository.save(employeeRole);
+            // Create default organization if it doesn't exist
+            Organization org = organizationRepository.findByOrganizationName("Default Organization")
+                .orElseGet(() -> {
+                    Organization newOrg = new Organization();
+                    newOrg.setOrganizationName("Default Organization");
+                    return organizationRepository.save(newOrg);
+                });
 
-            Role employerRole = new Role();
-            employerRole.setRoleName("ROLE_ADMIN");
-            employerRole.setRoleDescription("Employer role");
-            roleRepository.save(employerRole);
+            // Create roles if they don't exist
+            Role employeeRole = roleRepository.findByRoleName("ROLE_USER")
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("ROLE_USER");
+                    role.setRoleDescription("Employee role");
+                    role.setRoles(Roles.EMPLOYEE);
+                    return roleRepository.save(role);
+                });
 
-            // Create default user
-            User defaultUser = new User();
-            defaultUser.setUsername("employee");
-            defaultUser.setEmail("employee@test.com");
-            defaultUser.setPasswordHash(passwordEncoder.encode("employee"));
-            defaultUser.setRole(employeeRole);
-            defaultUser.setOrganization(org);
-            defaultUser.setFirstname("Test");
-            defaultUser.setLastname("Employee");
-            userRepository.save(defaultUser);
+            Role employerRole = roleRepository.findByRoleName("ROLE_ADMIN")
+                .orElseGet(() -> {
+                    Role role = new Role();
+                    role.setRoleName("ROLE_ADMIN");
+                    role.setRoleDescription("Employer role");
+                    role.setRoles(Roles.EMPLOYER);
+                    return roleRepository.save(role);
+                });
 
-            // Create admin user
-            User adminUser = new User();
-            adminUser.setUsername("admin");
-            adminUser.setEmail("admin@test.com");
-            adminUser.setPasswordHash(passwordEncoder.encode("admin"));
-            adminUser.setRole(employerRole);
-            adminUser.setOrganization(org);
-            adminUser.setFirstname("Admin");
-            adminUser.setLastname("User");
-            userRepository.save(adminUser);
+            // Create default employee user if it doesn't exist
+            if (!userRepository.findByEmail("employee@test.com").isPresent()) {
+                User defaultUser = new User();
+                defaultUser.setUsername("employee");
+                defaultUser.setEmail("employee@test.com");
+                defaultUser.setPasswordHash(passwordEncoder.encode("employee"));
+                defaultUser.setRole(employeeRole);
+                defaultUser.setOrganization(org);
+                defaultUser.setFirstname("Test");
+                defaultUser.setLastname("Employee");
+                userRepository.save(defaultUser);
+                log.info("Created default employee user");
+            }
+
+            // Create admin user if it doesn't exist
+            if (!userRepository.findByEmail("admin@test.com").isPresent()) {
+                User adminUser = new User();
+                adminUser.setUsername("admin");
+                adminUser.setEmail("admin@test.com");
+                adminUser.setPasswordHash(passwordEncoder.encode("admin"));
+                adminUser.setRole(employerRole);
+                adminUser.setOrganization(org);
+                adminUser.setFirstname("Admin");
+                adminUser.setLastname("User");
+                userRepository.save(adminUser);
+                log.info("Created default admin user");
+            }
+
+            log.info("Development data initialization completed");
         };
     }
 }

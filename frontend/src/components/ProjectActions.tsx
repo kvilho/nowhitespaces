@@ -141,6 +141,7 @@ const ProjectActions: React.FC = () => {
             <Dialog 
                 open={isCreateDialogOpen} 
                 onClose={() => setIsCreateDialogOpen(false)}
+                aria-labelledby="create-project-dialog-title"
                 PaperProps={{ 
                     style: { 
                         borderRadius: '12px',
@@ -149,6 +150,7 @@ const ProjectActions: React.FC = () => {
                 }}
             >
                 <DialogTitle 
+                    id="create-project-dialog-title"
                     className="dialog-title"
                     sx={{
                         backgroundColor: '#1976d2',
@@ -163,15 +165,22 @@ const ProjectActions: React.FC = () => {
                         <TextField
                             autoFocus
                             margin="dense"
+                            id="project-name"
+                            name="projectName"
                             label="Project Name"
                             type="text"
                             fullWidth
                             value={newProject.projectName}
                             onChange={(e) => setNewProject({...newProject, projectName: e.target.value})}
                             sx={{ mb: 2 }}
+                            inputProps={{
+                                'aria-label': 'Project name'
+                            }}
                         />
                         <TextField
                             margin="dense"
+                            id="project-description"
+                            name="projectDescription"
                             label="Project Description"
                             type="text"
                             fullWidth
@@ -179,6 +188,9 @@ const ProjectActions: React.FC = () => {
                             rows={4}
                             value={newProject.projectDescription}
                             onChange={(e) => setNewProject({...newProject, projectDescription: e.target.value})}
+                            inputProps={{
+                                'aria-label': 'Project description'
+                            }}
                         />
                     </Box>
                 </DialogContent>
@@ -189,6 +201,7 @@ const ProjectActions: React.FC = () => {
                             color: '#666',
                             textTransform: 'none'
                         }}
+                        aria-label="Cancel creating project"
                     >
                         Cancel
                     </Button>
@@ -197,11 +210,11 @@ const ProjectActions: React.FC = () => {
                         variant="contained"
                         disabled={!newProject.projectName}
                         sx={{ 
-                            textTransform: 'none',
-                            borderRadius: 2
+                            textTransform: 'none'
                         }}
+                        aria-label="Create project"
                     >
-                        Create
+                        Create Project
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -210,6 +223,7 @@ const ProjectActions: React.FC = () => {
             <Dialog 
                 open={isJoinDialogOpen} 
                 onClose={() => setIsJoinDialogOpen(false)}
+                aria-labelledby="join-project-dialog-title"
                 PaperProps={{ 
                     style: { 
                         borderRadius: '12px',
@@ -218,6 +232,7 @@ const ProjectActions: React.FC = () => {
                 }}
             >
                 <DialogTitle 
+                    id="join-project-dialog-title"
                     className="dialog-title"
                     sx={{
                         backgroundColor: '#1976d2',
@@ -229,27 +244,37 @@ const ProjectActions: React.FC = () => {
                 </DialogTitle>
                 <DialogContent className="dialog-content">
                     <Box sx={{ mt: 2 }}>
-                        <div className="project-code-inputs">
+                        <Box 
+                            sx={{ 
+                                display: 'flex', 
+                                gap: 1, 
+                                justifyContent: 'center' 
+                            }}
+                            role="group"
+                            aria-label="Project code input"
+                        >
                             {projectCode.map((digit, index) => (
                                 <TextField
                                     key={index}
                                     inputRef={inputRefs[index]}
-                                    className="project-code-input"
                                     value={digit}
                                     onChange={(e) => handleInputChange(index, e.target.value)}
                                     onKeyDown={(e) => handleKeyDown(index, e)}
+                                    variant="outlined"
                                     inputProps={{
                                         maxLength: 1,
-                                        style: { 
-                                            textAlign: 'center',
-                                            fontSize: '1.5rem',
-                                            fontWeight: '500'
+                                        style: { textAlign: 'center' },
+                                        'aria-label': `Digit ${index + 1} of project code`
+                                    }}
+                                    sx={{
+                                        width: '48px',
+                                        '& .MuiOutlinedInput-input': {
+                                            padding: '12px 8px'
                                         }
                                     }}
-                                    variant="outlined"
                                 />
                             ))}
-                        </div>
+                        </Box>
                     </Box>
                 </DialogContent>
                 <DialogActions className="dialog-actions">
@@ -259,6 +284,7 @@ const ProjectActions: React.FC = () => {
                             color: '#666',
                             textTransform: 'none'
                         }}
+                        aria-label="Cancel joining project"
                     >
                         Cancel
                     </Button>
@@ -267,18 +293,18 @@ const ProjectActions: React.FC = () => {
                         variant="contained"
                         disabled={projectCode.some(digit => digit === '')}
                         sx={{ 
-                            textTransform: 'none',
-                            borderRadius: 2
+                            textTransform: 'none'
                         }}
+                        aria-label="Join project"
                     >
-                        Join
+                        Join Project
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={6000}
+            <Snackbar 
+                open={snackbar.open} 
+                autoHideDuration={6000} 
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
@@ -286,6 +312,7 @@ const ProjectActions: React.FC = () => {
                     onClose={handleCloseSnackbar} 
                     severity={snackbar.severity}
                     sx={{ width: '100%' }}
+                    role="status"
                 >
                     {snackbar.message}
                 </Alert>
