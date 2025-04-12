@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Paper, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Paper, Typography, Link } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import "../styles/loginform.css";
 import authService from '../services/authService';
 
@@ -8,13 +8,24 @@ const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        // Check for registration success message
+        const state = location.state as { message?: string };
+        if (state?.message) {
+            setSuccess(state.message);
+        }
+    }, [location]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
+        setSuccess('');
         setIsLoading(true);
 
         try {
@@ -58,9 +69,15 @@ const Login: React.FC = () => {
                         </Typography>
                     )}
 
+                    {success && (
+                        <Typography color="success" className="success-message">
+                            {success}
+                        </Typography>
+                    )}
+
                     {/* Email Field */}
                     <div className='input-field'>
-                    <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12c2.485 0 4.5-2.015 4.5-4.5S14.485 3 12 3 7.5 5.015 7.5 7.5 9.515 12 12 12zm0 2.25c-3.735 0-6.75 3.015-6.75 6.75h13.5c0-3.735-3.015-6.75-6.75-6.75z"></path>
                         </svg>
                         <input
@@ -76,7 +93,7 @@ const Login: React.FC = () => {
 
                     {/* Password Field */}
                     <div className='input-field'>
-                    <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" strokeLinejoin="round" strokeLinecap="round"></path>
                         </svg>
                         <input
@@ -121,6 +138,13 @@ const Login: React.FC = () => {
                     >
                         {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
+
+                    <Typography variant="body2" className="login-subtitle" style={{ marginTop: '1rem' }}>
+                        Don't have an account?{' '}
+                        <Link href="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
+                            Create one
+                        </Link>
+                    </Typography>
                 </form>
             </Paper>
         </div>

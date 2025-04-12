@@ -19,6 +19,19 @@ class AuthService {
     return response.data;
   }
 
+  // Register method
+  async register(username: string, firstname: string, lastname: string, email: string, password: string, phone: string) {
+    const response = await api.post("/api/auth/register", {
+      username,
+      firstname,
+      lastname,
+      email,
+      password,
+      phone
+    });
+    return response.data;
+  }
+
   // Logout method
   logout() {
     localStorage.removeItem("token");
