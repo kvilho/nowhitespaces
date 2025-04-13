@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Paper, Box, List, ListItem, ListItemText, Divider, CircularProgress, Alert } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import ProjectActions from '../components/ProjectActions';
 import projectService, { Project } from '../services/projectService';
 
 const Projects: React.FC = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,7 +88,11 @@ const Projects: React.FC = () => {
               <List>
                 {projects.map((project, index) => (
                   <React.Fragment key={project.projectId}>
-                    <ListItem alignItems="flex-start">
+                    <ListItem 
+                      alignItems="flex-start" 
+                      button 
+                      onClick={() => navigate(`/projects/${project.projectId}`)}
+                    >
                       <ListItemText
                         primary={project.projectName}
                         secondary={

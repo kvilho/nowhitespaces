@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
@@ -50,6 +51,7 @@ const App: React.FC = () => {
                 <Projects />
               </ProtectedRoute>
             } />
+            <Route path="/projects/:id" element={<ProjectDetails />} />
           </Routes>
         </div>
       </Router>

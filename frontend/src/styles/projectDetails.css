@@ -1,0 +1,40 @@
+.container {
+  margin-top: 2rem;
+}
+
+.back-button {
+  margin-bottom: 1rem;
+}
+
+.project-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.project-description {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.project-members {
+  margin-top: 2rem;
+}
+
+.project-members h6 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.project-members .MuiListItem-root {
+  padding: 0.5rem 0;
+}
+
+.project-members .MuiListItemText-primary {
+  font-weight: bold;
+}
+
+.project-members .MuiListItemText-secondary {
+  color: #666;
+}

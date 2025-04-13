@@ -13,6 +13,15 @@ export interface Project {
   };
 }
 
+interface ProjectMember {
+  id: number;
+  user: {
+    username: string;
+    email: string;
+  };
+  role: string;
+}
+
 class ProjectService {
   async getMyProjects(): Promise<Project[]> {
     try {
@@ -23,6 +32,26 @@ class ProjectService {
       throw error;
     }
   }
+
+  async getProjectById(id: string): Promise<Project> {
+    try {
+      const response = await api.get(`/api/projects/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching project by ID:', error);
+      throw error;
+    }
+  }
+
+  async getProjectMembers(projectId: string): Promise<ProjectMember[]> {
+    try {
+      const response = await api.get(`/api/projects/${projectId}/members`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching project members:', error);
+      throw error;
+    }
+  }
 }
 
-export default new ProjectService(); 
+export default new ProjectService();

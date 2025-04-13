@@ -61,6 +61,34 @@ public class ProjectService {
         projectMemberRepository.save(member);
     }
 
+    public Project getProjectById(Long id, User user) {
+        Project project = projectRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        boolean isMember = project.getMembers().stream()
+            .anyMatch(member -> member.getUser().getId().equals(user.getId()));
+
+        if (!isMember) {
+            throw new RuntimeException("User is not a member of this project");
+        }
+
+        return project;
+    }
+
+    public List<ProjectMember> getProjectMembers(Long projectId, User user) {
+        Project project = projectRepository.findById(projectId)
+            .orElseThrow(() -> new RuntimeException("Project not found"));
+
+        boolean isMember = project.getMembers().stream()
+            .anyMatch(member -> member.getUser().getId().equals(user.getId()));
+
+        if (!isMember) {
+            throw new RuntimeException("User is not a member of this project");
+        }
+
+        return project.getMembers();
+    }
+
     private String generateProjectCode() {
         // Generate a random 6-character numeric code
         String code;

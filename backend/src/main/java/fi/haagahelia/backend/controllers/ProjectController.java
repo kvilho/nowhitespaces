@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,7 @@ import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.security.CustomUserDetails;
 import fi.haagahelia.backend.services.ProjectService;
+import fi.haagahelia.backend.model.ProjectMember;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -86,6 +88,34 @@ public class ProjectController {
         User user = currentUser.getUser();
         projectService.joinProjectByCode(projectCode, user);
         return ResponseEntity.ok("Joined project successfully");
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Project> getProjectById(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            Project project = projectService.getProjectById(id, currentUser.getUser());
+            return ResponseEntity.ok(project);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).build();
+        }
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<List<ProjectMember>> getProjectMembers(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            List<ProjectMember> members = projectService.getProjectMembers(id, currentUser.getUser());
+            return ResponseEntity.ok(members);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).build();
+        }
     }
 }
 
