@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Typography, CircularProgress, Alert, List, ListItem, ListItemText, Button } from '@mui/material';
-import projectService, { Project } from '../services/projectService';
+import projectService, { Project, ProjectMember } from '../services/projectService';
 import '../styles/projectDetails.css';
 
 const ProjectDetails: React.FC = () => {
@@ -56,8 +56,8 @@ const ProjectDetails: React.FC = () => {
         Project Members
       </Typography>
       <List>
-        {members.map((member) => (
-          <ListItem key={member.id}>
+        {members.map((member, index) => (
+          <ListItem key={member.id || `${member.user.username}-${index}`}>
             <ListItemText
               primary={member.user.username}
               secondary={`Role: ${member.role} | Email: ${member.user.email}`}

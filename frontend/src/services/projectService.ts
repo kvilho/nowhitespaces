@@ -13,7 +13,7 @@ export interface Project {
   };
 }
 
-interface ProjectMember {
+export interface ProjectMember {
   id: number;
   user: {
     username: string;
