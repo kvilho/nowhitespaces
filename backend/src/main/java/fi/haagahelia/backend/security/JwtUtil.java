@@ -59,7 +59,7 @@ public class JwtUtil {
             throw new RuntimeException("Unsupported JWT token", e);
         } catch (MalformedJwtException e) {
             throw new RuntimeException("Malformed JWT token", e);
-        } catch (SignatureException e) {
+        } catch (io.jsonwebtoken.security.SignatureException e) {
             throw new RuntimeException("Invalid JWT signature", e);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException("JWT claims string is empty", e);

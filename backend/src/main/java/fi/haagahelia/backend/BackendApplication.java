@@ -1,6 +1,5 @@
 package fi.haagahelia.backend;
 
-import java.security.KeyStore.Entry;
 import java.time.LocalDateTime;
 
 import org.slf4j.Logger;

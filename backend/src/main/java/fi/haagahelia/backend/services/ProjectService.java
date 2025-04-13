@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.model.ProjectMember;
@@ -18,7 +17,6 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMemberRepository projectMemberRepository;
 
-    @Autowired
     public ProjectService(ProjectRepository projectRepository, ProjectMemberRepository projectMemberRepository) {
         this.projectRepository = projectRepository;
         this.projectMemberRepository = projectMemberRepository;
