@@ -14,5 +14,8 @@ public class SecretKeyGenerator {
         // Print the Base64-encoded key
         String base64Key = Base64.getEncoder().encodeToString(key.getEncoded());
         System.out.println("Generated Secret Key: " + base64Key);
+
+        // Instructions for the user
+        System.out.println("Please copy the above key and set it as the JWT_SECRET_KEY environment variable.");
     }
 }
