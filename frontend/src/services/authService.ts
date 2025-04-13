@@ -47,8 +47,11 @@ class AuthService {
   // Check if the user is authenticated
   isAuthenticated() {
     const token = this.getToken();
+    if (!token) {
+      return false; // Return false without logging if no token exists
+    }
     console.log('Checking authentication, token:', token);
-    return !!token;
+    return true;
   }
 
   // Get the user's role from localStorage
