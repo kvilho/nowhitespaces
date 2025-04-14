@@ -96,21 +96,6 @@ public class BackendApplication {
                 return userRepository.save(admin);
             });
 
-            // Create data for test project
-            projectRepository.findByProjectCode("123456")
-                .orElseGet(() -> {
-                    Project project = new Project();
-                    project.setProjectCode("123456");
-                    project.setProjectName("Hardcoded Test Project");
-                    project.setCreatedBy(adminUser); // Set the creator as the admin user
-                    project.setCreatedAt(LocalDateTime.now());
-                    project.setProjectDescription("This is a hardcoded test project created by the admin user.");
-                    return projectRepository.save(project);
-                });
-
-log.info("Created hardcoded project with admin user as creator");
-
-
             log.info("Development data initialization completed");
         };
     }

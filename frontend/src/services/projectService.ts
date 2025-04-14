@@ -66,7 +66,7 @@ class ProjectService {
 
   async updateEntryStatus(entryId: number, status: string): Promise<void> {
     try {
-      await api.put(`/api/entries/${entryId}/status`, { status });
+      await api.put(`/api/entries/${entryId}/status?status=${status}`);
     } catch (error) {
       console.error('Error updating entry status:', error);
       throw error;
