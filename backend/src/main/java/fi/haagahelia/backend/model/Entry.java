@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Transient;
+import jakarta.persistence.Column;
 
 @Entity
 public class Entry {
@@ -18,40 +19,37 @@ public class Entry {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long entryId;
+    
     private LocalDateTime entryStart;
     private LocalDateTime entryEnd;
     private String entryDescription;
-    private String entryStatus;
 
     @ManyToOne
-    @JoinColumn(name = "userId") //many-to-one relationship with User
+    @JoinColumn(name = "userId", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "organizationId") //many-to-one relationship with Organization
+    @JoinColumn(name = "organizationId", nullable = false)
     private Organization organization;
 
-    @Enumerated(EnumType.STRING) // Store enum as a String in database
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
-    @Transient  // This means the field won't be persisted to database
+    @ManyToOne
+    @JoinColumn(name = "projectId", nullable = false)
+    private Project project;
+
+    @Transient
     private Long userId;
 
-    public Entry(long entryId, LocalDateTime entryStart, LocalDateTime entryEnd, String entryDescription, Status status, User user, Organization organization) {
-        this.entryId = entryId;
-        this.entryStart = entryStart;
-        this.entryEnd = entryEnd;
-        this.entryDescription = entryDescription;
-        this.status = status;
-        this.user = user;
-        this.organization = organization;
-    }
+    @Transient
+    private Long projectId;
 
     public Entry() {
     }
 
-    // getters n setters 
-
+    // Getters and Setters
     public Long getEntryId() {
         return entryId;
     }
@@ -74,14 +72,6 @@ public class Entry {
 
     public void setEntryEnd(LocalDateTime entryEnd) {
         this.entryEnd = entryEnd;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setEntryStatus(Status status) {
-        this.status = status;
     }
 
     public String getEntryDescription() {
@@ -108,12 +98,36 @@ public class Entry {
         this.organization = organization;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     public Long getUserId() {
         return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     @Override

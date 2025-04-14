@@ -1,9 +1,14 @@
 package fi.haagahelia.backend.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="users")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
     @Id
@@ -26,13 +31,17 @@ public class User {
     @Column(name = "phone", unique = true) // Ensure phone number is unique (like you ;))
     private String phone;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organizationId")
     private Organization organization;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("user")
+    private List<ProjectMember> projectMembers = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -131,17 +140,11 @@ public class User {
         this.organization = organization;
     }
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", username=" + username + ", firstname=" + firstname + ", lastname=" + lastname
-                + ", email=" + email + ", phone=" + phone + ", role=" + role + ", organization=" + organization + "]";
+    public List<ProjectMember> getProjectMembers() {
+        return projectMembers;
     }
 
-    
-    
-
-    
-}
-
-
-    
+    public void setProjectMembers(List<ProjectMember> projectMembers) {
+        this.projectMembers = projectMembers;
+    }
+}    

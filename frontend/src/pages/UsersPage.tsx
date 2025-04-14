@@ -14,7 +14,7 @@ interface User {
     };
 }
 
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/users`;
+const API_URL = "http://localhost:8080/api/users";
 
 const UsersPage: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);

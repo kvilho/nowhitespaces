@@ -1,34 +1,55 @@
-import { useState } from 'react';
-
-import { Paper, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Paper, Typography, Link } from '@mui/material';
+import { useNavigate, useLocation } from 'react-router-dom';
 import "../styles/loginform.css";
-import AuthService from '../services/authService';
+import authService from '../services/authService';
 
 const Login: React.FC = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
-    const authService = AuthService.getInstance();
+    const location = useLocation();
 
+    useEffect(() => {
+        // Check for registration success message
+        const state = location.state as { message?: string };
+        if (state?.message) {
+            setSuccess(state.message);
+        }
+    }, [location]);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         setError('');
-        
+        setSuccess('');
+        setIsLoading(true);
+
         try {
-            await authService.login(username, password);
-            navigate('/'); // Redirect to home page after successful login
-        } catch (err) {
-            setError('Invalid username or password');
+            // Use authService to handle login
+            await authService.login(email, password);
+            navigate('/'); // Redirect to home on successful login
+        } catch (err: any) {
+            console.error('Login error:', err);
+            if (err.response?.status === 401 || err.response?.status === 400) {
+                setError('Invalid email or password');
+            } else if (err.response?.data) {
+                setError(err.response.data);
+            } else if (err.message === 'Network Error') {
+                setError('Unable to connect to the server. Please try again later.');
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
-
     };
 
     return (
@@ -48,22 +69,29 @@ const Login: React.FC = () => {
                         </Typography>
                     )}
 
-                    {/* Username Field with Icon */}
+                    {success && (
+                        <Typography color="success" className="success-message">
+                            {success}
+                        </Typography>
+                    )}
+
+                    {/* Email Field */}
                     <div className='input-field'>
                         <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M12 12c2.485 0 4.5-2.015 4.5-4.5S14.485 3 12 3 7.5 5.015 7.5 7.5 9.515 12 12 12zm0 2.25c-3.735 0-6.75 3.015-6.75 6.75h13.5c0-3.735-3.015-6.75-6.75-6.75z"></path>
                         </svg>
                         <input
                             className='input text-input'
-                            placeholder='Username'
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            placeholder='Email'
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
                     </div>
 
-                    {/* Password Field with Icon and Toggle */}
+                    {/* Password Field */}
                     <div className='input-field'>
                         <svg className="icon" stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" strokeLinejoin="round" strokeLinecap="round"></path>
@@ -75,12 +103,13 @@ const Login: React.FC = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            disabled={isLoading}
                         />
-
                         <button
                             type="button"
                             className="password-toggle"
                             onClick={togglePasswordVisibility}
+                            disabled={isLoading}
                         >
                             <svg
                                 className="eye-icon"
@@ -99,13 +128,23 @@ const Login: React.FC = () => {
                                     </>
                                 )}
                             </svg>
-
                         </button>
                     </div>
 
-                    <button type="submit" className="login-button">
-                        Sign In
+                    <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={isLoading}
+                    >
+                        {isLoading ? 'Signing in...' : 'Sign In'}
                     </button>
+
+                    <Typography variant="body2" className="login-subtitle" style={{ marginTop: '1rem' }}>
+                        Don't have an account?{' '}
+                        <Link href="/register" style={{ color: '#1976d2', textDecoration: 'none' }}>
+                            Create one
+                        </Link>
+                    </Typography>
                 </form>
             </Paper>
         </div>

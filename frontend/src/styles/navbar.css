@@ -1,10 +1,29 @@
+/* Reset default body margin and set up proper spacing */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
 .navbar {
     background: linear-gradient(to right, #1976d2, #1565c0);
     padding: 0.75rem 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 1000;
+    height: 64px; /* Set explicit height */
+    box-sizing: border-box;
+}
+
+/* Main content wrapper */
+.main-content {
+    padding-top: 64px; /* Same as navbar height */
+    min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .navbar-container {
@@ -37,7 +56,7 @@
 
 .nav-links {
     display: flex;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: center;
 }
 
@@ -66,33 +85,47 @@
 .nav-link.active::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -0.5rem;
     left: 50%;
     transform: translateX(-50%);
     width: 24px;
     height: 3px;
     background-color: #ffffff;
     border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+/* Shared animation for active indicators */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scaleX(0.7);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scaleX(1);
+    }
 }
 
 /* Profile section */
 .profile-section {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    position: relative;
 }
 
 .profile-button {
     background: none;
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .profile-button:hover {
@@ -100,9 +133,154 @@
     border-color: rgba(255, 255, 255, 0.3);
 }
 
+.profile-button.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.profile-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
 .profile-button svg {
     width: 20px;
     height: 20px;
+}
+
+/* Settings section */
+.settings-section {
+    position: relative;
+    margin-right: 0.5rem;
+}
+
+.settings-button {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.settings-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.settings-button.active {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.settings-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background-color: #ffffff;
+    border-radius: 2px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+.settings-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Dropdowns */
+.settings-dropdown,
+.profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 0.5rem;
+    background: linear-gradient(to right, #1976d2, #1565c0);
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    min-width: 200px;
+    z-index: 1000;
+    padding: 0.5rem;
+    transform-origin: top;
+    animation: slideDown 0.2s ease forwards;
+    opacity: 0;
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item:first-child {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.dropdown-item:last-child {
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .navbar {
+        background: linear-gradient(to right, #1565c0, #0d47a1);
+    }
+
+    .settings-dropdown,
+    .profile-dropdown {
+        background: linear-gradient(to right, #1565c0, #0d47a1);
+    }
+
+    .dropdown-item {
+        color: #ffffff;
+    }
+
+    .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .settings-dropdown .MuiFormControlLabel-label {
+        color: #ffffff;
+    }
 }
 
 /* Mobile menu button */
@@ -151,12 +329,22 @@
     .nav-link.active::after {
         display: none;
     }
-}
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .navbar {
-        background: linear-gradient(to right, #1565c0, #0d47a1);
+    .settings-dropdown,
+    .profile-dropdown {
+        position: static;
+        margin-top: 0.5rem;
+        width: 100%;
+    }
+
+    .settings-section,
+    .profile-section {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .dropdown-item {
+        text-align: center;
     }
 }
 
@@ -164,6 +352,7 @@
     color: rgba(255, 255, 255, 0.9);
     background: none;
     border: none;
+    color: white;
     font-size: inherit;
     cursor: pointer;
     padding: 0.5rem 1rem;
@@ -172,4 +361,142 @@
 
 .logout-button:hover {
     color: #ff4081;
+}
+
+/* Dark mode switch styles */
+.dark-mode-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem 0;
+}
+
+.dark-mode-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #ffffff;
+}
+
+.switch {
+    font-size: 14px;
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #73C0FC;
+    transition: .4s;
+    border-radius: 30px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    border-radius: 20px;
+    left: 2px;
+    bottom: 2px;
+    z-index: 2;
+    background-color: #e8e8e8;
+    transition: .4s;
+}
+
+.sun svg {
+    position: absolute;
+    top: 4px;
+    left: 28px;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+}
+
+.moon svg {
+    fill: #73C0FC;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+}
+
+.sun svg {
+    animation: rotate 15s linear infinite;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.moon svg {
+    animation: tilt 5s linear infinite;
+}
+
+@keyframes tilt {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.input:checked + .slider {
+    background-color: #183153;
+}
+
+.input:focus + .slider {
+    box-shadow: 0 0 1px #183153;
+}
+
+.input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Dark mode support for the text */
+@media (prefers-color-scheme: dark) {
+    .dark-mode-text {
+        color: #ffffff;
+    }
+}
+
+/* Adjust dropdown item padding for the switch */
+.dropdown-item .dark-mode-container {
+    padding: 0.25rem 0.5rem;
+}
+
+/* Dark mode dropdown styles */
+body.dark-mode .settings-dropdown,
+body.dark-mode .profile-dropdown {
+    background: linear-gradient(to right, #1565c0, #0d47a1);
+}
+
+body.dark-mode .dropdown-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }

@@ -1,47 +1,51 @@
 // Testing GitHub Actions CI workflow
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { CssBaseline, Box } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import Profile from "./pages/Profile"
-import UsersPage from "./pages/UsersPage";
+import Register from "./pages/Register";
+import Profile from "./pages/Profile";
+import Projects from "./pages/Projects";
+import ProjectDetails from "./pages/ProjectDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-
-const theme = createTheme({
-  palette: {
-    primary: { main: "#1976d2" },
-    secondary: { main: "#ff4081" },
-  },
-});
+import EmployerDashboard from './components/EmployerDashboard';
+import Calendar from './components/Calendar';
 
 const App: React.FC = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  const theme = createTheme({
+    palette: {
+      mode: darkMode ? 'dark' : 'light',
+      primary: { main: "#1976d2" },
+      secondary: { main: "#ff4081" },
+    },
+  });
+
+  const handleDarkModeChange = (checked: boolean) => {
+    setDarkMode(checked);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Navbar />
-        <Box sx={{ paddingTop: "64px" }}>
+        <Navbar darkMode={darkMode} onDarkModeChange={handleDarkModeChange} />
+        <div className={`main-content ${darkMode ? 'dark-mode' : ''}`}>
           <Routes>
+            <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/users" element={
-              <ProtectedRoute>
-                <UsersPage />
-              </ProtectedRoute>
-            } />
+            <Route path="/register" element={<Register />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/:id" element={<ProjectDetails />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
-        </Box>
+        </div>
       </Router>
     </ThemeProvider>
   );

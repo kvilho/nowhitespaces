@@ -148,6 +148,16 @@
     border-radius: 0.5rem;
 }
 
+/* Success Message */
+.success-message {
+    text-align: center;
+    font-size: 0.9rem;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
 /* Responsive Design */
 @media (max-width: 576px) {
     .login-container {

@@ -1,15 +1,16 @@
 export interface Entry {
     entryId: number;
-    entryStart: string | number[];  // Accept both formats
-    entryEnd: string | number[];    // Accept both formats
+    entryStart: string | Date;
+    entryEnd: string | Date;
     entryDescription: string;
-    status: string;
+    status: 'PENDING' | 'APPROVED' | 'DECLINED';
     user: {
         id: number;
         username: string;
-        organization: {
-            organizationId: number;
-            organizationName: string;
-        }
+        email: string;
+    };
+    project: {
+        projectId: number;
+        projectName: string;
     };
 } 
