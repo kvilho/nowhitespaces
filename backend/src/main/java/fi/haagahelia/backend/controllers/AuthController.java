@@ -71,13 +71,17 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(userDetails);
 
+            // Get the user ID from the repository
+            User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
             String role = userDetails.getAuthorities().stream()
                 .findFirst()
                 .map(GrantedAuthority::getAuthority)
                 .map(auth -> auth.startsWith("ROLE_") ? auth.substring(5) : auth)
                 .orElse("USER");
 
-            return ResponseEntity.ok(new AuthResponse(token, userDetails.getUsername(), role));
+            return ResponseEntity.ok(new AuthResponse(token, userDetails.getUsername(), role, user.getId()));
         } catch (BadCredentialsException e) {
             log.warn("Invalid credentials for email: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");

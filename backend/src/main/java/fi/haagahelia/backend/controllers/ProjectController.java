@@ -13,6 +13,7 @@ import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.security.CustomUserDetails;
 import fi.haagahelia.backend.services.ProjectService;
 import fi.haagahelia.backend.model.ProjectMember;
+import fi.haagahelia.backend.model.Entry;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -114,6 +115,21 @@ public class ProjectController {
             List<ProjectMember> members = projectService.getProjectMembers(id, currentUser.getUser());
             return ResponseEntity.ok(members);
         } catch (Exception e) {
+            return ResponseEntity.status(404).build();
+        }
+    }
+
+    @GetMapping("/{id}/entries")
+    public ResponseEntity<?> getProjectEntries(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(403).build();
+        }
+
+        try {
+            List<Entry> entries = projectService.getProjectEntries(id, currentUser.getUser());
+            return ResponseEntity.ok(entries);
+        } catch (Exception e) {
+            logger.error("Error getting project entries", e);
             return ResponseEntity.status(404).build();
         }
     }

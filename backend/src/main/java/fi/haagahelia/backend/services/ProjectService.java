@@ -10,16 +10,20 @@ import fi.haagahelia.backend.model.ProjectMember;
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.ProjectMemberRepository;
 import fi.haagahelia.backend.repositories.ProjectRepository;
+import fi.haagahelia.backend.model.Entry;
+import fi.haagahelia.backend.repositories.EntryRepository;
 
 @Service
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMemberRepository projectMemberRepository;
+    private final EntryRepository entryRepository;
 
-    public ProjectService(ProjectRepository projectRepository, ProjectMemberRepository projectMemberRepository) {
+    public ProjectService(ProjectRepository projectRepository, ProjectMemberRepository projectMemberRepository, EntryRepository entryRepository) {
         this.projectRepository = projectRepository;
         this.projectMemberRepository = projectMemberRepository;
+        this.entryRepository = entryRepository;
     }
 
     public Project createProject(Project project, User creator) {
@@ -76,17 +80,19 @@ public class ProjectService {
     }
 
     public List<ProjectMember> getProjectMembers(Long projectId, User user) {
-        Project project = projectRepository.findById(projectId)
-            .orElseThrow(() -> new RuntimeException("Project not found"));
+        Project project = getProjectById(projectId, user);
+        return projectMemberRepository.findByProject(project);
+    }
 
-        boolean isMember = project.getMembers().stream()
-            .anyMatch(member -> member.getUser().getId().equals(user.getId()));
-
-        if (!isMember) {
-            throw new RuntimeException("User is not a member of this project");
-        }
-
-        return project.getMembers();
+    public List<Entry> getProjectEntries(Long projectId, User user) {
+        Project project = getProjectById(projectId, user);
+        
+        // Check if user is a member of the project
+        ProjectMember member = projectMemberRepository.findByProjectAndUser(project, user)
+            .orElseThrow(() -> new RuntimeException("User is not a member of this project"));
+        
+        // If user is the project creator (employer) or a member, return all project entries
+        return entryRepository.findByProject(project);
     }
 
     private String generateProjectCode() {

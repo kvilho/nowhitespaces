@@ -843,7 +843,125 @@
 .entries-list-container h3 {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    gap: 10px; 
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-dropdown,
+.sort-dropdown {
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: white;
+    color: #1976d2;
+    min-width: 120px;
+}
+
+.date-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.date-input {
+    padding: 0.5rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: white;
+    color: #1976d2;
+}
+
+.entry-project {
+    color: #1976d2;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.entry-status[data-status="pending"] {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.entry-status[data-status="approved"] {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+.entry-status[data-status="declined"] {
+    background-color: #ffebee;
+    color: #f44336;
+}
+
+/* Dark mode styles */
+.home-container.dark-mode .filter-dropdown,
+.home-container.dark-mode .sort-dropdown,
+.home-container.dark-mode .date-input {
+    background-color: #262626;
+    border-color: #444;
+    color: #63b0fd;
+}
+
+.home-container.dark-mode .entry-project {
+    color: #63b0fd;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-dropdown,
+    .sort-dropdown,
+    .date-input {
+        width: 100%;
+    }
+
+    .date-filters {
+        flex-direction: column;
+    }
+}
+
+.project-select {
+  margin-bottom: 15px;
+}
+
+.project-select label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+}
+
+.project-select select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.project-select select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+}
+
+.entry-popup-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 

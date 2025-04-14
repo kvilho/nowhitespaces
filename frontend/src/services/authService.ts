@@ -10,10 +10,12 @@ class AuthService {
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("email", response.data.email);
       localStorage.setItem("role", response.data.role);
+      localStorage.setItem("userId", response.data.userId);
       console.log('Stored auth data:', {
         token: response.data.token,
         email: response.data.email,
-        role: response.data.role
+        role: response.data.role,
+        userId: response.data.userId
       });
     }
     return response.data;
@@ -37,11 +39,17 @@ class AuthService {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
     localStorage.removeItem("role");
+    localStorage.removeItem("userId");
   }
 
   // Get the current user's token
   getToken() {
     return localStorage.getItem("token");
+  }
+
+  // Get the current user's ID
+  getUserId() {
+    return localStorage.getItem("userId");
   }
 
   // Check if the user is authenticated

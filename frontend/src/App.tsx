@@ -1,6 +1,6 @@
 // Testing GitHub Actions CI workflow
-import { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import Navbar from "./components/Navbar";
@@ -11,6 +11,8 @@ import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
 import ProjectDetails from "./pages/ProjectDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
+import EmployerDashboard from './components/EmployerDashboard';
+import Calendar from './components/Calendar';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -32,26 +34,16 @@ const App: React.FC = () => {
       <CssBaseline />
       <Router>
         <Navbar darkMode={darkMode} onDarkModeChange={handleDarkModeChange} />
-        <div className="main-content">
+        <div className={`main-content ${darkMode ? 'dark-mode' : ''}`}>
           <Routes>
+            <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Home darkMode={darkMode} />
-              </ProtectedRoute>
-            } />
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            } />
-            <Route path="/projects" element={
-              <ProtectedRoute>
-                <Projects />
-              </ProtectedRoute>
-            } />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </div>
       </Router>

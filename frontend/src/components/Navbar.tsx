@@ -14,6 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [userRole, setUserRole] = useState<string | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,11 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
     useEffect(() => {
         setIsAuthenticated(authService.isAuthenticated());
     }, [location.pathname]);
+
+    useEffect(() => {
+        const role = localStorage.getItem('userRole');
+        setUserRole(role);
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -73,6 +79,11 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
                             <Link to="/" className={`nav-link ${isActive('/')}`}>
                                 Home
                             </Link>
+                            {userRole === 'EMPLOYER' && (
+                                <Link to="/employer-dashboard" className={`nav-link ${isActive('/employer-dashboard')}`}>
+                                    Entry Approval
+                                </Link>
+                            )}
                             <Link to="/projects" className={`nav-link ${isActive('/projects')}`}>
                                 Projects
                             </Link>

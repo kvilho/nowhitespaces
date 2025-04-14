@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
 import { Entry } from "../types/Entry"; // Import the Entry type
 import config from '../config';
 import authService from '../services/authService';
-import axiosInstance from '../utils/axiosConfig';
+import projectService from '../services/projectService';
+import { Project } from '../services/projectService';
 
 // Common headers for all requests
 const getHeaders = () => {
@@ -18,6 +19,11 @@ const getHeaders = () => {
 const fetchConfig = {
   credentials: 'include' as RequestCredentials,
 };
+
+interface DeleteConfirmation {
+  show: boolean;
+  entryId: number | null;
+}
 
 const Calendar: React.FC = () => {
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -36,11 +42,18 @@ const Calendar: React.FC = () => {
   const [endTime, setEndTime] = useState<string>("16:00");
   const [entryText, setEntryText] = useState<string>("");
   const [editEntry, setEditEntry] = useState<Entry | null>(null);
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{show: boolean; entryId: number | null}>({
+  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmation>({
     show: false,
     entryId: null
   });
   const [sortMethod, setSortMethod] = useState<string>("date-asc");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterProject, setFilterProject] = useState<string>("all");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [project, setProject] = useState<Entry | null>(null);
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
@@ -48,13 +61,19 @@ const Calendar: React.FC = () => {
 
   useEffect(() => {
     fetchEntries();
+    fetchUserProjects();
   }, [currentMonth, currentYear]);
 
   const fetchEntries = async () => {
     try {
-
+      const userId = authService.getUserId();
+      if (!userId) {
+        console.error('No user ID found');
+        window.location.href = '/login';
+        return;
+      }
       const response = await fetch(
-        `${config.apiUrl}/api/entries?month=${currentMonth + 1}&year=${currentYear}`,
+        `${config.apiUrl}/api/entries?userId=${userId}&month=${currentMonth + 1}&year=${currentYear}`,
         {
           ...fetchConfig,
           method: 'GET',
@@ -63,7 +82,6 @@ const Calendar: React.FC = () => {
       );
       if (!response.ok) {
         if (response.status === 401) {
-          // Handle unauthorized access
           window.location.href = '/login';
           return;
         }
@@ -76,6 +94,105 @@ const Calendar: React.FC = () => {
     } catch (error) {
       console.error('Error fetching entries:', error);
     }
+  };
+
+  const fetchUserProjects = async () => {
+    try {
+      const projects = await projectService.getMyProjects();
+      setUserProjects(projects);
+      if (projects.length > 0) {
+        setSelectedProject(projects[0]); // Select first project by default
+      }
+    } catch (error) {
+      console.error('Error fetching user projects:', error);
+    }
+  };
+
+  const filterEntries = () => {
+    return entries.filter((entry) => {
+      const entryDate = formatDate(entry.entryStart as string | Date);
+      const startDateObj = startDate ? new Date(startDate + 'T00:00:00Z') : null;
+      const endDateObj = endDate ? new Date(endDate + 'T23:59:59Z') : null;
+
+      const matchesStatus = filterStatus === 'all' || entry.status === filterStatus;
+      const matchesProject = filterProject === 'all' || entry.project?.projectId.toString() === filterProject;
+      const matchesDateRange = (!startDateObj || entryDate >= startDateObj) && 
+                             (!endDateObj || entryDate <= endDateObj);
+
+      return matchesStatus && matchesProject && matchesDateRange;
+    });
+  };
+
+  const sortEntries = (entries: Entry[]) => {
+    switch (sortMethod) {
+      case "date-asc": // Sort by date in ascending order
+        return [...entries].sort((a, b) => {
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateA.getTime() - dateB.getTime();
+        });
+      case "date-desc": // Sort by date in descending order
+        return [...entries].sort((a, b) => {
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateB.getTime() - dateA.getTime();
+        });
+      case "status":
+        return [...entries].sort((a, b) => {
+          // First sort by status
+          const statusComparison = a.status.localeCompare(b.status);
+          if (statusComparison !== 0) {
+            return statusComparison;
+          }
+          // If statuses are the same, sort by date
+          const dateA = Array.isArray(a.entryStart)
+            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
+            : new Date(a.entryStart);
+          const dateB = Array.isArray(b.entryStart)
+            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
+            : new Date(b.entryStart);
+          return dateA.getTime() - dateB.getTime();
+        });
+      case "description": // Sort by description
+        return [...entries].sort((a, b) => a.entryDescription.localeCompare(b.entryDescription));
+      default:
+        return entries;
+    }
+  };
+
+  // Helper function to format date consistently
+  const formatDate = (date: string | Date | number[]): Date => {
+    if (Array.isArray(date)) {
+      return new Date(Date.UTC(date[0], date[1] - 1, date[2], date[3] || 0, date[4] || 0));
+    }
+    if (date instanceof Date) {
+      return date;
+    }
+    return new Date(date + 'Z'); // Ensure UTC
+  };
+
+  // Helper function to format time display
+  const formatTimeDisplay = (date: string | Date | number[]): string => {
+    const dateObj = formatDate(date);
+    return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  // Memoize filtered and sorted entries
+  const processedEntries = useMemo(() => {
+    return sortEntries(filterEntries());
+  }, [entries, filterStatus, filterProject, startDate, endDate, sortMethod]);
+
+  const getUniqueProjects = () => {
+    const projects = new Set(entries.map(entry => entry.project?.projectId).filter(Boolean));
+    return Array.from(projects);
   };
 
   const prevMonth = () => {
@@ -105,15 +222,24 @@ const Calendar: React.FC = () => {
       .toString()
       .padStart(2, "0")}-${selectedDate.getUTCDate().toString().padStart(2, "0")}`;
   
+    const userId = authService.getUserId();
+    if (!userId) {
+      console.error('No user ID found');
+      return;
+    }
+
+    if (!selectedProject) {
+      console.error('No project selected');
+      return;
+    }
+
     const entryData = {
       entryStart: `${formattedDate}T${startTime}:00`,
       entryEnd: `${formattedDate}T${endTime}:00`,
-      userId: 1,
       entryDescription: entryText,
       status: "PENDING",
-      user: {
-        id: 1,
-      },
+      userId: parseInt(userId),
+      projectId: selectedProject.projectId
     };
   
     try {
@@ -186,51 +312,6 @@ const Calendar: React.FC = () => {
     setDeleteConfirmation({ show: false, entryId: null });
   };
 
-  const sortEntries = (entries: Entry[]) => {
-    switch (sortMethod) {
-      case "date-asc": // Sort by date in ascending order
-        return [...entries].sort((a, b) => {
-          const dateA = Array.isArray(a.entryStart)
-            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
-            : new Date(a.entryStart);
-          const dateB = Array.isArray(b.entryStart)
-            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
-            : new Date(b.entryStart);
-          return dateA.getTime() - dateB.getTime();
-        });
-      case "date-desc": // Sort by date in descending order
-        return [...entries].sort((a, b) => {
-          const dateA = Array.isArray(a.entryStart)
-            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
-            : new Date(a.entryStart);
-          const dateB = Array.isArray(b.entryStart)
-            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
-            : new Date(b.entryStart);
-          return dateB.getTime() - dateA.getTime();
-        });
-      case "status":
-        return [...entries].sort((a, b) => {
-          // First sort by status
-          const statusComparison = a.status.localeCompare(b.status);
-          if (statusComparison !== 0) {
-            return statusComparison;
-          }
-          // If statuses are the same, sort by date
-          const dateA = Array.isArray(a.entryStart)
-            ? new Date(a.entryStart[0], a.entryStart[1] - 1, a.entryStart[2], a.entryStart[3] || 0, a.entryStart[4] || 0)
-            : new Date(a.entryStart);
-          const dateB = Array.isArray(b.entryStart)
-            ? new Date(b.entryStart[0], b.entryStart[1] - 1, b.entryStart[2], b.entryStart[3] || 0, b.entryStart[4] || 0)
-            : new Date(b.entryStart);
-          return dateA.getTime() - dateB.getTime();
-        });
-      case "description": // Sort by description
-        return [...entries].sort((a, b) => a.entryDescription.localeCompare(b.entryDescription));
-      default:
-        return entries;
-    }
-  };
-
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSortMethod(e.target.value);
   };
@@ -295,62 +376,110 @@ const Calendar: React.FC = () => {
 
       <div className="entries-list-container">
         <h3>
-          All Entries
-          <select
-            className="sort-dropdown"
-            value={sortMethod}
-            onChange={handleSortChange}
-          >
-            <option value="date-asc">Date (Ascending)</option>
-            <option value="date-desc">Date (Descending)</option>
-            <option value="status">Status</option>
-            <option value="description">Description</option>
-          </select>
+          My Entries
+          <div className="filters">
+            <select
+              className="filter-dropdown"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="DECLINED">Declined</option>
+            </select>
+
+            <select
+              className="filter-dropdown"
+              value={filterProject}
+              onChange={(e) => setFilterProject(e.target.value)}
+            >
+              <option value="all">All Projects</option>
+              {getUniqueProjects().map(id => (
+                <option key={id} value={id}>
+                  {entries.find(e => e.project?.projectId === id)?.project?.projectName}
+                </option>
+              ))}
+            </select>
+
+            <div className="date-filters">
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="date-input"
+              />
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="date-input"
+              />
+            </div>
+
+            <select
+              className="sort-dropdown"
+              value={sortMethod}
+              onChange={handleSortChange}
+            >
+              <option value="date-asc">Date (Ascending)</option>
+              <option value="date-desc">Date (Descending)</option>
+              <option value="status">Status</option>
+              <option value="description">Description</option>
+            </select>
+          </div>
         </h3>
         <div className="entries-list">
-          {sortEntries(entries).map((entry) => (
+          {processedEntries.map((entry: Entry) => (
             <div key={entry.entryId} className="entry">
               <div className="entry-date-wrapper">
                 <div>
                   <div className="entry-date">
-                    {Array.isArray(entry.entryStart)
-                      ? new Date(Date.UTC(
-                          entry.entryStart[0],
-                          entry.entryStart[1] - 1,
-                          entry.entryStart[2]
-                        )).toLocaleDateString()
-                      : new Date(entry.entryStart).toLocaleDateString()}
+                    {formatDate(entry.entryStart as string | Date).toLocaleDateString()}
                   </div>
                   <div className="entry-time">
-                    {Array.isArray(entry.entryStart)
-                      ? `${entry.entryStart[3]}:${entry.entryStart[4].toString().padStart(2, '0')}`
-                      : new Date(entry.entryStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    } - 
-                    {Array.isArray(entry.entryEnd)
-                      ? `${entry.entryEnd[3]}:${entry.entryEnd[4].toString().padStart(2, '0')}`
-                      : new Date(entry.entryEnd).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                    }
+                    {formatTimeDisplay(entry.entryStart as string | Date)} - {formatTimeDisplay(entry.entryEnd as string | Date)}
                   </div>
                 </div>
-                <div className="entry-status">{entry.status}</div>
+                <div className="entry-status" data-status={entry.status.toLowerCase()}>{entry.status}</div>
               </div>
               <div className="entry-text">{entry.entryDescription}</div>
+              {entry.project && (
+                <div className="entry-project">Project: {entry.project.projectName}</div>
+              )}
               <div className="entry-buttons">
                 <i className="bx bxs-edit-alt" onClick={() => handleEditEvent(entry)}></i>
                 <i className="bx bxs-message-alt-x" onClick={() => handleDeleteClick(entry.entryId)}></i>
               </div>
             </div>
           ))}
-          {entries.length === 0 && (
-            <div className="no-entries">No entries yet</div>
+          {filterEntries().length === 0 && (
+            <div className="no-entries">No entries found</div>
           )}
         </div>
       </div>
 
-      {/* Entry Popup - Now contains Start & End Time Inputs */}
+      {/* Entry Popup - Now contains Project Selection */}
       {showEntryPopup && (
         <div className="entry-popup">
           <h2>Work Hours</h2>
+          <div className="project-select">
+            <label>Project</label>
+            <select
+              value={selectedProject?.projectId || ''}
+              onChange={(e) => {
+                const project = userProjects.find(p => p.projectId === parseInt(e.target.value));
+                setSelectedProject(project || null);
+              }}
+              required
+            >
+              {userProjects.map((project) => (
+                <option key={project.projectId} value={project.projectId}>
+                  {project.projectName}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="time-input">
             <label>Start Time</label>
             <input
@@ -378,7 +507,7 @@ const Calendar: React.FC = () => {
               }
             }}
           />
-          <button className="entry-popup-btn" onClick={handleEntrySubmit}>
+          <button className="entry-popup-btn" onClick={handleEntrySubmit} disabled={!selectedProject}>
             {editEntry ? "Update Entry" : "Add Entry"}
           </button>
           <button className="close-entry-popup" onClick={() => setShowEntryPopup(false)}>

@@ -1,4 +1,5 @@
 import api from '../api/axios';
+import { Entry } from '../types/Entry';
 
 export interface Project {
   projectId: number;
@@ -49,6 +50,39 @@ class ProjectService {
       return response.data;
     } catch (error) {
       console.error('Error fetching project members:', error);
+      throw error;
+    }
+  }
+
+  async getProjectEntries(projectId: string): Promise<Entry[]> {
+    try {
+      const response = await api.get(`/api/projects/${projectId}/entries`);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching project entries:', error);
+      throw error;
+    }
+  }
+
+  async updateEntryStatus(entryId: number, status: string): Promise<void> {
+    try {
+      await api.put(`/api/entries/${entryId}/status`, { status });
+    } catch (error) {
+      console.error('Error updating entry status:', error);
+      throw error;
+    }
+  }
+
+  async createProject(projectData: {
+    projectName: string;
+    projectCode: string;
+    projectDescription: string;
+  }): Promise<Project> {
+    try {
+      const response = await api.post('/api/projects', projectData);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating project:', error);
       throw error;
     }
   }
