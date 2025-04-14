@@ -82,19 +82,19 @@ public class BackendApplication {
                 log.info("Created default employee user");
             }
 
-            // Create admin user
-        User adminUser = userRepository.findByEmail("admin@test.com")
-            .orElseGet(() -> {
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setEmail("admin@test.com");
-                admin.setPasswordHash(passwordEncoder.encode("admin"));
-                admin.setRole(employerRole);
-                admin.setOrganization(org);
-                admin.setFirstname("Admin");
-                admin.setLastname("User");
-                return userRepository.save(admin);
-            });
+            // Create admin user if it doesn't exist
+            if (!userRepository.findByEmail("admin@test.com").isPresent()) {
+                User adminUser = new User();
+                adminUser.setUsername("admin");
+                adminUser.setEmail("admin@test.com");
+                adminUser.setPasswordHash(passwordEncoder.encode("admin"));
+                adminUser.setRole(employerRole);
+                adminUser.setOrganization(org);
+                adminUser.setFirstname("Admin");
+                adminUser.setLastname("User");
+                userRepository.save(adminUser);
+                log.info("Created admin user");
+            }
 
             log.info("Development data initialization completed");
         };
