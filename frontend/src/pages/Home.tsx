@@ -1,4 +1,4 @@
-import { Typography, Paper, Button } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import Calendar from "../components/Calendar";
 import "../styles/home.css";
 
@@ -28,19 +28,20 @@ const Home: React.FC<HomeProps> = ({ darkMode }) => {
 
   return (
     <div className={`home-container ${darkMode ? "dark-mode" : ""}`}>
-      {/* Main content wrapper */}
       <div className="home-content">
-        {/* Left side: Calendar */}
-        <div className="calendar-section">
-          <Calendar />
+        <div className="dashboard-grid">
+          {/* Main Calendar Section */}
+          <div className="calendar-wrapper">
+            <Calendar />
+          </div>
         </div>
-       
       </div>
+      
       {isButtonVisible() && (
         <Button
           variant="contained"
           color="primary"
-          style={{ position: "fixed", bottom: 16, right: 16 }}
+          className="floating-action-button"
           onClick={handleLocationRequest}
         >
           Free time?
