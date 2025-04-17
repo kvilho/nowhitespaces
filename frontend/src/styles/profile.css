@@ -57,6 +57,17 @@
   margin: 1rem 0;
 }
 
+.profile-form {
+  margin-top: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 /* Dark mode styles */
 .dark-mode .profile-header {
   background: #1e1e1e;
@@ -90,7 +101,8 @@
     padding: 1.5rem;
   }
 
-  .profile-info {
+  .profile-info,
+  .form-grid {
     grid-template-columns: 1fr;
   }
 } 

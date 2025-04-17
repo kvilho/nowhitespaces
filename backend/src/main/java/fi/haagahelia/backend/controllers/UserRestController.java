@@ -137,4 +137,29 @@ public class UserRestController {
     public ResponseEntity<HourSummaryDTO> getUserHourSummaryAdmin(@PathVariable Long userId) {
         return ResponseEntity.ok(hourSummaryService.getUserHourSummary(userId));
     }
+
+    @Operation(summary = "Update current user's profile")
+    @PutMapping("/profile")
+    public ResponseEntity<User> updateCurrentUserProfile(
+            @RequestBody User userDetails,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User existingUser = currentUser.getUser();
+        
+        // Only allow updating specific fields
+        existingUser.setFirstname(userDetails.getFirstname());
+        existingUser.setLastname(userDetails.getLastname());
+        existingUser.setPhone(userDetails.getPhone());
+        
+        // Only update password if a new one is provided
+        if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
+            existingUser.setPasswordHash(userDetails.getPasswordHash());
+        }
+
+        User updatedUser = userRepository.save(existingUser);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

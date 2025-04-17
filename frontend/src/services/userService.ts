@@ -11,6 +11,7 @@ export interface UserProfile {
     roleName: string;
     roleDescription?: string;
   };
+  password?: string;
 }
 
 export interface ProjectHoursDTO {
@@ -26,9 +27,10 @@ export interface StatusSummaryDTO {
 }
 
 export interface HourSummaryDTO {
-  approved: StatusSummaryDTO;
-  pending: StatusSummaryDTO;
-  declined: StatusSummaryDTO;
+  totalHours: number;
+  approvedHours: number;
+  pendingHours: number;
+  rejectedHours: number;
 }
 
 class UserService {
