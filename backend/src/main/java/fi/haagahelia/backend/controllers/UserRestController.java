@@ -26,16 +26,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
-
+import fi.haagahelia.backend.dto.HourSummaryDTO;
+import fi.haagahelia.backend.security.CustomUserDetails;
+import fi.haagahelia.backend.service.HourSummaryService;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "users")
 public class UserRestController {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HourSummaryService hourSummaryService;
 
     /*  VIITTAUKSET ROOLI JA ORGANISAATIO REPOSITOREIHIN VALMIINA KUN NIITÄ TARVITAAN
     
@@ -49,7 +56,6 @@ public class UserRestController {
     
     // GET: Get all users
     @Schema (description = "Get all users")
-    @Tag(name = "users")    
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -57,7 +63,6 @@ public class UserRestController {
 
     // GET: Get users by ID
     @Schema(description = "Get user by ID")
-    @Tag(name = "users")
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById (@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
@@ -65,9 +70,18 @@ public class UserRestController {
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    // GET: Get current user's profile
+    @Operation(summary = "Get current user's profile")
+    @GetMapping("/profile")
+    public ResponseEntity<User> getCurrentUserProfile(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(currentUser.getUser());
+    }
+
     // POST: Add new user
     @Schema(description = "Add new user")
-    @Tag(name = "users")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
         User savedUser = userRepository.save(newUser);
@@ -76,7 +90,6 @@ public class UserRestController {
 
     // PUT: Update user by ID
     @Schema(description = "Update user by ID")
-    @Tag(name = "users")
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         Optional<User> optionalUser = userRepository.findById(id);
@@ -99,7 +112,6 @@ public class UserRestController {
 
     // DELETE: Delete user by ID
     @Schema(description = "Delete user by ID")
-    @Tag(name = "users")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         if (userRepository.existsById(id)) {
@@ -108,5 +120,21 @@ public class UserRestController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @Operation(summary = "Get user's hour summary")
+    @GetMapping("/profile/hours-summary")
+    public ResponseEntity<HourSummaryDTO> getUserHourSummary(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(currentUser.getUser().getId()));
+    }
+
+    @Operation(summary = "Get user's hour summary (Admin only)")
+    @GetMapping("/{userId}/hours-summary")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<HourSummaryDTO> getUserHourSummaryAdmin(@PathVariable Long userId) {
+        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(userId));
     }
 }
