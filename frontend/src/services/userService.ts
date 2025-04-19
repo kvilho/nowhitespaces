@@ -27,10 +27,9 @@ export interface StatusSummaryDTO {
 }
 
 export interface HourSummaryDTO {
-  totalHours: number;
-  approvedHours: number;
-  pendingHours: number;
-  rejectedHours: number;
+  approved: StatusSummaryDTO;
+  pending: StatusSummaryDTO;
+  declined: StatusSummaryDTO;
 }
 
 class UserService {

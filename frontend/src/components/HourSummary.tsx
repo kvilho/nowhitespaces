@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Typography, Grid, CircularProgress, Box } from '@mui/material';
+import { Typography, Grid, CircularProgress, Box } from '@mui/material';
 import { HourSummaryDTO, StatusSummaryDTO } from '../services/userService';
 import '../styles/hourSummary.css';
 
@@ -10,48 +10,52 @@ interface HourSummaryProps {
 }
 
 const StatusCard: React.FC<{ title: string; data: StatusSummaryDTO; status: string }> = ({ title, data, status }) => (
-  <Paper className={`summary-card ${status}`} elevation={2}>
-    <Typography variant="h6" className="card-title">
-      {title}
-    </Typography>
-    <Typography variant="h4" className="total-hours">
-      {data.totalHours.toFixed(1)}h
-    </Typography>
-    <Box className="breakdown-section">
-      <Typography variant="subtitle1" className="breakdown-title">
-        Monthly Breakdown
-      </Typography>
-      <div className="monthly-breakdown">
-        {Object.entries(data.monthlyBreakdown).map(([month, hours]) => (
-          <div key={month} className="month-item">
-            <Typography variant="body2" className="month-label">
-              {month}
-            </Typography>
-            <Typography variant="body1" className="month-hours">
-              {hours.toFixed(1)}h
-            </Typography>
+  <div className={`summary-card ${status}`}>
+    <span>
+      <div className="summary-content">
+        <Typography variant="h6" className="card-title">
+          {title}
+        </Typography>
+        <Typography variant="h4" className="total-hours">
+          {data.totalHours.toFixed(1)}h
+        </Typography>
+        <Box className="breakdown-section">
+          <Typography variant="subtitle1" className="breakdown-title">
+            Monthly Breakdown
+          </Typography>
+          <div className="monthly-breakdown">
+            {Object.entries(data.monthlyBreakdown).map(([month, hours]) => (
+              <div key={month} className="month-item">
+                <Typography variant="body2" className="month-label">
+                  {month}
+                </Typography>
+                <Typography variant="body1" className="month-hours">
+                  {hours.toFixed(1)}h
+                </Typography>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-    </Box>
-    <Box className="breakdown-section">
-      <Typography variant="subtitle1" className="breakdown-title">
-        Per Project
-      </Typography>
-      <div className="project-breakdown">
-        {data.perProject.map((project) => (
-          <div key={project.projectId} className="project-item">
-            <Typography variant="body2" className="project-name">
-              {project.projectName}
-            </Typography>
-            <Typography variant="body1" className="project-hours">
-              {project.hours.toFixed(1)}h
-            </Typography>
+        </Box>
+        <Box className="breakdown-section">
+          <Typography variant="subtitle1" className="breakdown-title">
+            Per Project
+          </Typography>
+          <div className="project-breakdown">
+            {data.perProject.map((project) => (
+              <div key={project.projectId} className="project-item">
+                <Typography variant="body2" className="project-name">
+                  {project.projectName}
+                </Typography>
+                <Typography variant="body1" className="project-hours">
+                  {project.hours.toFixed(1)}h
+                </Typography>
+              </div>
+            ))}
           </div>
-        ))}
+        </Box>
       </div>
-    </Box>
-  </Paper>
+    </span>
+  </div>
 );
 
 const HourSummary: React.FC<HourSummaryProps> = ({ summary, isLoading, error }) => {
@@ -65,9 +69,9 @@ const HourSummary: React.FC<HourSummaryProps> = ({ summary, isLoading, error }) 
 
   if (error) {
     return (
-      <Paper className="error-paper" elevation={2}>
+      <div className="error-paper">
         <Typography color="error">{error}</Typography>
-      </Paper>
+      </div>
     );
   }
 
