@@ -1,7 +1,7 @@
 /* --- MAIN CALENDAR CONTAINER --- */
 .calendar-app {
     width: 100%;
-    max-width: 1800px; /* Increased max-width */
+    max-width: 1800px;
     margin: 0 auto;
     padding: 2rem;
     display: flex;
@@ -9,25 +9,24 @@
 }
 
 .calendar-container {
-    flex: 1.2; /* Increased flex ratio */
+    flex: 2;
     background-color: #ffffff;
     padding: 2rem;
     border-radius: 1rem;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    min-width: 800px; /* Increased minimum width */
+    min-width: 700px;
+    height: 650px;
 }
 
 /* ENTRIES LIST CONTAINER */
 .entries-list-container {
-    flex: 0.8; /* Added flex ratio */
+    flex: 1;
     background: white;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 25px;
-    margin-top: 0; /* Removed top margin */
-    height: calc(100vh - 100px); /* Made container taller */
-    min-width: 500px; /* Added minimum width */
-    overflow: hidden;
+    min-width: 350px;
+    height: 650px;
     display: flex;
     flex-direction: column;
 }
@@ -47,6 +46,7 @@
     overflow-y: auto;
     padding-right: 10px;
     flex-grow: 1;
+    height: 500px;
 }
 
 /* Customize scrollbar */

@@ -6,6 +6,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2rem;
+    min-height: 100vh;
+    background-color: #f5f5f5;
 }
 
 /* Project Actions Card */
@@ -15,6 +17,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     padding: 2rem;
     height: fit-content;
+    margin-bottom: 2rem;
 }
 
 .project-actions h2 {
@@ -86,6 +89,15 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
+}
+
+.project-list-item {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.project-list-item:hover {
+    background-color: rgba(25, 118, 210, 0.04);
 }
 
 .project-card {
@@ -117,9 +129,10 @@
 }
 
 .project-description {
-    color: #444;
+    color: rgba(0, 0, 0, 0.6);
     font-size: 1rem;
     line-height: 1.5;
+    margin-bottom: 0.5rem;
 }
 
 /* Project Details Page */
@@ -161,7 +174,7 @@
     font-size: 2.25rem;
     font-weight: 600;
     color: #1976d2;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .project-meta {
@@ -376,6 +389,18 @@
     color: #bbb;
 }
 
+/* Project creator styles */
+.project-creator {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.875rem;
+}
+
+/* Owner badge styles */
+.owner-badge {
+    height: 20px;
+    font-size: 0.75rem;
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .projects-container {
@@ -414,5 +439,16 @@
 
     .members-list {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .project-actions {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .project-list-item {
+        padding: 1rem;
     }
 } 
