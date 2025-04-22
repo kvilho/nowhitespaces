@@ -35,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
+        String requestURI = request.getRequestURI();
+        logger.debug("Processing request for URI: {}", requestURI);
+
         // Extract the Authorization header
         final String authHeader = request.getHeader("Authorization");
         logger.debug("Authorization header: {}", authHeader);
@@ -44,14 +47,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Check if the Authorization header is missing or doesn't start with "Bearer "
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.debug("No valid Authorization header found");
+            logger.debug("No valid Authorization header found for URI: {}", requestURI);
             filterChain.doFilter(request, response);
             return;
         }
 
         // Extract the JWT token from the Authorization header
         jwt = authHeader.substring(7);
-        logger.debug("JWT token extracted: {}", jwt);
+        logger.debug("JWT token extracted: {}", jwt.substring(0, Math.min(10, jwt.length())) + "...");
 
         try {
             // Extract the username (email) from the token
@@ -62,11 +65,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 // Load the user details from the database
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-                logger.debug("User details loaded: {}", userDetails);
+                logger.debug("User details loaded for {}, Authorities: {}", userEmail, userDetails.getAuthorities());
 
                 // Validate the token
                 if (jwtUtil.validateToken(jwt, userDetails)) {
-                    logger.debug("Token is valid");
+                    logger.debug("Token is valid for user: {}", userEmail);
                     // Create an authentication token
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
@@ -79,13 +82,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     // Set the authentication in the SecurityContext
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                    logger.debug("Authentication set in SecurityContext");
+                    logger.debug("Authentication set in SecurityContext for user: {} with authorities: {}", 
+                               userEmail, userDetails.getAuthorities());
                 } else {
-                    logger.warn("Token validation failed");
+                    logger.warn("Token validation failed for user: {}", userEmail);
                 }
+            } else {
+                logger.debug("Skip authentication: userEmail={}, existing auth={}", 
+                           userEmail, SecurityContextHolder.getContext().getAuthentication());
             }
         } catch (Exception e) {
-            logger.error("Error processing JWT token", e);
+            logger.error("Error processing JWT token for URI: " + requestURI, e);
         }
 
         // Continue the filter chain

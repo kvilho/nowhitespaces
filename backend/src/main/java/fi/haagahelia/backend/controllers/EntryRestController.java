@@ -29,7 +29,6 @@ import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.UserRepository;
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.repositories.ProjectRepository;
-import fi.haagahelia.backend.model.ProjectMember;
 import fi.haagahelia.backend.repositories.ProjectMemberRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import fi.haagahelia.backend.security.CustomUserDetails;

@@ -6,22 +6,50 @@ export interface UserProfile {
   lastname: string;
   email: string;
   phone: string;
-  role: string;
+  role: {
+    roleId: number;
+    roleName: string;
+    roleDescription?: string;
+  };
+  password?: string;
+}
+
+export interface ProjectHoursDTO {
+  projectId: number;
+  projectName: string;
+  hours: number;
+}
+
+export interface StatusSummaryDTO {
+  totalHours: number;
+  monthlyBreakdown: { [key: string]: number };
+  perProject: ProjectHoursDTO[];
+}
+
+export interface HourSummaryDTO {
+  approved: StatusSummaryDTO;
+  pending: StatusSummaryDTO;
+  declined: StatusSummaryDTO;
 }
 
 class UserService {
   async getUserProfile() {
-    const response = await api.get("/api/user/profile");
+    const response = await api.get("/api/users/profile");
     return response.data;
   }
 
   async updateUserProfile(profile: UserProfile) {
-    const response = await api.put("/api/user/profile", profile);
+    const response = await api.put("/api/users/profile", profile);
     return response.data;
   }
 
   async getAllUsers() {
-    const response = await api.get("/api/user/all");
+    const response = await api.get("/api/users");
+    return response.data;
+  }
+
+  async getUserHourSummary(): Promise<HourSummaryDTO> {
+    const response = await api.get("/api/users/profile/hours-summary");
     return response.data;
   }
 }

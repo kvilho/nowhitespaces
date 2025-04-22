@@ -26,10 +26,18 @@ public class CustomCorsConfig {
         // Allow all common HTTP methods
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         
-        // Allow all headers
-        config.setAllowedHeaders(List.of("*"));
+        // Allow specific headers
+        config.setAllowedHeaders(List.of(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin",
+            "X-Requested-With",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers"
+        ));
         
-        // Allow credentials
+        // Allow credentials (important for JWT token)
         config.setAllowCredentials(true);
         
         // Expose necessary headers
@@ -46,7 +54,7 @@ public class CustomCorsConfig {
         config.setMaxAge(3600L);
                 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/api/**", config);
 
         return source;
     }

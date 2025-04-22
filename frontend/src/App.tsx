@@ -12,7 +12,7 @@ import Projects from "./pages/Projects";
 import ProjectDetails from "./pages/ProjectDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EmployerDashboard from './components/EmployerDashboard';
-import Calendar from './components/Calendar';
+import CalendarPage from './pages/CalendarPage';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -39,7 +39,7 @@ const App: React.FC = () => {
             <Route path="/" element={<Home darkMode={darkMode} />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<CalendarPage darkMode={darkMode} />} />
             <Route path="/employer-dashboard" element={<EmployerDashboard />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/projects/:id" element={<ProjectDetails />} />

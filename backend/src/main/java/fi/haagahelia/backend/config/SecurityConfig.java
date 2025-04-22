@@ -13,6 +13,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fi.haagahelia.backend.security.JwtAuthenticationFilter;
 import fi.haagahelia.backend.services.CustomUserDetailsService;
@@ -20,6 +22,7 @@ import fi.haagahelia.backend.services.CustomUserDetailsService;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     private final CustomUserDetailsService customUserDetailsService;
     private final CustomCorsConfig customCorsConfig;
@@ -52,31 +55,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        log.debug("Configuring security filter chain");
+        
         http
-            // Enable CORS with custom configuration
-            .cors(cors -> cors.configurationSource(customCorsConfig.getCorsConfigurationSource()))
-            // Disable CSRF since we're using JWT
+            .cors(cors -> {
+                log.debug("Configuring CORS");
+                cors.configurationSource(customCorsConfig.getCorsConfigurationSource());
+            })
             .csrf(csrf -> csrf.disable())
-            // Set session management to stateless
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // Define authorization rules
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/**", "/h2-console/**", "/api/users/register").permitAll() // Public endpoints
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Allow preflight requests
-                .requestMatchers("/api/projects/**").authenticated() // Allow authenticated users to access projects
-                .requestMatchers("/api/admin/**").hasRole("EMPLOYER")
-                .requestMatchers("/api/organizations/**").hasRole("EMPLOYER")
-                .requestMatchers("/api/users/**").authenticated()
-                .anyRequest().authenticated() // All other endpoints require authentication
+            .authorizeHttpRequests(auth -> {
+                log.debug("Configuring authorization rules");
+                auth
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/users/profile", "/api/users/profile/**").authenticated()
+                    .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USER", "EMPLOYEE")
+                    .anyRequest().authenticated();
+            })
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            // Add the authentication provider
-            .authenticationProvider(authenticationProvider())
-            // Add the JWT authentication filter before the UsernamePasswordAuthenticationFilter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            // Disable frame options for H2 console
-            .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
-
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        
+        log.debug("Security filter chain configuration completed");
         return http.build();
     }
 }

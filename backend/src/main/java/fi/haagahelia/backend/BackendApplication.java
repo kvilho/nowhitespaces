@@ -1,7 +1,5 @@
 package fi.haagahelia.backend;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +13,6 @@ import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.model.Role;
 import fi.haagahelia.backend.model.Roles;
 import fi.haagahelia.backend.model.User;
-import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.repositories.OrganizationRepository;
 import fi.haagahelia.backend.repositories.RoleRepository;
 import fi.haagahelia.backend.repositories.UserRepository;

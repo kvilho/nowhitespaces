@@ -1,9 +1,11 @@
 package fi.haagahelia.backend.model;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 import jakarta.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -19,7 +21,10 @@ public class User {
     @Column(name = "username", nullable = false, unique = true)
 	private String username;
 
+    @Column(name = "firstname")
     private String firstname;
+    
+    @Column(name = "lastname")
     private String lastname;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -31,6 +36,10 @@ public class User {
     @Column(name = "phone", unique = true) // Ensure phone number is unique (like you ;))
     private String phone;
 
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
@@ -40,8 +49,10 @@ public class User {
     private Organization organization;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("user")
+    @JsonIgnoreProperties({"user", "hibernateLazyInitializer", "handler"})
+    @JsonIgnore
     private List<ProjectMember> projectMembers = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -143,8 +154,16 @@ public class User {
     public List<ProjectMember> getProjectMembers() {
         return projectMembers;
     }
-
+    
     public void setProjectMembers(List<ProjectMember> projectMembers) {
         this.projectMembers = projectMembers;
+    }
+    
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }    

@@ -36,4 +36,15 @@ public interface EntryRepository extends JpaRepository<Entry, Long>  {
     List<Entry> findByOrganizationIdAndStatus(@Param("organizationId") Long organizationId, @Param("status") Status status);
 
     List<Entry> findByProject(Project project);
+
+    @Query("SELECT e FROM Entry e WHERE e.user.id = :userId AND e.status = :status")
+    List<Entry> findByUserIdAndStatus(@Param("userId") Long userId, @Param("status") Status status);
+
+    @Query("SELECT e FROM Entry e WHERE e.user.id = :userId AND e.status = :status AND e.entryStart BETWEEN :startDate AND :endDate")
+    List<Entry> findByUserIdAndStatusAndDateRange(
+        @Param("userId") Long userId,
+        @Param("status") Status status,
+        @Param("startDate") LocalDateTime startDate,
+        @Param("endDate") LocalDateTime endDate
+    );
 }
