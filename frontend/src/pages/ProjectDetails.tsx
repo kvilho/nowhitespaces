@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogActions,
   Chip,
-  Divider,
   Stack
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';

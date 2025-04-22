@@ -5,9 +5,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.UserRepository;
@@ -161,5 +162,54 @@ public class UserRestController {
 
         User updatedUser = userRepository.save(existingUser);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @Operation(summary = "Upload profile picture")
+    @PostMapping("/profile/picture")
+    public ResponseEntity<Void> uploadProfilePicture(
+            @RequestParam("file") MultipartFile file,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            User user = currentUser.getUser();
+            user.setProfilePicture(file.getBytes());
+            userRepository.save(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Operation(summary = "Get profile picture")
+    @GetMapping(value = "/profile/picture", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getProfilePicture(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        User user = currentUser.getUser();
+        if (user.getProfilePicture() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(user.getProfilePicture());
+    }
+
+    @Operation(summary = "Get user's profile picture")
+    @GetMapping(value = "/{userId}/picture", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getUserProfilePicture(@PathVariable Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty() || user.get().getProfilePicture() == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(user.get().getProfilePicture());
     }
 }

@@ -36,6 +36,10 @@ public class User {
     @Column(name = "phone", unique = true) // Ensure phone number is unique (like you ;))
     private String phone;
 
+    @Lob
+    @Column(name = "profile_picture")
+    private byte[] profilePicture;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "roleId") // Foreign key to the Role entity
     private Role role;
@@ -155,4 +159,11 @@ public class User {
         this.projectMembers = projectMembers;
     }
     
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
+    }
 }    
