@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.util.List;
 
@@ -131,6 +132,26 @@ public class ProjectController {
         } catch (Exception e) {
             logger.error("Error getting project entries", e);
             return ResponseEntity.status(404).build();
+        }
+    }
+
+    @DeleteMapping("/{projectId}/members/{memberId}")
+    public ResponseEntity<?> removeProjectMember(
+        @PathVariable Long projectId,
+        @PathVariable Long memberId,
+        @AuthenticationPrincipal CustomUserDetails currentUser
+    ) {
+        if (currentUser == null) {
+            logger.warn("Unauthorized access attempt to remove member");
+            return ResponseEntity.status(403).body("Unauthorized");
+        }
+
+        try {
+            projectService.removeMemberFromProject(projectId, memberId, currentUser.getUser());
+            return ResponseEntity.ok("Member removed successfully");
+        } catch (Exception e) {
+            logger.error("Error removing project member", e);
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.model.ProjectMember;
@@ -93,6 +94,23 @@ public class ProjectService {
         
         // If user is the project creator (employer) or a member, return all project entries
         return entryRepository.findByProject(project);
+    }
+
+    @Transactional
+    public void removeMemberFromProject(Long projectId, Long memberId, User currentUser) {
+        Project project = getProjectById(projectId, currentUser);
+
+        // Ensure the current user is the project creator
+        if (!project.getCreatedBy().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Only the project creator can remove members");
+        }
+
+        // Find the member to remove
+        ProjectMember member = projectMemberRepository.findById(memberId)
+            .orElseThrow(() -> new RuntimeException("Project member not found"));
+
+        // Remove the member
+        projectMemberRepository.delete(member);
     }
 
     private String generateProjectCode() {

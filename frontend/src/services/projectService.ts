@@ -15,7 +15,7 @@ export interface Project {
 }
 
 export interface ProjectMember {
-  id: number;
+  projectMemberId: number;
   user: {
     username: string;
     email: string;
@@ -83,6 +83,16 @@ class ProjectService {
       return response.data;
     } catch (error) {
       console.error('Error creating project:', error);
+      throw error;
+    }
+  }
+
+  async removeProjectMember(projectId: string, memberId: number): Promise<void> {
+    try {
+      console.log(`Removing member with ID ${memberId} from project ${projectId}`);
+      await api.delete(`/api/projects/${projectId}/members/${memberId}`);
+    } catch (error) {
+      console.error('Error removing project member:', error);
       throw error;
     }
   }

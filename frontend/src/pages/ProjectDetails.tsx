@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
@@ -21,6 +21,7 @@ import {
   Stack
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
 import projectService, { Project, ProjectMember } from '../services/projectService';
 import authService from '../services/authService';
 import { Entry } from '../types/Entry';
@@ -28,6 +29,7 @@ import '../styles/projectDetails.css';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +37,8 @@ const ProjectDetails: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [isEmployer, setIsEmployer] = useState(false);
   const [isCodeDialogOpen, setIsCodeDialogOpen] = useState(false);
+  const [isManageMembersDialogOpen, setIsManageMembersDialogOpen] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -80,6 +84,35 @@ const ProjectDetails: React.FC = () => {
     setIsCodeDialogOpen(false);
   };
 
+  const handleOpenManageMembersDialog = () => {
+    setIsManageMembersDialogOpen(true);
+  };
+
+  const handleCloseManageMembersDialog = () => {
+    setIsManageMembersDialogOpen(false);
+  };
+
+  const handleDeleteMember = async () => {
+    if (!memberToDelete || !memberToDelete.projectMemberId) {
+      console.error('Member to delete is not set or invalid');
+      return;
+    }
+
+    try {
+      await projectService.removeProjectMember(id!, memberToDelete.projectMemberId);
+      // Close both dialogs first
+      setMemberToDelete(null);
+      setIsManageMembersDialogOpen(false);
+      
+      // Fetch fresh data
+      const updatedMembers = await projectService.getProjectMembers(id!);
+      setMembers(updatedMembers);
+    } catch (err) {
+      console.error('Failed to delete member:', err);
+      setError('Failed to remove member. Please try again later.');
+    }
+  };
+
   const formatDateTime = (dateValue: string | Date) => {
     const date = typeof dateValue === 'string' ? new Date(dateValue) : dateValue;
     return date.toLocaleString();
@@ -116,7 +149,7 @@ const ProjectDetails: React.FC = () => {
         BACK TO PROJECTS
       </Button>
 
-      {/* Section 5 - Project Info Header */}
+      {/* Project Info Header */}
       <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
           {project?.projectName}
@@ -139,7 +172,7 @@ const ProjectDetails: React.FC = () => {
       </Paper>
 
       <Grid container spacing={3}>
-        {/* Section 6 - Project Members */}
+        {/* Project Members */}
         <Grid item xs={12} md={4}>
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%' }}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
@@ -147,7 +180,7 @@ const ProjectDetails: React.FC = () => {
             </Typography>
             <List>
               {members.map((member) => (
-                <ListItem key={member.id} disablePadding sx={{ mb: 2 }}>
+                <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
                   <ListItemText
                     primary={member.user.username}
                     secondary={
@@ -169,6 +202,7 @@ const ProjectDetails: React.FC = () => {
                 variant="contained"
                 fullWidth
                 sx={{ mt: 2 }}
+                onClick={handleOpenManageMembersDialog} // Open the dialog
               >
                 Manage Members
               </Button>
@@ -176,9 +210,9 @@ const ProjectDetails: React.FC = () => {
           </Paper>
         </Grid>
 
-        {/* Sections 7 & 8 - Entries */}
+        {/* Entries */}
         <Grid item xs={12} md={8}>
-          {/* Section 7 - Pending Entries */}
+          {/* Pending Entries */}
           <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
               Pending Entries
@@ -229,7 +263,7 @@ const ProjectDetails: React.FC = () => {
             </Box>
           </Paper>
 
-          {/* Section 8 - Processed Entries */}
+          {/* Processed Entries */}
           <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
               Processed Entries
@@ -296,6 +330,108 @@ const ProjectDetails: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsCodeDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Manage Members Dialog */}
+      <Dialog
+        open={isManageMembersDialogOpen}
+        onClose={handleCloseManageMembersDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ 
+          backgroundColor: 'primary.main', 
+          color: 'white',
+          fontWeight: 'bold'
+        }}>
+          Manage Members
+        </DialogTitle>
+        <DialogContent>
+          <List>
+            {members.map((member) => (
+              <ListItem 
+                key={member.projectMemberId} 
+                disablePadding 
+                sx={{ 
+                  mb: 2,
+                  p: 2,
+                  '&:hover': {
+                    backgroundColor: 'action.hover'
+                  }
+                }}
+              >
+                <ListItemText
+                  primary={member.user.username}
+                  secondary={
+                    <>
+                      <Typography variant="body2" color="text.secondary">
+                        Role: {member.role}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {member.user.email}
+                      </Typography>
+                    </>
+                  }
+                />
+                <IconButton
+                  color="error"
+                  onClick={() => setMemberToDelete(member)}
+                  sx={{ ml: 2 }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={handleCloseManageMembersDialog}
+            variant="outlined"
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={!!memberToDelete}
+        onClose={() => setMemberToDelete(null)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ 
+          backgroundColor: 'primary.main', 
+          color: 'white',
+          fontWeight: 'bold'
+        }}>
+          Confirm Member Removal
+        </DialogTitle>
+        <DialogContent sx={{ p: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Are you sure you want to remove <strong>{memberToDelete?.user.username}</strong> from the project?
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button 
+            onClick={() => setMemberToDelete(null)}
+            variant="outlined"
+            sx={{ mr: 1 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteMember}
+          >
+            Remove Member
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
