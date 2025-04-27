@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
-import { Entry } from "../types/Entry"; // Import the Entry type
+import { Entry } from "../services/entryService"; // Import the Entry type
 import config from '../config';
 import authService from '../services/authService';
 import projectService from '../services/projectService';
 import { Project } from '../services/projectService';
+import entryService from '../services/entryService';
 
 // Common headers for all requests
 const getHeaders = () => {
@@ -66,30 +67,7 @@ const Calendar: React.FC = () => {
 
   const fetchEntries = async () => {
     try {
-      const userId = authService.getUserId();
-      if (!userId) {
-        console.error('No user ID found');
-        window.location.href = '/login';
-        return;
-      }
-      const response = await fetch(
-        `${config.apiUrl}/api/entries?userId=${userId}&month=${currentMonth + 1}&year=${currentYear}`,
-        {
-          ...fetchConfig,
-          method: 'GET',
-          headers: getHeaders(),
-        }
-      );
-      if (!response.ok) {
-        if (response.status === 401) {
-          window.location.href = '/login';
-          return;
-        }
-        throw new Error('Failed to fetch entries');
-      }
-
-      const data = await response.json();
-      console.log('Fetched entries:', data);
+      const data = await entryService.getMyEntries();
       setEntries(data);
     } catch (error) {
       console.error('Error fetching entries:', error);
@@ -162,7 +140,7 @@ const Calendar: React.FC = () => {
           return dateA.getTime() - dateB.getTime();
         });
       case "description": // Sort by description
-        return [...entries].sort((a, b) => a.entryDescription.localeCompare(b.entryDescription));
+        return [...entries].sort((a, b) => (a.entryDescription || '').localeCompare(b.entryDescription || ''));
       default:
         return entries;
     }

@@ -36,6 +36,11 @@ class EntryService {
     const response = await api.get(`/api/entries/latest?limit=${limit}`);
     return response.data;
   }
+
+  async getMyEntries(): Promise<Entry[]> {
+    const response = await api.get('/api/entries/my');
+    return response.data;
+  }
 }
 
 export default new EntryService(); 

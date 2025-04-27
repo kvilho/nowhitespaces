@@ -259,4 +259,13 @@ public class EntryRestController {
             
         return ResponseEntity.ok(limitedEntries);
     }
+
+    // GET: Get entries for the authenticated user only
+    @GetMapping("/my")
+    public List<Entry> getMyEntries(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return List.of();
+        }
+        return entryRepository.findByUserId(currentUser.getUser().getId());
+    }
 }
