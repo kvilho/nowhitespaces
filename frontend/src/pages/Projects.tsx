@@ -3,15 +3,14 @@ import {
   Container, 
   Typography, 
   Paper, 
-  Box, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Divider, 
+  Box,  
   CircularProgress, 
   Alert,
   Chip,
-  Stack
+  Stack,
+  Grid,
+  Card,
+  CardContent
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ProjectActions from '../components/ProjectActions';
@@ -54,8 +53,7 @@ const Projects: React.FC = () => {
         component="h1" 
         gutterBottom 
         sx={{ 
-          color: '#1976d2',
-          fontWeight: 500,
+          fontWeight: 700,
           mb: 3
         }}
       >
@@ -63,52 +61,30 @@ const Projects: React.FC = () => {
       </Typography>
       
       {/* Project Actions Section */}
-      <Paper 
-        elevation={2} 
-        sx={{ 
-          p: 3,
-          borderRadius: 2,
-          mb: 3,
-          backgroundColor: '#fff'
-        }}
-      >
-        <Typography 
-          variant="h6" 
-          component="h2" 
-          gutterBottom 
-          sx={{ 
-            color: '#1976d2',
-            mb: 2
-          }}
+      <Paper elevation={3} sx={{ p: 3, borderRadius: 3, mb: 3 }}>
+        <Typography
+          variant="h6"
+          component="h2"
+          gutterBottom
+          sx={{ fontWeight: 700, mb: 2 }}
         >
           Project Actions
         </Typography>
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            gap: 2, 
-            flexDirection: { xs: 'column', sm: 'row' }
-          }}
-        >
-          <ProjectActions />
-        </Box>
+        <Card elevation={2} sx={{ borderRadius: 3, p: 2 }}>
+          <CardContent>
+            <ProjectActions />
+          </CardContent>
+        </Card>
       </Paper>
 
       {/* My Projects Section */}
-      <Paper 
-        elevation={2} 
-        sx={{ 
-          p: 3,
-          borderRadius: 2,
-          backgroundColor: '#fff'
-        }}
-      >
+      <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
         <Typography 
           variant="h6" 
           component="h2" 
           gutterBottom 
           sx={{ 
-            color: '#1976d2',
+            fontWeight: 700,
             mb: 2
           }}
         >
@@ -126,76 +102,42 @@ const Projects: React.FC = () => {
             No projects yet. Create a new project or join an existing one to get started.
           </Typography>
         ) : (
-          <List sx={{ width: '100%' }}>
-            {projects.map((project, index) => (
-              <React.Fragment key={project.projectId}>
-                <ListItem 
-                  alignItems="flex-start" 
-                  button 
+          <Grid container spacing={3}>
+            {projects.map((project) => (
+              <Grid item xs={12} sm={6} md={4} key={project.projectId}>
+                <Card
+                  elevation={2}
+                  sx={{ borderRadius: 3, height: '100%', cursor: 'pointer', transition: 'box-shadow 0.2s', '&:hover': { boxShadow: 6 } }}
                   onClick={() => navigate(`/projects/${project.projectId}`)}
-                  sx={{
-                    py: 2,
-                    '&:hover': {
-                      backgroundColor: 'rgba(25, 118, 210, 0.04)'
-                    }
-                  }}
                 >
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <Typography 
-                          variant="subtitle1" 
-                          component="span" 
-                          sx={{ 
-                            fontWeight: 600,
-                            color: '#1976d2'
-                          }}
-                        >
+                  <CardContent>
+                    <Stack spacing={1}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="h6" component="div" sx={{ fontWeight: 700, flexGrow: 1 }}>
                           {project.projectName}
                         </Typography>
                         {currentUserId && project.createdBy.id.toString() === currentUserId && (
-                          <Chip 
-                            label="Owner" 
-                            size="small" 
-                            color="primary" 
-                            variant="outlined"
-                            sx={{ 
-                              height: 20,
-                              fontSize: '0.75rem'
-                            }}
+                          <Chip
+                            label="Owner"
+                            size="small"
+                            color="primary"
+                            variant="filled"
+                            sx={{ height: 22, fontSize: '0.8rem', fontWeight: 700 }}
                           />
                         )}
                       </Box>
-                    }
-                    secondary={
-                      <Stack spacing={1}>
-                        <Typography 
-                          variant="body2" 
-                          color="text.secondary"
-                          sx={{ 
-                            display: 'block',
-                            mb: 0.5
-                          }}
-                        >
-                          {project.projectDescription || 'No description provided'}
-                        </Typography>
-                        <Typography 
-                          variant="caption" 
-                          color="text.secondary"
-                          sx={{ 
-                            display: 'block'
-                          }}
-                        >
-                          Created by: {project.createdBy.username}
-                        </Typography>
-                      </Stack>
-                    }
-                  />
-                </ListItem>
-                {index < projects.length - 1 && <Divider component="li" />}
-              </React.Fragment>
+                      <Typography variant="body2" color="text.secondary">
+                        {project.projectDescription || 'No description provided'}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        Created by: {project.createdBy.username}
+                      </Typography>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </List>
+          </Grid>
         )}
       </Paper>
     </Container>
