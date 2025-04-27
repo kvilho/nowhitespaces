@@ -18,7 +18,8 @@ import {
   DialogContent,
   DialogActions,
   Chip,
-  Stack
+  Stack,
+  Card
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -144,42 +145,216 @@ const ProjectDetails: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Button variant="outlined" onClick={() => window.history.back()} sx={{ mb: 3 }}>
+      <Button variant="outlined" onClick={() => window.history.back()} sx={{ mb: 3, borderRadius: 2 }}>
         BACK TO PROJECTS
       </Button>
 
-      {/* Project Info Header */}
-      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          {project?.projectName}
-        </Typography>
-        <Typography variant="body1" paragraph>
-          {project?.projectDescription}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Created by: {project?.createdBy.username}
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => setIsCodeDialogOpen(true)}
-          startIcon={<ContentCopyIcon />}
-          sx={{ mt: 2 }}
-        >
-          Project Code
-        </Button>
-      </Paper>
-
       <Grid container spacing={3}>
+        {/* Project Info */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+              {project?.projectName}
+            </Typography>
+            <Typography variant="body1" paragraph>
+              {project?.projectDescription}
+            </Typography>
+            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+              Created by: {project?.createdBy.username}
+            </Typography>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => setIsCodeDialogOpen(true)}
+              startIcon={<ContentCopyIcon />}
+              sx={{ mt: 2, borderRadius: 2 }}
+            >
+              Project Code
+            </Button>
+          </Paper>
+        </Grid>
+
         {/* Project Members */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+        <Grid item xs={12} sm={6} md={4}>
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 3, height: '100%' }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Project Members
             </Typography>
+            <Box sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
+              <List>
+                {members.map((member) => (
+                  <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
+                    <ListItemText
+                      primary={member.user?.username || 'Unknown user'}
+                      secondary={
+                        <>
+                          <Typography variant="body2" color="text.secondary">
+                            Role: {member.role}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {member.user?.email || 'No email'}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+            {isEmployer && (
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{ mt: 2, borderRadius: 2 }}
+                onClick={handleOpenManageMembersDialog}
+              >
+                Manage Members
+              </Button>
+            )}
+          </Paper>
+        </Grid>
+
+        {/* Pending Entries */}
+        <Grid item xs={12} sm={6} md={8}>
+          <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+              Pending Entries
+            </Typography>
+            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+              <Stack spacing={2}>
+                {entries
+                  .filter(entry => entry.status === 'PENDING')
+                  .map((entry) => (
+                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+                      <Stack spacing={1}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                          Unknown user
+                        </Typography>
+                        <Typography variant="body2">
+                          {entry.entryDescription || 'No description'}
+                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Time: {formatDateTime(entry.entryStart)}
+                          </Typography>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          </Typography>
+                        </Stack>
+                        {isEmployer && (
+                          <Stack direction="row" spacing={1} mt={1}>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              size="small"
+                              sx={{ borderRadius: 2, minWidth: 90 }}
+                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'APPROVED')}
+                            >
+                              Approve
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              size="small"
+                              sx={{ borderRadius: 2, minWidth: 90 }}
+                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
+                            >
+                              Decline
+                            </Button>
+                          </Stack>
+                        )}
+                      </Stack>
+                    </Card>
+                  ))}
+              </Stack>
+            </Box>
+          </Paper>
+
+          {/* Processed Entries */}
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+              Processed Entries
+            </Typography>
+            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+              <Stack spacing={2}>
+                {entries
+                  .filter(entry => entry.status !== 'PENDING')
+                  .map((entry) => (
+                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+                      <Stack spacing={1}>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                            Unknown user
+                          </Typography>
+                          <Chip
+                            label={entry.status}
+                            color={entry.status === 'APPROVED' ? 'success' : 'error'}
+                            size="small"
+                            sx={{ fontWeight: 700 }}
+                          />
+                        </Stack>
+                        <Typography variant="body2">
+                          {entry.entryDescription || 'No description'}
+                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Time: {formatDateTime(entry.entryStart)}
+                          </Typography>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </Card>
+                  ))}
+              </Stack>
+            </Box>
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Project Code Dialog */}
+      <Dialog
+        open={isCodeDialogOpen}
+        onClose={() => setIsCodeDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 700 }}>Project Code</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2, backgroundColor: 'background.default', borderRadius: 2 }}>
+            <Typography variant="h5" component="span" sx={{ mr: 2 }}>
+              {project?.projectCode}
+            </Typography>
+            <IconButton onClick={handleCopyProjectCode} size="small">
+              <ContentCopyIcon />
+            </IconButton>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={() => setIsCodeDialogOpen(false)} sx={{ borderRadius: 2 }}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Manage Members Dialog */}
+      <Dialog
+        open={isManageMembersDialogOpen}
+        onClose={handleCloseManageMembersDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 700, textAlign: 'center' }}>
+          Manage Members
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ p: 2 }}>
             <List>
               {members.map((member) => (
-                <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
+                <ListItem 
+                  key={member.projectMemberId} 
+                  disablePadding 
+                  sx={{ mb: 2, p: 2, borderRadius: 2, '&:hover': { backgroundColor: 'action.hover' } }}
+                >
                   <ListItemText
                     primary={member.user?.username || 'Unknown user'}
                     secondary={
@@ -193,201 +368,23 @@ const ProjectDetails: React.FC = () => {
                       </>
                     }
                   />
+                  <IconButton
+                    color="error"
+                    onClick={() => setMemberToDelete(member)}
+                    sx={{ ml: 2 }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
                 </ListItem>
               ))}
             </List>
-            {isEmployer && (
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{ mt: 2 }}
-                onClick={handleOpenManageMembersDialog} // Open the dialog
-              >
-                Manage Members
-              </Button>
-            )}
-          </Paper>
-        </Grid>
-
-        {/* Entries */}
-        <Grid item xs={12} md={8}>
-          {/* Pending Entries */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              Pending Entries
-            </Typography>
-            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <List>
-                {entries
-                  .filter(entry => entry.status === 'PENDING')
-                  .map((entry) => (
-                    <Paper key={entry.id} elevation={1} sx={{ mb: 2, p: 2 }}>
-                      <Stack spacing={1}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                          Unknown user
-                        </Typography>
-                        <Typography variant="body2">
-                          {entry.description || 'No description'}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.date)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Duration: {entry.hours}h
-                        </Typography>
-                        {isEmployer && (
-                          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
-                            <Button
-                              variant="contained"
-                              color="success"
-                              size="small"
-                              onClick={() => handleEntryStatusUpdate(entry.id, 'APPROVED')}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="error"
-                              size="small"
-                              onClick={() => handleEntryStatusUpdate(entry.id, 'DECLINED')}
-                            >
-                              Decline
-                            </Button>
-                          </Box>
-                        )}
-                      </Stack>
-                    </Paper>
-                  ))}
-              </List>
-            </Box>
-          </Paper>
-
-          {/* Processed Entries */}
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              Processed Entries
-            </Typography>
-            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <List>
-                {entries
-                  .filter(entry => entry.status !== 'PENDING')
-                  .map((entry) => (
-                    <Paper key={entry.id} elevation={1} sx={{ mb: 2, p: 2 }}>
-                      <Stack spacing={1}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                            Unknown user
-                          </Typography>
-                          <Chip
-                            label={entry.status}
-                            color={entry.status === 'APPROVED' ? 'success' : 'error'}
-                            size="small"
-                          />
-                        </Box>
-                        <Typography variant="body2">
-                          {entry.description || 'No description'}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.date)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Duration: {entry.hours}h
-                        </Typography>
-                      </Stack>
-                    </Paper>
-                  ))}
-              </List>
-            </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* Project Code Dialog */}
-      <Dialog
-        open={isCodeDialogOpen}
-        onClose={() => setIsCodeDialogOpen(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Project Code</DialogTitle>
-        <DialogContent>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            p: 2,
-            backgroundColor: 'background.default',
-            borderRadius: 1
-          }}>
-            <Typography variant="h5" component="span" sx={{ mr: 2 }}>
-              {project?.projectCode}
-            </Typography>
-            <IconButton onClick={handleCopyProjectCode} size="small">
-              <ContentCopyIcon />
-            </IconButton>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsCodeDialogOpen(false)}>Close</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Manage Members Dialog */}
-      <Dialog
-        open={isManageMembersDialogOpen}
-        onClose={handleCloseManageMembersDialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle sx={{ 
-          backgroundColor: 'primary.main', 
-          color: 'white',
-          fontWeight: 'bold'
-        }}>
-          Manage Members
-        </DialogTitle>
-        <DialogContent>
-          <List>
-            {members.map((member) => (
-              <ListItem 
-                key={member.projectMemberId} 
-                disablePadding 
-                sx={{ 
-                  mb: 2,
-                  p: 2,
-                  '&:hover': {
-                    backgroundColor: 'action.hover'
-                  }
-                }}
-              >
-                <ListItemText
-                  primary={member.user?.username || 'Unknown user'}
-                  secondary={
-                    <>
-                      <Typography variant="body2" color="text.secondary">
-                        Role: {member.role}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {member.user?.email || 'No email'}
-                      </Typography>
-                    </>
-                  }
-                />
-                <IconButton
-                  color="error"
-                  onClick={() => setMemberToDelete(member)}
-                  sx={{ ml: 2 }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
           <Button 
             onClick={handleCloseManageMembersDialog}
             variant="outlined"
+            sx={{ borderRadius: 2 }}
           >
             Close
           </Button>
@@ -401,26 +398,22 @@ const ProjectDetails: React.FC = () => {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle sx={{ 
-          backgroundColor: 'primary.main', 
-          color: 'white',
-          fontWeight: 'bold'
-        }}>
+        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 700, textAlign: 'center' }}>
           Confirm Member Removal
         </DialogTitle>
         <DialogContent sx={{ p: 3 }}>
-          <Typography variant="body1" sx={{ mb: 2 }}>
+          <Typography variant="body1" sx={{ mb: 2, textAlign: 'center' }}>
             Are you sure you want to remove <strong>{memberToDelete?.user?.username || 'Unknown user'}</strong> from the project?
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
             This action cannot be undone.
           </Typography>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
           <Button 
             onClick={() => setMemberToDelete(null)}
             variant="outlined"
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, borderRadius: 2 }}
           >
             Cancel
           </Button>
@@ -428,6 +421,7 @@ const ProjectDetails: React.FC = () => {
             variant="contained"
             color="error"
             onClick={handleDeleteMember}
+            sx={{ borderRadius: 2 }}
           >
             Remove Member
           </Button>
