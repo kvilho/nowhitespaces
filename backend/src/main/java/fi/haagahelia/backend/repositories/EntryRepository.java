@@ -47,4 +47,7 @@ public interface EntryRepository extends JpaRepository<Entry, Long>  {
         @Param("startDate") LocalDateTime startDate,
         @Param("endDate") LocalDateTime endDate
     );
+
+    @Query("SELECT e FROM Entry e WHERE e.user.id = :userId ORDER BY e.entryStart DESC")
+    List<Entry> findLatestByUserId(@Param("userId") Long userId);
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { 
   Container, 
   Typography, 
@@ -24,12 +24,11 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import projectService, { Project, ProjectMember } from '../services/projectService';
 import authService from '../services/authService';
-import { Entry } from '../types/Entry';
+import { Entry } from '../services/entryService';
 import '../styles/projectDetails.css';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -182,14 +181,14 @@ const ProjectDetails: React.FC = () => {
               {members.map((member) => (
                 <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
                   <ListItemText
-                    primary={member.user.username}
+                    primary={member.user?.username || 'Unknown user'}
                     secondary={
                       <>
                         <Typography variant="body2" color="text.secondary">
                           Role: {member.role}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {member.user.email}
+                          {member.user?.email || 'No email'}
                         </Typography>
                       </>
                     }
@@ -222,19 +221,19 @@ const ProjectDetails: React.FC = () => {
                 {entries
                   .filter(entry => entry.status === 'PENDING')
                   .map((entry) => (
-                    <Paper key={entry.entryId} elevation={1} sx={{ mb: 2, p: 2 }}>
+                    <Paper key={entry.id} elevation={1} sx={{ mb: 2, p: 2 }}>
                       <Stack spacing={1}>
                         <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                          {entry.user.username}
+                          Unknown user
                         </Typography>
                         <Typography variant="body2">
-                          {entry.entryDescription}
+                          {entry.description || 'No description'}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.entryStart)} - {formatDateTime(entry.entryEnd)}
+                          Time: {formatDateTime(entry.date)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          Duration: {entry.hours}h
                         </Typography>
                         {isEmployer && (
                           <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
@@ -242,7 +241,7 @@ const ProjectDetails: React.FC = () => {
                               variant="contained"
                               color="success"
                               size="small"
-                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'APPROVED')}
+                              onClick={() => handleEntryStatusUpdate(entry.id, 'APPROVED')}
                             >
                               Approve
                             </Button>
@@ -250,7 +249,7 @@ const ProjectDetails: React.FC = () => {
                               variant="contained"
                               color="error"
                               size="small"
-                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
+                              onClick={() => handleEntryStatusUpdate(entry.id, 'DECLINED')}
                             >
                               Decline
                             </Button>
@@ -273,11 +272,11 @@ const ProjectDetails: React.FC = () => {
                 {entries
                   .filter(entry => entry.status !== 'PENDING')
                   .map((entry) => (
-                    <Paper key={entry.entryId} elevation={1} sx={{ mb: 2, p: 2 }}>
+                    <Paper key={entry.id} elevation={1} sx={{ mb: 2, p: 2 }}>
                       <Stack spacing={1}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                            {entry.user.username}
+                            Unknown user
                           </Typography>
                           <Chip
                             label={entry.status}
@@ -286,13 +285,13 @@ const ProjectDetails: React.FC = () => {
                           />
                         </Box>
                         <Typography variant="body2">
-                          {entry.entryDescription}
+                          {entry.description || 'No description'}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.entryStart)} - {formatDateTime(entry.entryEnd)}
+                          Time: {formatDateTime(entry.date)}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          Duration: {entry.hours}h
                         </Typography>
                       </Stack>
                     </Paper>
@@ -362,14 +361,14 @@ const ProjectDetails: React.FC = () => {
                 }}
               >
                 <ListItemText
-                  primary={member.user.username}
+                  primary={member.user?.username || 'Unknown user'}
                   secondary={
                     <>
                       <Typography variant="body2" color="text.secondary">
                         Role: {member.role}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {member.user.email}
+                        {member.user?.email || 'No email'}
                       </Typography>
                     </>
                   }
@@ -411,7 +410,7 @@ const ProjectDetails: React.FC = () => {
         </DialogTitle>
         <DialogContent sx={{ p: 3 }}>
           <Typography variant="body1" sx={{ mb: 2 }}>
-            Are you sure you want to remove <strong>{memberToDelete?.user.username}</strong> from the project?
+            Are you sure you want to remove <strong>{memberToDelete?.user?.username || 'Unknown user'}</strong> from the project?
           </Typography>
           <Typography variant="body2" color="text.secondary">
             This action cannot be undone.

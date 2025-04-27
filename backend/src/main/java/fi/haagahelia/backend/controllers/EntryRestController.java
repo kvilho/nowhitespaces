@@ -239,4 +239,24 @@ public class EntryRestController {
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // GET: Get latest entries for current user
+    @Schema(description = "Get latest entries for current user")
+    @Tag(name = "entries")
+    @GetMapping("/latest")
+    public ResponseEntity<List<Entry>> getLatestEntries(
+            @RequestParam(defaultValue = "5") int limit,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        List<Entry> entries = entryRepository.findLatestByUserId(currentUser.getUser().getId());
+        List<Entry> limitedEntries = entries.stream()
+            .limit(limit)
+            .collect(java.util.stream.Collectors.toList());
+            
+        return ResponseEntity.ok(limitedEntries);
+    }
 }

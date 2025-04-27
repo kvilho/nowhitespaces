@@ -15,14 +15,12 @@ import {
 } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import userService, { UserProfile, HourSummaryDTO } from '../services/userService';
-import HourSummary from '../components/HourSummary';
+import userService, { UserProfile } from '../services/userService';
 import config from '../config';
 import '../styles/profile.css';
 
 const Profile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [hourSummary, setHourSummary] = useState<HourSummaryDTO | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -41,10 +39,7 @@ const Profile: React.FC = () => {
     const fetchProfileData = async () => {
       try {
         setIsLoading(true);
-        const [profileData, summaryData] = await Promise.all([
-          userService.getUserProfile(),
-          userService.getUserHourSummary()
-        ]);
+        const profileData = await userService.getUserProfile();
         setProfile(profileData);
         setFormData({
           firstname: profileData.firstname || '',
@@ -52,7 +47,6 @@ const Profile: React.FC = () => {
           phone: profileData.phone || '',
           password: ''
         });
-        setHourSummary(summaryData);
         
         // Fetch profile picture
         try {
@@ -251,74 +245,74 @@ const Profile: React.FC = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       fullWidth
-                      helperText="Leave blank to keep current password"
                     />
                   </Grid>
+                  <Grid item xs={12}>
+                    <Stack direction="row" spacing={2}>
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        disabled={isSaving}
+                      >
+                        {isSaving ? 'Saving...' : 'Save Changes'}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        onClick={() => setIsEditing(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </Stack>
+                  </Grid>
                 </Grid>
-                
-                {saveError && (
-                  <Alert severity="error" sx={{ mt: 2 }}>
-                    {saveError}
-                  </Alert>
-                )}
-                
-                <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    disabled={isSaving}
-                  >
-                    {isSaving ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setFormData({
-                        firstname: profile?.firstname || '',
-                        lastname: profile?.lastname || '',
-                        phone: profile?.phone || '',
-                        password: ''
-                      });
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </Box>
               </form>
             ) : (
-              <Stack spacing={2}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">Username</Typography>
-                  <Typography variant="body1">{profile?.username}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">Email</Typography>
-                  <Typography variant="body1">{profile?.email}</Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary">Phone</Typography>
-                  <Typography variant="body1">{profile?.phone}</Typography>
-                </Box>
-                <Button
-                  variant="contained"
-                  onClick={() => setIsEditing(true)}
-                  sx={{ alignSelf: 'flex-start', mt: 2 }}
-                >
-                  Edit Profile
-                </Button>
-              </Stack>
+              <Box>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      First Name
+                    </Typography>
+                    <Typography variant="body1">
+                      {profile?.firstname}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Last Name
+                    </Typography>
+                    <Typography variant="body1">
+                      {profile?.lastname}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Email
+                    </Typography>
+                    <Typography variant="body1">
+                      {profile?.email}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Phone
+                    </Typography>
+                    <Typography variant="body1">
+                      {profile?.phone}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      variant="contained"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit Profile
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Box>
             )}
           </Paper>
-        </Grid>
-
-        {/* Work Summary Section */}
-        <Grid item xs={12}>
-          <HourSummary 
-            summary={hourSummary}
-            isLoading={isLoading}
-            error={error}
-          />
         </Grid>
       </Grid>
     </Container>

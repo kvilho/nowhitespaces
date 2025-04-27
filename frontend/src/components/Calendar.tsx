@@ -233,13 +233,18 @@ const Calendar: React.FC = () => {
       return;
     }
 
+    const entryStart = `${formattedDate}T${startTime}:00`;
+    const entryEnd = `${formattedDate}T${endTime}:00`;
+    const hours = (new Date(entryEnd).getTime() - new Date(entryStart).getTime()) / 3600000;
+
     const entryData = {
-      entryStart: `${formattedDate}T${startTime}:00`,
-      entryEnd: `${formattedDate}T${endTime}:00`,
+      entryStart,
+      entryEnd,
       entryDescription: entryText,
       status: "PENDING",
       userId: parseInt(userId),
-      projectId: selectedProject.projectId
+      projectId: selectedProject.projectId,
+      hours
     };
   
     try {
