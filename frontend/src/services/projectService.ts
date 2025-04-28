@@ -1,5 +1,5 @@
 import api from '../api/axios';
-import { Entry } from '../types/Entry';
+import { Entry } from './entryService';
 
 export interface Project {
   projectId: number;
@@ -93,6 +93,24 @@ class ProjectService {
       await api.delete(`/api/projects/${projectId}/members/${memberId}`);
     } catch (error) {
       console.error('Error removing project member:', error);
+      throw error;
+    }
+  }
+
+  async updateProject(projectId: number, data: { projectName: string; projectDescription: string }): Promise<void> {
+    try {
+      await api.put(`/api/projects/${projectId}`, data);
+    } catch (error) {
+      console.error('Error updating project:', error);
+      throw error;
+    }
+  }
+
+  async deleteProject(projectId: number): Promise<void> {
+    try {
+      await api.delete(`/api/projects/${projectId}`);
+    } catch (error) {
+      console.error('Error deleting project:', error);
       throw error;
     }
   }

@@ -27,6 +27,7 @@ import projectService, { Project, ProjectMember } from '../services/projectServi
 import authService from '../services/authService';
 import { Entry } from '../services/entryService';
 import '../styles/projectDetails.css';
+import ManageProjectDialog from '../components/ManageProjectDialog';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,31 +40,28 @@ const ProjectDetails: React.FC = () => {
   const [isCodeDialogOpen, setIsCodeDialogOpen] = useState(false);
   const [isManageMembersDialogOpen, setIsManageMembersDialogOpen] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
+  const [isManageProjectDialogOpen, setIsManageProjectDialogOpen] = useState(false);
+
+  const fetchProjectData = async () => {
+    try {
+      setLoading(true);
+      const fetchedProject = await projectService.getProjectById(id!);
+      setProject(fetchedProject);
+      const fetchedMembers = await projectService.getProjectMembers(id!);
+      setMembers(fetchedMembers);
+      const currentUserId = authService.getUserId();
+      setIsEmployer(fetchedProject.createdBy.id.toString() === currentUserId);
+      const fetchedEntries = await projectService.getProjectEntries(id!);
+      setEntries(fetchedEntries);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load project details. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        setLoading(true);
-        const fetchedProject = await projectService.getProjectById(id!);
-        setProject(fetchedProject);
-        
-        const fetchedMembers = await projectService.getProjectMembers(id!);
-        setMembers(fetchedMembers);
-        
-        const currentUserId = authService.getUserId();
-        setIsEmployer(fetchedProject.createdBy.id.toString() === currentUserId);
-
-        const fetchedEntries = await projectService.getProjectEntries(id!);
-        setEntries(fetchedEntries);
-        
-        setError(null);
-      } catch (err) {
-        setError('Failed to load project details. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjectData();
   }, [id]);
 
@@ -82,10 +80,6 @@ const ProjectDetails: React.FC = () => {
       navigator.clipboard.writeText(project.projectCode);
     }
     setIsCodeDialogOpen(false);
-  };
-
-  const handleOpenManageMembersDialog = () => {
-    setIsManageMembersDialogOpen(true);
   };
 
   const handleCloseManageMembersDialog = () => {
@@ -171,6 +165,16 @@ const ProjectDetails: React.FC = () => {
             >
               Project Code
             </Button>
+            {isEmployer && (
+              <Button
+                variant="outlined"
+                color="primary"
+                sx={{ mt: 2, ml: 2, borderRadius: 2 }}
+                onClick={() => setIsManageProjectDialogOpen(true)}
+              >
+                Manage Project
+              </Button>
+            )}
           </Paper>
         </Grid>
 
@@ -201,16 +205,6 @@ const ProjectDetails: React.FC = () => {
                 ))}
               </List>
             </Box>
-            {isEmployer && (
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{ mt: 2, borderRadius: 2 }}
-                onClick={handleOpenManageMembersDialog}
-              >
-                Manage Members
-              </Button>
-            )}
           </Paper>
         </Grid>
 
@@ -335,6 +329,16 @@ const ProjectDetails: React.FC = () => {
           <Button onClick={() => setIsCodeDialogOpen(false)} sx={{ borderRadius: 2 }}>Close</Button>
         </DialogActions>
       </Dialog>
+
+      {/* Manage Project Dialog */}
+      <ManageProjectDialog
+        open={isManageProjectDialogOpen}
+        onClose={() => setIsManageProjectDialogOpen(false)}
+        project={project}
+        members={members}
+        setMembers={setMembers}
+        fetchProjectData={fetchProjectData}
+      />
 
       {/* Manage Members Dialog */}
       <Dialog
