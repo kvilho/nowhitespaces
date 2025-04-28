@@ -67,11 +67,16 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> {
                 log.debug("Configuring authorization rules");
                 auth
-                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/auth/**",
+                                    "/h2-console/**",
+                                    "/v3/api-docs/**",
+                                    "/swagger-ui/**",
+                                    "/swagger-ui.html").permitAll()
                     .requestMatchers("/api/users/profile", "/api/users/profile/**").authenticated()
                     .requestMatchers("/api/users/**").hasAnyRole("ADMIN", "USER", "EMPLOYEE")
                     .anyRequest().authenticated();
             })
+            .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )

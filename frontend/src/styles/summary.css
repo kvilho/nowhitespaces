@@ -1,0 +1,34 @@
+.summary-card {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 16px;
+  height: 100%;
+  transition: transform 0.2s ease-in-out;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+}
+
+.summary-card h6 {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.summary-card h4 {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+/* Dark mode support */
+.dark-mode .summary-card {
+  background-color: var(--dark-card-bg);
+}
+
+.dark-mode .summary-card h6 {
+  color: var(--dark-text-secondary);
+}
+
+.dark-mode .summary-card h4 {
+  color: var(--dark-text-primary);
+} 

@@ -19,13 +19,15 @@
     "@emotion/styled": "11.11.0",
     "@mui/icons-material": "5.15.10",
     "@mui/material": "5.15.10",
+    "@mui/x-date-pickers": "^6.19.4",
     "axios": "^1.8.4",
     "cookie": "0.6.0",
-    "date-fns": "3.3.1",
+    "date-fns": "^2.30.0",
     "react": "18.2.0",
     "react-big-calendar": "1.8.7",
     "react-dom": "18.2.0",
     "react-router-dom": "6.22.1",
+    "recharts": "^2.15.3",
     "serve": "14.2.1"
   },
   "devDependencies": {

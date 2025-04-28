@@ -2,8 +2,10 @@ package fi.haagahelia.backend.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.model.ProjectMember;
@@ -95,6 +97,23 @@ public class ProjectService {
         return entryRepository.findByProject(project);
     }
 
+    @Transactional
+    public void removeMemberFromProject(Long projectId, Long memberId, User currentUser) {
+        Project project = getProjectById(projectId, currentUser);
+
+        // Ensure the current user is the project creator
+        if (!project.getCreatedBy().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Only the project creator can remove members");
+        }
+
+        // Find the member to remove
+        ProjectMember member = projectMemberRepository.findById(memberId)
+            .orElseThrow(() -> new RuntimeException("Project member not found"));
+
+        // Remove the member
+        projectMemberRepository.delete(member);
+    }
+
     private String generateProjectCode() {
         // Generate a random 6-character numeric code
         String code;
@@ -110,5 +129,23 @@ public class ProjectService {
                 .map(ProjectMember::getProject)
                 .distinct()  // Ensure no duplicate projects
                 .toList();
+    }
+
+    // Update project name and description only
+    public Optional<Project> updateProject(Long id, Project updatedProject) {
+        return projectRepository.findById(id).map(project -> {
+            project.setProjectName(updatedProject.getProjectName());
+            project.setProjectDescription(updatedProject.getProjectDescription());
+            return projectRepository.save(project);
+        });
+    }
+
+    // Method to delete project
+    public boolean deleteProject(Long id) {
+        if (projectRepository.existsById(id)) {
+            projectRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }

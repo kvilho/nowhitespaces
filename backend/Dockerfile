@@ -9,5 +9,5 @@ RUN ./mvnw clean install -DskipTests
 RUN find ./target -type f -name '*.jar' -exec cp {} /opt/app/app.jar \; -quit
 FROM eclipse-temurin:17-jre-alpine
 COPY --from=builder /opt/app/*.jar /opt/app/
-ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}", "-jar", "/opt/app/app.jar"]
 EXPOSE 8080

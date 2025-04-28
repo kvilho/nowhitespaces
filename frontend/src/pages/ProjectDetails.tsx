@@ -18,13 +18,16 @@ import {
   DialogContent,
   DialogActions,
   Chip,
-  Stack
+  Stack,
+  Card
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
 import projectService, { Project, ProjectMember } from '../services/projectService';
 import authService from '../services/authService';
-import { Entry } from '../types/Entry';
+import { Entry } from '../services/entryService';
 import '../styles/projectDetails.css';
+import ManageProjectDialog from '../components/ManageProjectDialog';
 
 const ProjectDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -35,31 +38,30 @@ const ProjectDetails: React.FC = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [isEmployer, setIsEmployer] = useState(false);
   const [isCodeDialogOpen, setIsCodeDialogOpen] = useState(false);
+  const [isManageMembersDialogOpen, setIsManageMembersDialogOpen] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
+  const [isManageProjectDialogOpen, setIsManageProjectDialogOpen] = useState(false);
+
+  const fetchProjectData = async () => {
+    try {
+      setLoading(true);
+      const fetchedProject = await projectService.getProjectById(id!);
+      setProject(fetchedProject);
+      const fetchedMembers = await projectService.getProjectMembers(id!);
+      setMembers(fetchedMembers);
+      const currentUserId = authService.getUserId();
+      setIsEmployer(fetchedProject.createdBy.id.toString() === currentUserId);
+      const fetchedEntries = await projectService.getProjectEntries(id!);
+      setEntries(fetchedEntries);
+      setError(null);
+    } catch (err) {
+      setError('Failed to load project details. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchProjectData = async () => {
-      try {
-        setLoading(true);
-        const fetchedProject = await projectService.getProjectById(id!);
-        setProject(fetchedProject);
-        
-        const fetchedMembers = await projectService.getProjectMembers(id!);
-        setMembers(fetchedMembers);
-        
-        const currentUserId = authService.getUserId();
-        setIsEmployer(fetchedProject.createdBy.id.toString() === currentUserId);
-
-        const fetchedEntries = await projectService.getProjectEntries(id!);
-        setEntries(fetchedEntries);
-        
-        setError(null);
-      } catch (err) {
-        setError('Failed to load project details. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjectData();
   }, [id]);
 
@@ -78,6 +80,31 @@ const ProjectDetails: React.FC = () => {
       navigator.clipboard.writeText(project.projectCode);
     }
     setIsCodeDialogOpen(false);
+  };
+
+  const handleCloseManageMembersDialog = () => {
+    setIsManageMembersDialogOpen(false);
+  };
+
+  const handleDeleteMember = async () => {
+    if (!memberToDelete || !memberToDelete.projectMemberId) {
+      console.error('Member to delete is not set or invalid');
+      return;
+    }
+
+    try {
+      await projectService.removeProjectMember(id!, memberToDelete.projectMemberId);
+      // Close both dialogs first
+      setMemberToDelete(null);
+      setIsManageMembersDialogOpen(false);
+      
+      // Fetch fresh data
+      const updatedMembers = await projectService.getProjectMembers(id!);
+      setMembers(updatedMembers);
+    } catch (err) {
+      console.error('Failed to delete member:', err);
+      setError('Failed to remove member. Please try again later.');
+    }
   };
 
   const formatDateTime = (dateValue: string | Date) => {
@@ -112,102 +139,109 @@ const ProjectDetails: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Button variant="outlined" onClick={() => window.history.back()} sx={{ mb: 3 }}>
+      <Button variant="outlined" onClick={() => window.history.back()} sx={{ mb: 3, borderRadius: 2 }}>
         BACK TO PROJECTS
       </Button>
 
-      {/* Section 5 - Project Info Header */}
-      <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
-          {project?.projectName}
-        </Typography>
-        <Typography variant="body1" paragraph>
-          {project?.projectDescription}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Created by: {project?.createdBy.username}
-        </Typography>
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={() => setIsCodeDialogOpen(true)}
-          startIcon={<ContentCopyIcon />}
-          sx={{ mt: 2 }}
-        >
-          Project Code
-        </Button>
-      </Paper>
-
       <Grid container spacing={3}>
-        {/* Section 6 - Project Members */}
-        <Grid item xs={12} md={4}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
-              Project Members
+        {/* Project Info */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+              {project?.projectName}
             </Typography>
-            <List>
-              {members.map((member) => (
-                <ListItem key={member.id} disablePadding sx={{ mb: 2 }}>
-                  <ListItemText
-                    primary={member.user.username}
-                    secondary={
-                      <>
-                        <Typography variant="body2" color="text.secondary">
-                          Role: {member.role}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {member.user.email}
-                        </Typography>
-                      </>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
+            <Typography variant="body1" paragraph>
+              {project?.projectDescription}
+            </Typography>
+            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+              Created by: {project?.createdBy.username}
+            </Typography>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => setIsCodeDialogOpen(true)}
+              startIcon={<ContentCopyIcon />}
+              sx={{ mt: 2, borderRadius: 2 }}
+            >
+              Project Code
+            </Button>
             {isEmployer && (
               <Button
-                variant="contained"
-                fullWidth
-                sx={{ mt: 2 }}
+                variant="outlined"
+                color="primary"
+                sx={{ mt: 2, ml: 2, borderRadius: 2 }}
+                onClick={() => setIsManageProjectDialogOpen(true)}
               >
-                Manage Members
+                Manage Project
               </Button>
             )}
           </Paper>
         </Grid>
 
-        {/* Sections 7 & 8 - Entries */}
-        <Grid item xs={12} md={8}>
-          {/* Section 7 - Pending Entries */}
-          <Paper elevation={2} sx={{ p: 3, mb: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+        {/* Project Members */}
+        <Grid item xs={12} sm={6} md={4}>
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 3, height: '100%' }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
+              Project Members
+            </Typography>
+            <Box sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
+              <List>
+                {members.map((member) => (
+                  <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
+                    <ListItemText
+                      primary={member.user?.username || 'Unknown user'}
+                      secondary={
+                        <>
+                          <Typography variant="body2" color="text.secondary">
+                            Role: {member.role}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {member.user?.email || 'No email'}
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Pending Entries */}
+        <Grid item xs={12} sm={6} md={8}>
+          <Paper elevation={3} sx={{ p: 3, mb: 3, borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Pending Entries
             </Typography>
             <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <List>
+              <Stack spacing={2}>
                 {entries
                   .filter(entry => entry.status === 'PENDING')
                   .map((entry) => (
-                    <Paper key={entry.entryId} elevation={1} sx={{ mb: 2, p: 2 }}>
+                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
                       <Stack spacing={1}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                          {entry.user.username}
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                          Unknown user
                         </Typography>
                         <Typography variant="body2">
-                          {entry.entryDescription}
+                          {entry.entryDescription || 'No description'}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.entryStart)} - {formatDateTime(entry.entryEnd)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
-                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Time: {formatDateTime(entry.entryStart)}
+                          </Typography>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          </Typography>
+                        </Stack>
                         {isEmployer && (
-                          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                          <Stack direction="row" spacing={1} mt={1}>
                             <Button
                               variant="contained"
                               color="success"
                               size="small"
+                              sx={{ borderRadius: 2, minWidth: 90 }}
                               onClick={() => handleEntryStatusUpdate(entry.entryId, 'APPROVED')}
                             >
                               Approve
@@ -216,54 +250,58 @@ const ProjectDetails: React.FC = () => {
                               variant="contained"
                               color="error"
                               size="small"
+                              sx={{ borderRadius: 2, minWidth: 90 }}
                               onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
                             >
                               Decline
                             </Button>
-                          </Box>
+                          </Stack>
                         )}
                       </Stack>
-                    </Paper>
+                    </Card>
                   ))}
-              </List>
+              </Stack>
             </Box>
           </Paper>
 
-          {/* Section 8 - Processed Entries */}
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+          {/* Processed Entries */}
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Processed Entries
             </Typography>
             <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <List>
+              <Stack spacing={2}>
                 {entries
                   .filter(entry => entry.status !== 'PENDING')
                   .map((entry) => (
-                    <Paper key={entry.entryId} elevation={1} sx={{ mb: 2, p: 2 }}>
+                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
                       <Stack spacing={1}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <Typography variant="subtitle1" sx={{ fontWeight: 'medium' }}>
-                            {entry.user.username}
+                        <Stack direction="row" justifyContent="space-between" alignItems="center">
+                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                            Unknown user
                           </Typography>
                           <Chip
                             label={entry.status}
                             color={entry.status === 'APPROVED' ? 'success' : 'error'}
                             size="small"
+                            sx={{ fontWeight: 700 }}
                           />
-                        </Box>
+                        </Stack>
                         <Typography variant="body2">
-                          {entry.entryDescription}
+                          {entry.entryDescription || 'No description'}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Time: {formatDateTime(entry.entryStart)} - {formatDateTime(entry.entryEnd)}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
-                        </Typography>
+                        <Stack direction="row" spacing={2} alignItems="center">
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Time: {formatDateTime(entry.entryStart)}
+                          </Typography>
+                          <Typography variant="subtitle2" color="text.secondary">
+                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          </Typography>
+                        </Stack>
                       </Stack>
-                    </Paper>
+                    </Card>
                   ))}
-              </List>
+              </Stack>
             </Box>
           </Paper>
         </Grid>
@@ -276,16 +314,9 @@ const ProjectDetails: React.FC = () => {
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle>Project Code</DialogTitle>
+        <DialogTitle sx={{ textAlign: 'center', fontWeight: 700 }}>Project Code</DialogTitle>
         <DialogContent>
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            p: 2,
-            backgroundColor: 'background.default',
-            borderRadius: 1
-          }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2, backgroundColor: 'background.default', borderRadius: 2 }}>
             <Typography variant="h5" component="span" sx={{ mr: 2 }}>
               {project?.projectCode}
             </Typography>
@@ -294,8 +325,110 @@ const ProjectDetails: React.FC = () => {
             </IconButton>
           </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsCodeDialogOpen(false)}>Close</Button>
+        <DialogActions sx={{ justifyContent: 'center' }}>
+          <Button onClick={() => setIsCodeDialogOpen(false)} sx={{ borderRadius: 2 }}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Manage Project Dialog */}
+      <ManageProjectDialog
+        open={isManageProjectDialogOpen}
+        onClose={() => setIsManageProjectDialogOpen(false)}
+        project={project}
+        members={members}
+        setMembers={setMembers}
+        fetchProjectData={fetchProjectData}
+      />
+
+      {/* Manage Members Dialog */}
+      <Dialog
+        open={isManageMembersDialogOpen}
+        onClose={handleCloseManageMembersDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 700, textAlign: 'center' }}>
+          Manage Members
+        </DialogTitle>
+        <DialogContent>
+          <Box sx={{ p: 2 }}>
+            <List>
+              {members.map((member) => (
+                <ListItem 
+                  key={member.projectMemberId} 
+                  disablePadding 
+                  sx={{ mb: 2, p: 2, borderRadius: 2, '&:hover': { backgroundColor: 'action.hover' } }}
+                >
+                  <ListItemText
+                    primary={member.user?.username || 'Unknown user'}
+                    secondary={
+                      <>
+                        <Typography variant="body2" color="text.secondary">
+                          Role: {member.role}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {member.user?.email || 'No email'}
+                        </Typography>
+                      </>
+                    }
+                  />
+                  <IconButton
+                    color="error"
+                    onClick={() => setMemberToDelete(member)}
+                    sx={{ ml: 2 }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button 
+            onClick={handleCloseManageMembersDialog}
+            variant="outlined"
+            sx={{ borderRadius: 2 }}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={!!memberToDelete}
+        onClose={() => setMemberToDelete(null)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 700, textAlign: 'center' }}>
+          Confirm Member Removal
+        </DialogTitle>
+        <DialogContent sx={{ p: 3 }}>
+          <Typography variant="body1" sx={{ mb: 2, textAlign: 'center' }}>
+            Are you sure you want to remove <strong>{memberToDelete?.user?.username || 'Unknown user'}</strong> from the project?
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+            This action cannot be undone.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button 
+            onClick={() => setMemberToDelete(null)}
+            variant="outlined"
+            sx={{ mr: 1, borderRadius: 2 }}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleDeleteMember}
+            sx={{ borderRadius: 2 }}
+          >
+            Remove Member
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

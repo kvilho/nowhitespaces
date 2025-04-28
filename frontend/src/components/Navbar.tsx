@@ -82,6 +82,9 @@ const Navbar: React.FC<NavbarProps> = ({ darkMode, onDarkModeChange }) => {
                             <Link to="/calendar" className={`nav-link ${isActive('/calendar')}`}>
                                 Calendar
                             </Link>
+                            <Link to="/summary" className={`nav-link ${isActive('/summary')}`}>
+                                Summary
+                            </Link>
                             {userRole === 'EMPLOYER' && (
                                 <Link to="/employer-dashboard" className={`nav-link ${isActive('/employer-dashboard')}`}>
                                     Entry Approval
