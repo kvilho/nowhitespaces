@@ -1,89 +1,55 @@
 import React, { useState, useEffect } from "react";
-import { Typography, Button, Grid, Paper, Box } from "@mui/material";
+import { 
+  Typography, 
+  Button, 
+  Grid, 
+  Paper, 
+  Container,
+  Card,
+  CardContent,
+  Chip 
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import "../styles/home.css";
 import authService from "../services/authService";
+import entryService, { Entry } from "../services/entryService";
 import config from "../config";
-import { Entry } from "../types/Entry";
 
 interface HomeProps {
   darkMode: boolean;
 }
 
+const motivationalMessages = [
+  "Keep pushing forward! Every step counts. 💪",
+  "You're making progress, one day at a time! 🌟",
+  "Stay focused and keep moving forward! 🚀",
+  "Your dedication is inspiring! Keep it up! ✨",
+  "Every day is a new opportunity to shine! 🌈"
+];
+
 const Home: React.FC<HomeProps> = ({ darkMode }) => {
   const navigate = useNavigate();
-  const [userName, setUserName] = useState<string>("");
-  const [todayEntries, setTodayEntries] = useState<Entry[]>([]);
-  const [monthlySummary, setMonthlySummary] = useState({
-    approved: 0,
-    pending: 0,
-    declined: 0
-  });
+  const [allEntries, setAllEntries] = useState<Entry[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [motivationalMessage] = useState<string>(
+    motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)]
+  );
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      const userId = authService.getUserId();
-      if (!userId) {
-        navigate('/login');
-        return;
-      }
-
+    const fetchEntries = async () => {
       try {
-        // Fetch user profile
-        const userResponse = await fetch(`${config.apiUrl}/api/users/${userId}`, {
-          credentials: 'include',
-          headers: {
-            'Authorization': `Bearer ${authService.getToken()}`
-          }
-        });
-        const userData = await userResponse.json();
-        setUserName(userData.firstName || "User");
-
-        // Fetch today's entries
-        const today = new Date();
-        const entriesResponse = await fetch(
-          `${config.apiUrl}/api/entries?userId=${userId}&date=${today.toISOString().split('T')[0]}`,
-          {
-            credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${authService.getToken()}`
-            }
-          }
-        );
-        const entriesData = await entriesResponse.json();
-        setTodayEntries(entriesData);
-
-        // Fetch monthly summary
-        const currentMonth = today.getMonth() + 1;
-        const currentYear = today.getFullYear();
-        const summaryResponse = await fetch(
-          `${config.apiUrl}/api/entries/summary?userId=${userId}&month=${currentMonth}&year=${currentYear}`,
-          {
-            credentials: 'include',
-            headers: {
-              'Authorization': `Bearer ${authService.getToken()}`
-            }
-          }
-        );
-        const summaryData = await summaryResponse.json();
-        setMonthlySummary(summaryData);
+        const entries = await entryService.getMyEntries();
+        setAllEntries(entries);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching entries:', error);
       }
     };
 
-    fetchUserData();
-  }, [navigate]);
-
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const isButtonVisible = () => {
-    const now = new Date();
-    const currentHour = now.getUTCHours() + 2;
-    return currentHour >= 6 && currentHour < 21;
-  };
+    fetchEntries();
+  }, []);
 
   const handleLocationRequest = () => {
     if (navigator.geolocation) {
@@ -97,67 +63,133 @@ const Home: React.FC<HomeProps> = ({ darkMode }) => {
     }
   };
 
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'APPROVED':
+        return 'success';
+      case 'PENDING':
+        return 'warning';
+      case 'DECLINED':
+        return 'error';
+      default:
+        return 'default';
+    }
+  };
+
+  const formatTime = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
+  const filteredEntries = allEntries.filter(entry => {
+    const entryDate = new Date(entry.entryStart);
+    return (
+      entryDate.getFullYear() === selectedDate.getFullYear() &&
+      entryDate.getMonth() === selectedDate.getMonth() &&
+      entryDate.getDate() === selectedDate.getDate()
+    );
+  });
+
   return (
-    <>
-      <div className={`home-container ${darkMode ? "dark-mode" : ""}`}>
-        <div className="home-content">
-          <Typography variant="h4" className="welcome-message">
-            Welcome back, {userName}!
-          </Typography>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Grid container spacing={3}>
+        {/* Welcome Message */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
+              Welcome back!
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {motivationalMessage}
+            </Typography>
+          </Paper>
+        </Grid>
 
-          {/* Quick Access Buttons */}
-          <Grid item xs={12}>
-            <Paper elevation={3} className="dashboard-card">
-              <Typography variant="h6" className="card-title">
-                Quick Access
+        {/* Date Picker */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Select Date"
+                value={selectedDate}
+                onChange={(newValue: Date | null) => newValue && setSelectedDate(newValue)}
+                sx={{ width: '100%' }}
+              />
+            </LocalizationProvider>
+          </Paper>
+        </Grid>
+
+        {/* Today's Entries */}
+        <Grid item xs={12}>
+          <Paper elevation={3} sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              {selectedDate.toDateString() === new Date().toDateString() 
+                ? "Today's Entries" 
+                : `Entries for ${selectedDate.toLocaleDateString()}`}
+            </Typography>
+            {filteredEntries.length === 0 ? (
+              <Typography 
+                variant="body1" 
+                color="text.secondary" 
+                sx={{ textAlign: 'center', py: 4 }}
+              >
+                No entries for this date.
               </Typography>
-              <Box className="quick-access-buttons">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/calendar')}
-                  className="quick-access-button"
-                >
-                  Add New Entry
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/projects')}
-                  className="quick-access-button"
-                >
-                  View Projects
-                </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => navigate('/profile')}
-                  className="quick-access-button"
-                >
-                  Edit Profile
-                </Button>
-              </Box>
-            </Paper>
-          </Grid>
+            ) : (
+              <Grid container spacing={2}>
+                {filteredEntries.map((entry) => (
+                  <Grid item xs={12} key={entry.entryId}>
+                    <Card elevation={1} sx={{ borderRadius: 2 }}>
+                      <CardContent sx={{ p: 2 }}>
+                        <Grid container alignItems="center" spacing={2}>
+                          <Grid item xs>
+                            <Typography variant="body1" gutterBottom>
+                              {entry.entryDescription || 'No description'}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              {entry.project.projectName}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" display="block">
+                              {formatTime(entry.entryStart)} - {formatTime(entry.entryEnd)}
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <Chip
+                              label={entry.status}
+                              color={getStatusColor(entry.status)}
+                            />
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
 
-          {/* Motivational Message */}
-          <Typography variant="body1" className="motivational-message">
-            You're doing great! Keep up the good work! 💪
-          </Typography>
-        </div>
-      </div>
-
-      {isButtonVisible() && (
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ position: "fixed", bottom: 16, right: 16 }}
-          onClick={handleLocationRequest}
-        >
-          Free time?
-        </Button>
-      )}
-    </>
+      {/* Fixed "Free time?" button */}
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+          width: 120,
+          height: 50,
+          minWidth: 20,
+          boxShadow: 3
+        }}
+        onClick={handleLocationRequest}
+      >
+        Free time?
+      </Button>
+    </Container>
   );
 };
 
