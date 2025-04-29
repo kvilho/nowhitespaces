@@ -4,12 +4,12 @@
 [![Frontend CI](https://github.com/kvilho/nowhitespaces/actions/workflows/frontend.yml/badge.svg)](https://github.com/kvilho/nowhitespaces/actions/workflows/frontend.yml)
 
 # Hourbook
-Hourbook - Work Hour Management System
 
 <p align="center">
   <img src="./documents/hourbooklogo.png" alt="Logo" title="Logo" />
 </p>
 
+Hourbook - Work Hour Management System
 
 ## About the project
 This application is designed to help employers and employees track and manage work hours efficiently. It consists of a Java Spring Boot back-end that handles business logic, database interactions, and APIs, paired with a React front-end for a user-friendly interface. The system aims to streamline time tracking and reporting. 
