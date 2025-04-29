@@ -41,7 +41,7 @@ public class HourSummaryService {
         return new HourSummaryDTO.StatusSummaryDTO(totalHours, monthlyBreakdown, projectBreakdown);
     }
 
-    private double calculateTotalHours(List<Entry> entries) {
+    public double calculateTotalHours(List<Entry> entries) {
         return entries.stream()
                 .mapToDouble(entry -> {
                     LocalDateTime start = entry.getEntryStart();
@@ -52,7 +52,7 @@ public class HourSummaryService {
                 .sum();
     }
 
-    private Map<String, Double> calculateMonthlyBreakdown(List<Entry> entries) {
+    public Map<String, Double> calculateMonthlyBreakdown(List<Entry> entries) {
         Map<String, Double> monthlyHours = new HashMap<>();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM");
 
@@ -69,7 +69,7 @@ public class HourSummaryService {
         return monthlyHours;
     }
 
-    private List<HourSummaryDTO.ProjectHoursDTO> calculateProjectBreakdown(List<Entry> entries) {
+    public List<HourSummaryDTO.ProjectHoursDTO> calculateProjectBreakdown(List<Entry> entries) {
         Map<Long, ProjectSummary> projectSummaries = new HashMap<>();
 
         entries.forEach(entry -> {
