@@ -205,7 +205,6 @@ Using Swagger UI, you can:
     #### 📁 File Location
     `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
     
-    ---
     | Test Method                                      | Description                                                                 |
     |--------------------------------------------------|-----------------------------------------------------------------------------|
     | `testCreateProject`                              | Verifies successful project creation and creator is saved as member.       |
@@ -221,7 +220,7 @@ Using Swagger UI, you can:
     | `testUpdateProjectSuccess`                       | Validates successful updating of project fields.                           |
     | `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
     | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
-    ---
+
     </details>
   #### <details><summary>HourSummaryServiceTest</summary>
   
@@ -230,14 +229,12 @@ Using Swagger UI, you can:
     #### 📁 File Location
     `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
     
-    ---
     | Test Method                                      | Description                                                                 |
     |--------------------------------------------------|-----------------------------------------------------------------------------|
     | `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
     | `testCalculateMonthlyBreakdown_multipleEntriesAcrossMonths` | Checks that hours are correctly grouped and summed by month.             |
     | `testCalculateProjectBreakdown_multipleProjects` | Validates correct grouping and summing of hours by project.                |
-    ---
-  </details>
+    </details>
 </details>
 
 
