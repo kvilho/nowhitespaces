@@ -187,10 +187,7 @@ Using Swagger UI, you can:
 
 ## Testing 
 
-<details>
-<summary>Service class testing</summary>
-
-#### ▶️ Running the Tests
+### ▶️ Running the Tests
   
 You can run the tests using:
   
@@ -198,6 +195,10 @@ You can run the tests using:
 ```bash
 mvn test
 ```
+
+<details>
+<summary>Service class testing</summary>
+
 <details>
 <summary>ProjectServiceTest</summary>
   
