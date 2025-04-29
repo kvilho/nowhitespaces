@@ -200,7 +200,7 @@ mvn test
 <summary>Service class testing</summary>
 
 <details>
-<summary>ProjectServiceTest</summary>
+ - <summary>ProjectServiceTest</summary>
   
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,    entry retrieval, and project updates/deletions.
     
