@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.model.ProjectMember;
+import fi.haagahelia.backend.model.ProjectRole;
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.ProjectMemberRepository;
 import fi.haagahelia.backend.repositories.ProjectRepository;
@@ -40,7 +41,7 @@ public class ProjectService {
         ProjectMember projectMember = new ProjectMember();
         projectMember.setProject(savedProject);
         projectMember.setUser(creator);
-        projectMember.setRole("employer");
+        projectMember.setRole(ProjectRole.OWNER);
         projectMember.setJoinedAt(LocalDateTime.now());
         projectMemberRepository.save(projectMember);
 
@@ -62,7 +63,7 @@ public class ProjectService {
         ProjectMember member = new ProjectMember();
         member.setProject(project);
         member.setUser(user);
-        member.setRole("employee");
+        member.setRole(ProjectRole.EMPLOYEE);
         member.setJoinedAt(LocalDateTime.now());
         projectMemberRepository.save(member);
     }
@@ -93,7 +94,7 @@ public class ProjectService {
         ProjectMember member = projectMemberRepository.findByProjectAndUser(project, user)
             .orElseThrow(() -> new RuntimeException("User is not a member of this project"));
         
-        // If user is the project creator (employer) or a member, return all project entries
+        // If user is the project creator (owner) or a member, return all project entries
         return entryRepository.findByProject(project);
     }
 
@@ -101,9 +102,12 @@ public class ProjectService {
     public void removeMemberFromProject(Long projectId, Long memberId, User currentUser) {
         Project project = getProjectById(projectId, currentUser);
 
-        // Ensure the current user is the project creator
-        if (!project.getCreatedBy().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Only the project creator can remove members");
+        // Ensure the current user is the project owner
+        ProjectMember currentUserMember = projectMemberRepository.findByProjectAndUser(project, currentUser)
+            .orElseThrow(() -> new RuntimeException("User is not a member of this project"));
+
+        if (currentUserMember.getRole() != ProjectRole.OWNER) {
+            throw new RuntimeException("Only the project owner can remove members");
         }
 
         // Find the member to remove

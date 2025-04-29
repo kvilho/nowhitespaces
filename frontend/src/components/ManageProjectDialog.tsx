@@ -12,9 +12,10 @@ import {
   Divider,
   Box,
   Stack,
-  TextField
+  TextField,
+  Chip
 } from '@mui/material';
-import { Project, ProjectMember } from '../services/projectService';
+import { Project, ProjectMember, ProjectRole } from '../services/projectService';
 import projectService from '../services/projectService';
 import { useNavigate } from 'react-router-dom';
 
@@ -35,167 +36,108 @@ const ManageProjectDialog: React.FC<ManageProjectDialogProps> = ({
   setMembers,
   fetchProjectData,
 }) => {
-  // State for edit dialog
-  const [editOpen, setEditOpen] = useState(false);
-  const [editName, setEditName] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
+  const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
 
-  // Open edit dialog and prefill fields
-  const handleEditProject = () => {
-    setEditName(project?.projectName || '');
-    setEditDescription(project?.projectDescription || '');
-    setEditOpen(true);
-  };
+  const handleDeleteMember = async () => {
+    if (!project || !memberToDelete) return;
 
-  // Save changes to project info
-  const handleSaveEdit = async () => {
-    if (!project) return;
-    setSaving(true);
     try {
-      await projectService.updateProject(project.projectId, {
-        projectName: editName,
-        projectDescription: editDescription,
-      });
-      setEditOpen(false);
+      await projectService.removeProjectMember(project.projectId.toString(), memberToDelete.projectMemberId);
       await fetchProjectData();
-    } catch (err) {
-      // Optionally show error
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // Dummy handler for removing a member
-  const handleRemoveMember = (memberId: number) => {
-    // In the future, this will remove the member
-    console.log(`Remove member ${memberId}: Coming soon`);
-    setMembers([...members]); // Use the prop to avoid unused warning
-  };
-
-  // Real handler for closing the project
-  const handleCloseProject = async () => {
-    if (!project?.projectId) {
-      console.error("Project ID is missing");
-      return;
-    }
-    try {
-      await projectService.deleteProject(project.projectId);
-      navigate('/projects');
+      setMemberToDelete(null);
     } catch (error) {
-      console.error('Failed to delete project:', error);
+      console.error('Error removing member:', error);
+    }
+  };
+
+  const getRoleColor = (role: ProjectRole) => {
+    switch (role) {
+      case ProjectRole.OWNER:
+        return 'primary';
+      case ProjectRole.EMPLOYEE:
+        return 'secondary';
+      default:
+        return 'default';
     }
   };
 
   return (
     <>
-      <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ textAlign: 'center', fontWeight: 700 }}>Manage Project</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={onClose}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle sx={{ backgroundColor: 'primary.main', color: 'white', fontWeight: 700, textAlign: 'center' }}>
+          Manage Members
+        </DialogTitle>
         <DialogContent>
-          <Stack spacing={3}>
-            {/* Project Info */}
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Project Info</Typography>
-              <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                {project?.projectName || 'No project name'}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                {project?.projectDescription || 'No description'}
-              </Typography>
-              <Button variant="outlined" fullWidth sx={{ mt: 1 }} onClick={handleEditProject}>
-                Edit Project Info
-              </Button>
-            </Box>
-
-            <Divider />
-
-            {/* Members List */}
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>Project Members</Typography>
-              <List>
-                {members.map((member) => (
-                  <ListItem key={member.projectMemberId} secondaryAction={
-                    <Button variant="outlined" color="error" size="small" onClick={() => handleRemoveMember(member.projectMemberId)}>
+          <Box sx={{ p: 2 }}>
+            <List>
+              {members.map((member) => (
+                <ListItem
+                  key={member.projectMemberId}
+                  disablePadding
+                  sx={{ mb: 2, p: 2, borderRadius: 2, '&:hover': { backgroundColor: 'action.hover' } }}
+                >
+                  <ListItemText
+                    primary={member.user?.username || 'Unknown user'}
+                    secondary={
+                      <>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                          <Chip
+                            label={member.role}
+                            color={getRoleColor(member.role)}
+                            size="small"
+                          />
+                        </Box>
+                        <Typography variant="body2" color="text.secondary">
+                          {member.user?.email || 'No email'}
+                        </Typography>
+                      </>
+                    }
+                  />
+                  {member.role !== ProjectRole.OWNER && (
+                    <Button
+                      color="error"
+                      onClick={() => setMemberToDelete(member)}
+                      sx={{ ml: 2 }}
+                    >
                       Remove
                     </Button>
-                  }>
-                    <ListItemText
-                      primary={member.user?.username || 'Unknown user'}
-                      secondary={`Role: ${member.role}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
-
-            <Divider />
-
-            {/* Close Project */}
-            <Box>
-              <Button
-                variant="contained"
-                color="error"
-                fullWidth
-                sx={{ mt: 4, borderRadius: 2 }}
-                onClick={handleCloseProject}
-              >
-                Close Project
-              </Button>
-            </Box>
-          </Stack>
+                  )}
+                </ListItem>
+              ))}
+            </List>
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} color="primary" variant="outlined" sx={{ borderRadius: 2 }}>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            sx={{ borderRadius: 2 }}
+          >
             Close
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Edit Project Info Dialog */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ fontWeight: 700, textAlign: 'center' }}>Edit Project Info</DialogTitle>
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={!!memberToDelete}
+        onClose={() => setMemberToDelete(null)}
+      >
+        <DialogTitle>Confirm Removal</DialogTitle>
         <DialogContent>
-          <Stack spacing={3} sx={{ mt: 1 }}>
-            <TextField
-              label="Project Name"
-              value={editName}
-              onChange={e => setEditName(e.target.value)}
-              fullWidth
-              autoFocus
-              variant="outlined"
-              sx={{ borderRadius: 2 }}
-            />
-            <TextField
-              label="Project Description"
-              value={editDescription}
-              onChange={e => setEditDescription(e.target.value)}
-              fullWidth
-              multiline
-              minRows={2}
-              variant="outlined"
-              sx={{ borderRadius: 2 }}
-            />
-          </Stack>
+          <Typography>
+            Are you sure you want to remove {memberToDelete?.user?.username} from the project?
+          </Typography>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
-          <Button
-            onClick={() => setEditOpen(false)}
-            variant="outlined"
-            sx={{ borderRadius: 2, mr: 1 }}
-            disabled={saving}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveEdit}
-            variant="contained"
-            color="primary"
-            sx={{ borderRadius: 2 }}
-            disabled={saving || !editName.trim()}
-          >
-            Save Changes
-          </Button>
+        <DialogActions>
+          <Button onClick={() => setMemberToDelete(null)}>Cancel</Button>
+          <Button onClick={handleDeleteMember} color="error">Remove</Button>
         </DialogActions>
       </Dialog>
     </>

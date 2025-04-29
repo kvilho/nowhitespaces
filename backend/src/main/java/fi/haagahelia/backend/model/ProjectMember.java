@@ -22,14 +22,16 @@ public class ProjectMember {
     @JsonIgnoreProperties({"projectMembers", "passwordHash"})
     private User user;
 
-    private String role;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ProjectRole role;
 
     private LocalDateTime joinedAt;
 
     // Constructors
     public ProjectMember() {}
 
-    public ProjectMember(long projectMemberId, Project project, User user, String role, LocalDateTime joinedAt) {
+    public ProjectMember(long projectMemberId, Project project, User user, ProjectRole role, LocalDateTime joinedAt) {
         this.projectMemberId = projectMemberId;
         this.project = project;
         this.user = user;
@@ -62,11 +64,11 @@ public class ProjectMember {
         this.user = user;
     }
 
-    public String getRole() {
+    public ProjectRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ProjectRole role) {
         this.role = role;
     }
 

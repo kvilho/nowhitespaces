@@ -199,20 +199,32 @@ public class ProjectServiceTest {
         memberToRemove.setUser(memberUser);
 
         Project testProject = new Project();
+        testProject.setProjectId(1L); 
         testProject.setProjectCode("P12345");
         testProject.setProjectName("Test Project");
 
         User creatorUser = new User();
         creatorUser.setId(1L);
+
         testProject.setCreatedBy(creatorUser);
         testProject.setMembers(new ArrayList<>());
-        testProject.getMembers().add(memberToRemove);
+
+        User memberUser = new User();
+        memberUser.setId(2L);
+
+        ProjectMember memberToRemove = new ProjectMember();
+        memberToRemove.setProjectMemberId(2L); // Sama ID jota haemme
+        memberToRemove.setUser(memberUser);
+        memberToRemove.setProject(testProject);
 
         // Setup creator member
         ProjectMember creatorProjectMember = new ProjectMember();
         creatorProjectMember.setProjectMemberId(1L);
         creatorProjectMember.setUser(creatorUser);
+        creatorProjectMember.setProject(testProject);
+
         testProject.getMembers().add(creatorProjectMember);
+        testProject.getMembers().add(memberToRemove);
 
         // Mock behavior for project and project member repositories
         when(projectRepository.findById(1L)).thenReturn(Optional.of(testProject));
@@ -224,6 +236,8 @@ public class ProjectServiceTest {
         // Verify that the member was deleted from the repository
         verify(projectMemberRepository, times(1)).delete(memberToRemove);
     }
+
+
 
     /**
      * Test case for removing a member from the project as a non-creator.
