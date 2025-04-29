@@ -189,6 +189,15 @@ Using Swagger UI, you can:
 
 ### <details><summary>Service class testing</summary>
 
+#### ▶️ Running the Tests
+
+You can run the tests using:
+
+**Maven:**
+```bash
+mvn test
+```
+
 #### ProjectServiceTest
 
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management, entry retrieval, and project updates/deletions.
@@ -196,14 +205,6 @@ This document provides an overview of the unit tests implemented for the `Projec
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
 
-#### ▶️ Running the Tests
-
-You can run these tests using:
-
-**Maven:**
-```bash
-mvn test
-```
 ---
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
@@ -229,14 +230,6 @@ This document provides an overview of the unit tests for the `HourSummaryService
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
 
-#### ▶️ Running the Tests
-
-You can run the tests using:
-
-**Maven:**
-```bash
-mvn test
-```
 ---
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
