@@ -189,7 +189,7 @@ Using Swagger UI, you can:
 
 ### <details><summary>Service class testing</summary>
 
-#### ProjectServiceTest – Unit Test Documentation
+#### ProjectServiceTest
 
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management, entry retrieval, and project updates/deletions.
 
@@ -220,8 +220,34 @@ mvn test
 | `testUpdateProjectSuccess`                       | Validates successful updating of project fields.                           |
 | `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
 | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
+---
+
+# HourSummaryServiceTest
+
+This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
+
+## 📁 File Location
+`backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
+
+## ▶️ Running the Tests
+
+You can run the tests using:
+
+**Maven:**
+```bash
+mvn test
+```
+---
+| Test Method                                      | Description                                                                 |
+|--------------------------------------------------|-----------------------------------------------------------------------------|
+| `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
+| `testCalculateMonthlyBreakdown_multipleEntriesAcrossMonths` | Checks that hours are correctly grouped and summed by month.             |
+| `testCalculateProjectBreakdown_multipleProjects` | Validates correct grouping and summing of hours by project.                |
+---
 
 </details>
+
+
 
 ## Team Members
 - Vilho Karhu https://github.com/kvilho
