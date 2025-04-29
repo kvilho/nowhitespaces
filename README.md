@@ -205,7 +205,8 @@ This document provides an overview of the unit tests implemented for the `Projec
     
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
-<br>
+
+---
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
 | `testCreateProject`                              | Verifies successful project creation and creator is saved as member.       |
@@ -230,7 +231,8 @@ This document provides an overview of the unit tests for the `HourSummaryService
     
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
-<br>
+
+---
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
 | `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
