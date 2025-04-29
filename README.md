@@ -187,6 +187,16 @@ Using Swagger UI, you can:
 
 ## 🛠 Testing 
 
+## ✅ Prerequisites
+
+Ensure the following are available in your project setup before running the tests:
+
+- JDK 17 or compatible version
+- Maven or Gradle (for dependency management)
+- JUnit 5
+- Mockito
+- Spring Boot Test dependencies
+
 ### ▶️ Running the Tests
   
 You can run the tests using:
