@@ -199,15 +199,13 @@ mvn test
 <details>
 <summary>Service class testing</summary>
 
----
-
 ### ProjectServiceTest
 
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,    entry retrieval, and project updates/deletions.
     
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
-    
+<br>
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
 | `testCreateProject`                              | Verifies successful project creation and creator is saved as member.       |
@@ -232,7 +230,7 @@ This document provides an overview of the unit tests for the `HourSummaryService
     
 #### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
-    
+<br>
 | Test Method                                      | Description                                                                 |
 |--------------------------------------------------|-----------------------------------------------------------------------------|
 | `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
