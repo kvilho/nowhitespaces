@@ -187,14 +187,14 @@ Using Swagger UI, you can:
 
 ## Testing 
 
-### Service class testing 
+### <details><summary>Service class testing</summary>
 
 #### ProjectServiceTest – Unit Test Documentation
 
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management, entry retrieval, and project updates/deletions.
 
 #### 📁 File Location
-`src/test/java/fi/haagahelia/backend/ProjectServiceTest.java`
+`backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
 
 #### ▶️ Running the Tests
 
@@ -220,6 +220,8 @@ mvn test
 | `testUpdateProjectSuccess`                       | Validates successful updating of project fields.                           |
 | `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
 | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
+
+</details>
 
 ## Team Members
 - Vilho Karhu https://github.com/kvilho
