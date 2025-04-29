@@ -222,14 +222,14 @@ mvn test
 | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
 ---
 
-# HourSummaryServiceTest
+#### HourSummaryServiceTest
 
 This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
 
-## 📁 File Location
+#### 📁 File Location
 `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
 
-## ▶️ Running the Tests
+#### ▶️ Running the Tests
 
 You can run the tests using:
 
