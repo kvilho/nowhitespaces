@@ -185,7 +185,7 @@ Using Swagger UI, you can:
 
 ---
 
-## Testing 
+## 🛠 Testing 
 
 ### ▶️ Running the Tests
   
