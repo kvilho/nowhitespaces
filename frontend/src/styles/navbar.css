@@ -26,6 +26,13 @@ body {
     box-sizing: border-box;
 }
 
+.navbar-logo {
+    height: 40px;
+    width: 26px;
+    margin-right: 1px;
+    vertical-align: middle;
+}
+
 .navbar-container {
     max-width: 1400px;
     margin: 0 auto;
