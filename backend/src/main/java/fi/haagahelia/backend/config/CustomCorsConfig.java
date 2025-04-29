@@ -54,7 +54,8 @@ public class CustomCorsConfig {
         config.setMaxAge(3600L);
                 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        config.setAllowedOriginPatterns(List.of("*"));
+       
+        source.registerCorsConfiguration("/**", config);
 
         return source;
     }
