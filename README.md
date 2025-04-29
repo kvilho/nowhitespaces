@@ -198,10 +198,10 @@ mvn test
 
 <details>
 <summary>Service class testing</summary>
-
+<br><br> 
 <details>
- - <summary>ProjectServiceTest</summary>
-  
+<summary>ProjectServiceTest</summary>
+<br><br> 
 This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,    entry retrieval, and project updates/deletions.
     
 #### 📁 File Location
@@ -224,9 +224,10 @@ This document provides an overview of the unit tests implemented for the `Projec
 | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
 
 </details>
+<br><br>
 <details>
 <summary>HourSummaryServiceTest</summary>
-  
+<br><br> 
 This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
     
 #### 📁 File Location
