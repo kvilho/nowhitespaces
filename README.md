@@ -187,8 +187,7 @@ Using Swagger UI, you can:
 
 ## Testing 
 
-<details>
-### <summary>Service class testing</summary>
+#### <details><summary>Service class testing</summary>
 
   #### ▶️ Running the Tests
   
@@ -198,8 +197,8 @@ Using Swagger UI, you can:
   ```bash
   mvn test
   ```
-  <details>
-  #### <summary>ProjectServiceTest</summary>
+  
+  #### <details><summary>ProjectServiceTest</summary>
   
     This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,      entry retrieval, and project updates/deletions.
     
@@ -223,8 +222,8 @@ Using Swagger UI, you can:
     | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
 
   </details>
-  <details>
-  #### <summary>HourSummaryServiceTest</summary>
+  
+  #### <details><summary>HourSummaryServiceTest</summary>
   
     This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
     
