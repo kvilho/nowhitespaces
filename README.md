@@ -189,55 +189,55 @@ Using Swagger UI, you can:
 
 ### <details><summary>Service class testing</summary>
 
-#### ▶️ Running the Tests
-
-You can run the tests using:
-
-**Maven:**
-```bash
-mvn test
-```
-
-#### ProjectServiceTest
-
-This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management, entry retrieval, and project updates/deletions.
-
-#### 📁 File Location
-`backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
-
----
-| Test Method                                      | Description                                                                 |
-|--------------------------------------------------|-----------------------------------------------------------------------------|
-| `testCreateProject`                              | Verifies successful project creation and creator is saved as member.       |
-| `testJoinProjectByCodeSuccess`                   | Ensures a user can join a project using a valid code.                      |
-| `testJoinProjectByCodeAlreadyMemberThrows`       | Ensures exception is thrown if user is already a project member.           |
-| `testGetProjectByIdAsMember`                     | Verifies that a project can be fetched if the user is a member.            |
-| `testGetProjectByIdAsNonMemberThrows`            | Ensures exception is thrown if a non-member tries to access the project.   |
-| `testGetProjectMembers`                          | Validates that all members of a project can be retrieved.                  |
-| `testGetProjectEntries`                          | Confirms entries of a project can be retrieved by a project member.        |
-| `testRemoveMemberFromProjectAsCreator`           | Verifies that the project creator can remove members.                      |
-| `testRemoveMemberFromProjectAsNonCreatorThrows`  | Ensures a non-creator cannot remove members from the project.              |
-| `testGetUserProjects`                            | Checks that all projects associated with a user are returned.              |
-| `testUpdateProjectSuccess`                       | Validates successful updating of project fields.                           |
-| `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
-| `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
----
-
-#### HourSummaryServiceTest
-
-This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
-
-#### 📁 File Location
-`backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
-
----
-| Test Method                                      | Description                                                                 |
-|--------------------------------------------------|-----------------------------------------------------------------------------|
-| `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
-| `testCalculateMonthlyBreakdown_multipleEntriesAcrossMonths` | Checks that hours are correctly grouped and summed by month.             |
-| `testCalculateProjectBreakdown_multipleProjects` | Validates correct grouping and summing of hours by project.                |
----
-
+  #### ▶️ Running the Tests
+  
+  You can run the tests using:
+  
+  **Maven:**
+  ```bash
+  mvn test
+  ```
+  
+  #### <details><summary>ProjectServiceTest</summary>
+  
+    This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,      entry retrieval, and project updates/deletions.
+    
+    #### 📁 File Location
+    `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
+    
+    ---
+    | Test Method                                      | Description                                                                 |
+    |--------------------------------------------------|-----------------------------------------------------------------------------|
+    | `testCreateProject`                              | Verifies successful project creation and creator is saved as member.       |
+    | `testJoinProjectByCodeSuccess`                   | Ensures a user can join a project using a valid code.                      |
+    | `testJoinProjectByCodeAlreadyMemberThrows`       | Ensures exception is thrown if user is already a project member.           |
+    | `testGetProjectByIdAsMember`                     | Verifies that a project can be fetched if the user is a member.            |
+    | `testGetProjectByIdAsNonMemberThrows`            | Ensures exception is thrown if a non-member tries to access the project.   |
+    | `testGetProjectMembers`                          | Validates that all members of a project can be retrieved.                  |
+    | `testGetProjectEntries`                          | Confirms entries of a project can be retrieved by a project member.        |
+    | `testRemoveMemberFromProjectAsCreator`           | Verifies that the project creator can remove members.                      |
+    | `testRemoveMemberFromProjectAsNonCreatorThrows`  | Ensures a non-creator cannot remove members from the project.              |
+    | `testGetUserProjects`                            | Checks that all projects associated with a user are returned.              |
+    | `testUpdateProjectSuccess`                       | Validates successful updating of project fields.                           |
+    | `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
+    | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
+    ---
+    </details>
+  #### <details><summary>HourSummaryServiceTest</summary>
+  
+    This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
+    
+    #### 📁 File Location
+    `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
+    
+    ---
+    | Test Method                                      | Description                                                                 |
+    |--------------------------------------------------|-----------------------------------------------------------------------------|
+    | `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
+    | `testCalculateMonthlyBreakdown_multipleEntriesAcrossMonths` | Checks that hours are correctly grouped and summed by month.             |
+    | `testCalculateProjectBreakdown_multipleProjects` | Validates correct grouping and summing of hours by project.                |
+    ---
+  </details>
 </details>
 
 
