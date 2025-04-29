@@ -67,6 +67,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> {
                 log.debug("Configuring authorization rules");
                 auth
+                    .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() 
                     .requestMatchers("/api/auth/**",
                                     "/h2-console/**",
                                     "/v3/api-docs/**",
