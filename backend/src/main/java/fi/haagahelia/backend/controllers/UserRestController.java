@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import fi.haagahelia.backend.dto.HourSummaryDTO;
 import fi.haagahelia.backend.security.CustomUserDetails;
-import fi.haagahelia.backend.service.HourSummaryService;
+import fi.haagahelia.backend.services.HourSummaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

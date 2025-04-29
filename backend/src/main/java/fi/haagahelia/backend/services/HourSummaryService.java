@@ -1,4 +1,4 @@
-package fi.haagahelia.backend.service;
+package fi.haagahelia.backend.services;
 
 import fi.haagahelia.backend.dto.HourSummaryDTO;
 import fi.haagahelia.backend.model.Entry;

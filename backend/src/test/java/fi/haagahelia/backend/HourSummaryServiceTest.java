@@ -5,7 +5,7 @@ import fi.haagahelia.backend.model.Entry;
 import fi.haagahelia.backend.model.Organization;
 import fi.haagahelia.backend.model.Project;
 import fi.haagahelia.backend.repositories.EntryRepository;
-import fi.haagahelia.backend.service.HourSummaryService;
+import fi.haagahelia.backend.services.HourSummaryService;
 import fi.haagahelia.backend.model.Status;
 import fi.haagahelia.backend.model.User;
 
@@ -131,6 +131,4 @@ public class HourSummaryServiceTest {
                 .orElseThrow();
         assertEquals(8.0, beta.getHours(), 0.01);
     }
-
-
 }
