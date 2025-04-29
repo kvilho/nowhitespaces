@@ -6,7 +6,7 @@
 # Hourbook
 Hourbook - Work Hour Management System
 
-![alt text](./documents/hourbook.jpg "Logo")
+![alt text](./documents/hourbooklogo.png "Logo")
 
 
 ## About the project
