@@ -187,7 +187,8 @@ Using Swagger UI, you can:
 
 ## Testing 
 
-### <details><summary>Service class testing</summary>
+<details>
+### <summary>Service class testing</summary>
 
   #### ▶️ Running the Tests
   
@@ -197,12 +198,12 @@ Using Swagger UI, you can:
   ```bash
   mvn test
   ```
-  
-  #### <details><summary>ProjectServiceTest</summary>
+  <details>
+  #### <summary>ProjectServiceTest</summary>
   
     This document provides an overview of the unit tests implemented for the `ProjectService` class in a Spring Boot backend application. These tests verify the correct behavior of core project-related operations such as creation, membership management,      entry retrieval, and project updates/deletions.
     
-    #### 📁 File Location
+  #### 📁 File Location
     `backend\src\test\java\fi\haagahelia\backend\ProjectServiceTest.java`
     
     | Test Method                                      | Description                                                                 |
@@ -221,12 +222,13 @@ Using Swagger UI, you can:
     | `testDeleteProjectSuccess`                       | Ensures a project can be deleted when it exists.                           |
     | `testDeleteProjectNotFound`                      | Ensures deletion fails gracefully if project does not exist.               |
 
-    </details>
-  #### <details><summary>HourSummaryServiceTest</summary>
+  </details>
+  <details>
+  #### <summary>HourSummaryServiceTest</summary>
   
     This document provides an overview of the unit tests for the `HourSummaryService` class. These tests ensure the accuracy of time tracking and breakdown logic used in reporting hours by month, project, and total.
     
-    #### 📁 File Location
+  #### 📁 File Location
     `backend\src\test\java\fi\haagahelia\backend\HourSummaryServiceTest.java`
     
     | Test Method                                      | Description                                                                 |
@@ -234,7 +236,7 @@ Using Swagger UI, you can:
     | `testCalculateTotalHours_withValidEntries`       | Verifies correct total hour calculation from multiple time entries.        |
     | `testCalculateMonthlyBreakdown_multipleEntriesAcrossMonths` | Checks that hours are correctly grouped and summed by month.             |
     | `testCalculateProjectBreakdown_multipleProjects` | Validates correct grouping and summing of hours by project.                |
-    </details>
+  </details>
 </details>
 
 
