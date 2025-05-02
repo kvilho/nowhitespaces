@@ -96,4 +96,25 @@ public class BackendApplication {
             log.info("Development data initialization completed");
         };
     }
+
+    @Bean
+public CommandLineRunner ensureDefaultRolesExist(RoleRepository roleRepository) {
+    return args -> {
+        if (roleRepository.findByRoleName("ROLE_USER").isEmpty()) {
+            Role userRole = new Role();
+            userRole.setRoleName("ROLE_USER");
+            userRole.setRoleDescription("Default role for regular users");
+            // Do not set Roles enum here (it's only for project-level roles)
+            roleRepository.save(userRole);
+        }
+
+        if (roleRepository.findByRoleName("ROLE_ADMIN").isEmpty()) {
+            Role adminRole = new Role();
+            adminRole.setRoleName("ROLE_ADMIN");
+            adminRole.setRoleDescription("Default role for administrators");
+            // Do not set Roles enum here
+            roleRepository.save(adminRole);
+        }
+    };
+}
 }
