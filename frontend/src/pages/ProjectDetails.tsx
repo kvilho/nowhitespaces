@@ -25,7 +25,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import projectService, { Project, ProjectMember } from '../services/projectService';
 import authService from '../services/authService';
-import { Entry } from '../services/entryService';
+import { Entry } from '../types/Entry';
 import '../styles/projectDetails.css';
 import ManageProjectDialog from '../components/ManageProjectDialog';
 
@@ -214,54 +214,58 @@ const ProjectDetails: React.FC = () => {
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Pending Entries
             </Typography>
-            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <Stack spacing={2}>
-                {entries
-                  .filter(entry => entry.status === 'PENDING')
-                  .map((entry) => (
-                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
-                      <Stack spacing={1}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                          Unknown user
-                        </Typography>
-                        <Typography variant="body2">
-                          {entry.entryDescription || 'No description'}
-                        </Typography>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Typography variant="subtitle2" color="text.secondary">
-                            Time: {formatDateTime(entry.entryStart)}
+            {entries.filter(entry => entry.status === 'PENDING').length === 0 ? (
+              <Typography>No pending entries</Typography>
+            ) : (
+              <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                <Stack spacing={2}>
+                  {entries
+                    .filter(entry => entry.status === 'PENDING')
+                    .map((entry) => (
+                      <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+                        <Stack spacing={1}>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                            {entry.user?.username || 'Unknown user'}
                           </Typography>
-                          <Typography variant="subtitle2" color="text.secondary">
-                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                          <Typography variant="body2">
+                            {entry.entryDescription || 'No description'}
                           </Typography>
-                        </Stack>
-                        {isEmployer && (
-                          <Stack direction="row" spacing={1} mt={1}>
-                            <Button
-                              variant="contained"
-                              color="success"
-                              size="small"
-                              sx={{ borderRadius: 2, minWidth: 90 }}
-                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'APPROVED')}
-                            >
-                              Approve
-                            </Button>
-                            <Button
-                              variant="contained"
-                              color="error"
-                              size="small"
-                              sx={{ borderRadius: 2, minWidth: 90 }}
-                              onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
-                            >
-                              Decline
-                            </Button>
+                          <Stack direction="row" spacing={2} alignItems="center">
+                            <Typography variant="subtitle2" color="text.secondary">
+                              Time: {formatDateTime(entry.entryStart)}
+                            </Typography>
+                            <Typography variant="subtitle2" color="text.secondary">
+                              Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                            </Typography>
                           </Stack>
-                        )}
-                      </Stack>
-                    </Card>
-                  ))}
-              </Stack>
-            </Box>
+                          {isEmployer && (
+                            <Stack direction="row" spacing={1} mt={1}>
+                              <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                sx={{ borderRadius: 2, minWidth: 90 }}
+                                onClick={() => handleEntryStatusUpdate(entry.entryId, 'APPROVED')}
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                variant="contained"
+                                color="error"
+                                size="small"
+                                sx={{ borderRadius: 2, minWidth: 90 }}
+                                onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
+                              >
+                                Decline
+                              </Button>
+                            </Stack>
+                          )}
+                        </Stack>
+                      </Card>
+                    ))}
+                </Stack>
+              </Box>
+            )}
           </Paper>
 
           {/* Processed Entries */}
@@ -269,40 +273,44 @@ const ProjectDetails: React.FC = () => {
             <Typography variant="h6" gutterBottom sx={{ fontWeight: 700 }}>
               Processed Entries
             </Typography>
-            <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
-              <Stack spacing={2}>
-                {entries
-                  .filter(entry => entry.status !== 'PENDING')
-                  .map((entry) => (
-                    <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
-                      <Stack spacing={1}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                            Unknown user
+            {entries.filter(entry => entry.status !== 'PENDING').length === 0 ? (
+              <Typography>No processed entries</Typography>
+            ) : (
+              <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+                <Stack spacing={2}>
+                  {entries
+                    .filter(entry => entry.status !== 'PENDING')
+                    .map((entry) => (
+                      <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
+                        <Stack spacing={1}>
+                          <Stack direction="row" justifyContent="space-between" alignItems="center">
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                              {entry.user?.username || 'Unknown user'}
+                            </Typography>
+                            <Chip
+                              label={entry.status}
+                              color={entry.status === 'APPROVED' ? 'success' : 'error'}
+                              size="small"
+                              sx={{ fontWeight: 700 }}
+                            />
+                          </Stack>
+                          <Typography variant="body2">
+                            {entry.entryDescription || 'No description'}
                           </Typography>
-                          <Chip
-                            label={entry.status}
-                            color={entry.status === 'APPROVED' ? 'success' : 'error'}
-                            size="small"
-                            sx={{ fontWeight: 700 }}
-                          />
+                          <Stack direction="row" spacing={2} alignItems="center">
+                            <Typography variant="subtitle2" color="text.secondary">
+                              Time: {formatDateTime(entry.entryStart)}
+                            </Typography>
+                            <Typography variant="subtitle2" color="text.secondary">
+                              Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
+                            </Typography>
+                          </Stack>
                         </Stack>
-                        <Typography variant="body2">
-                          {entry.entryDescription || 'No description'}
-                        </Typography>
-                        <Stack direction="row" spacing={2} alignItems="center">
-                          <Typography variant="subtitle2" color="text.secondary">
-                            Time: {formatDateTime(entry.entryStart)}
-                          </Typography>
-                          <Typography variant="subtitle2" color="text.secondary">
-                            Duration: {calculateDuration(entry.entryStart, entry.entryEnd)}
-                          </Typography>
-                        </Stack>
-                      </Stack>
-                    </Card>
-                  ))}
-              </Stack>
-            </Box>
+                      </Card>
+                    ))}
+                </Stack>
+              </Box>
+            )}
           </Paper>
         </Grid>
       </Grid>

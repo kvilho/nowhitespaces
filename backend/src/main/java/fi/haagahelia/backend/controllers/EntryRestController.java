@@ -268,4 +268,26 @@ public class EntryRestController {
         }
         return entryRepository.findByUserId(currentUser.getUser().getId());
     }
+
+    // GET: Get entries by project ID
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<List<Entry>> getEntriesByProject(
+            @PathVariable Long projectId,
+            @AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        try {
+            List<Entry> entries = entryRepository.findByProjectId(projectId);
+            // Ensure user details are fetched eagerly
+            entries.forEach(entry -> {
+                entry.getUser().getFirstname(); // Trigger lazy loading
+                entry.getUser().getLastname();
+            });
+            return ResponseEntity.ok(entries);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
