@@ -25,7 +25,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import projectService, { Project, ProjectMember } from '../services/projectService';
 import authService from '../services/authService';
-import { Entry } from '../types/Entry';
+import { Entry } from '../types/Entry'; // Ensure the shared Entry type is used
 import '../styles/projectDetails.css';
 import ManageProjectDialog from '../components/ManageProjectDialog';
 
@@ -35,12 +35,15 @@ const ProjectDetails: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [members, setMembers] = useState<ProjectMember[]>([]);
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<Entry[]>([]); // Use the shared Entry type
   const [isEmployer, setIsEmployer] = useState(false);
   const [isCodeDialogOpen, setIsCodeDialogOpen] = useState(false);
   const [isManageMembersDialogOpen, setIsManageMembersDialogOpen] = useState(false);
   const [memberToDelete, setMemberToDelete] = useState<ProjectMember | null>(null);
   const [isManageProjectDialogOpen, setIsManageProjectDialogOpen] = useState(false);
+  const [isProjectSummaryOpen, setIsProjectSummaryOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
+  const [memberEntries, setMemberEntries] = useState<Entry[]>([]);
 
   const fetchProjectData = async () => {
     try {
@@ -121,6 +124,21 @@ const ProjectDetails: React.FC = () => {
     return `${hours}h ${minutes}m`;
   };
 
+  const calculateProjectStats = () => {
+    const totalHours = entries.reduce((sum, entry) => sum + (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000, 0);
+    const totalEntries = entries.length;
+    const avgDuration = totalEntries > 0 ? totalHours / totalEntries : 0;
+    const latestEntryDate = entries.length > 0 ? new Date(Math.max(...entries.map(entry => new Date(entry.entryEnd).getTime()))) : null;
+
+    return { totalHours, totalEntries, avgDuration, latestEntryDate };
+  };
+
+  const handleViewEntries = (member: ProjectMember) => {
+    const memberEntries = entries.filter(entry => entry.user?.id === member.user.id);
+    setSelectedMember(member);
+    setMemberEntries(memberEntries);
+  };
+
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
@@ -166,14 +184,24 @@ const ProjectDetails: React.FC = () => {
               Project Code
             </Button>
             {isEmployer && (
-              <Button
-                variant="outlined"
-                color="primary"
-                sx={{ mt: 2, ml: 2, borderRadius: 2 }}
-                onClick={() => setIsManageProjectDialogOpen(true)}
-              >
-                Manage Project
-              </Button>
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  sx={{ mt: 2, ml: 2, borderRadius: 2 }}
+                  onClick={() => setIsManageProjectDialogOpen(true)}
+                >
+                  Manage Project
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2, borderRadius: 2 }}
+                  onClick={() => setIsProjectSummaryOpen(true)}
+                >
+                  View Project Summary
+                </Button>
+              </>
             )}
           </Paper>
         </Grid>
@@ -437,6 +465,88 @@ const ProjectDetails: React.FC = () => {
           >
             Remove Member
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Project Summary Dialog */}
+      <Dialog
+        open={isProjectSummaryOpen}
+        onClose={() => setIsProjectSummaryOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Project Summary</DialogTitle>
+        <DialogContent>
+          <Box sx={{ mb: 3 }}>
+            {entries.length === 0 ? (
+              <Typography>No entries yet</Typography>
+            ) : (
+              <>
+                <Typography variant="body1">Total Hours: {calculateProjectStats().totalHours.toFixed(1)}h</Typography>
+                <Typography variant="body1">Total Entries: {calculateProjectStats().totalEntries}</Typography>
+                <Typography variant="body1">Average Duration: {calculateProjectStats().avgDuration.toFixed(1)}h</Typography>
+                <Typography variant="body1">
+                  Latest Entry: {calculateProjectStats().latestEntryDate?.toLocaleDateString() || 'N/A'}
+                </Typography>
+              </>
+            )}
+          </Box>
+          <Typography variant="h6" gutterBottom>Project Members</Typography>
+          <List>
+            {members.map(member => {
+              const memberTotalHours = entries
+                .filter(entry => entry.user?.id === member.user.id)
+                .reduce((sum, entry) => sum + (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000, 0);
+
+              return (
+                <ListItem key={member.projectMemberId} sx={{ mb: 2 }}>
+                  <ListItemText
+                    primary={`${member.user?.firstname || ''} ${member.user?.lastname || ''}`}
+                    secondary={`Total Hours: ${memberTotalHours.toFixed(1)}h`}
+                  />
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleViewEntries(member)}
+                  >
+                    View Entries
+                  </Button>
+                </ListItem>
+              );
+            })}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsProjectSummaryOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Member Entries Dialog */}
+      <Dialog
+        open={!!selectedMember}
+        onClose={() => setSelectedMember(null)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>{selectedMember?.user?.firstname} {selectedMember?.user?.lastname}'s Entries</DialogTitle>
+        <DialogContent>
+          {memberEntries.length === 0 ? (
+            <Typography>No entries for this member</Typography>
+          ) : (
+            <List>
+              {memberEntries.map(entry => (
+                <ListItem key={entry.entryId} sx={{ mb: 2 }}>
+                  <ListItemText
+                    primary={entry.entryDescription || 'No description'}
+                    secondary={`Date: ${new Date(entry.entryStart).toLocaleDateString()} | Duration: ${((new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000).toFixed(1)}h`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedMember(null)}>Close</Button>
         </DialogActions>
       </Dialog>
     </Container>

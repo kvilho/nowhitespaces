@@ -3,14 +3,16 @@ export interface Entry {
     entryStart: string | Date;
     entryEnd: string | Date;
     entryDescription: string;
-    status: 'PENDING' | 'APPROVED' | 'DECLINED';
+    status: 'APPROVED' | 'PENDING' | 'DECLINED' | string; // Allow loose backend values
     user: {
         id: number;
+        firstname: string;
+        lastname: string;
         username: string;
         email: string;
     };
-    project: {
+    project?: {
         projectId: number;
         projectName: string;
     };
-} 
+}

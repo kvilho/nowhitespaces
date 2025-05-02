@@ -1,5 +1,5 @@
 import api from '../api/axios';
-import { Entry } from './entryService';
+import { Entry } from '../types/Entry'; // Correct import for the shared Entry type
 
 export enum ProjectRole {
     OWNER = 'OWNER',
@@ -22,6 +22,9 @@ export interface Project {
 export interface ProjectMember {
     projectMemberId: number;
     user: {
+        id: number;
+        firstname: string;
+        lastname: string;
         username: string;
         email: string;
     };
