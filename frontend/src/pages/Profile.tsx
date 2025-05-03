@@ -155,7 +155,7 @@ const Profile: React.FC = () => {
         <Box sx={{ position: 'relative', mb: 3 }}>
           <Avatar
             src={profile?.profilePicture || ''}
-            sx={{ width: 120, height: 120, mx: 'auto' }}
+            sx={{ width: 120, height: 120, mx: 'auto', border: '2px solid', borderColor: 'primary.main' }}
           />
           <IconButton
             sx={{
@@ -189,29 +189,30 @@ const Profile: React.FC = () => {
         <Typography variant="body2" color="text.secondary">
           {profile?.phone}
         </Typography>
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>
+          <Button variant="outlined" onClick={() => setIsEditDetailsOpen(true)}>Edit Details</Button>
+          <Button variant="outlined" onClick={() => setIsChangePasswordOpen(true)}>Change Password</Button>
+          <Button variant="outlined" color="error" onClick={() => setIsDeleteAccountOpen(true)}>Delete Account</Button>
+        </Box>
       </Paper>
 
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>
-        <Button variant="outlined" onClick={() => setIsEditDetailsOpen(true)}>Edit Details</Button>
-        <Button variant="outlined" onClick={() => setIsChangePasswordOpen(true)}>Change Password</Button>
-        <Button variant="outlined" color="error" onClick={() => setIsDeleteAccountOpen(true)}>Delete Account</Button>
-      </Box>
-
       {/* Edit Details Dialog */}
-      <Dialog open={isEditDetailsOpen} onClose={() => setIsEditDetailsOpen(false)}>
+      <Dialog open={isEditDetailsOpen} onClose={() => setIsEditDetailsOpen(false)} PaperProps={{ sx: { borderRadius: 3 } }}>
         <DialogTitle>Edit Details</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+        <DialogContent sx={{ p: 3 }}>
           <TextField
             label="First Name"
             fullWidth
             value={editDetailsForm.firstname}
             onChange={(e) => setEditDetailsForm({ ...editDetailsForm, firstname: e.target.value })}
+            sx={{ mb: 2 }}
           />
           <TextField
             label="Last Name"
             fullWidth
             value={editDetailsForm.lastname}
             onChange={(e) => setEditDetailsForm({ ...editDetailsForm, lastname: e.target.value })}
+            sx={{ mb: 2 }}
           />
           <TextField
             label="Phone"
@@ -220,22 +221,23 @@ const Profile: React.FC = () => {
             onChange={(e) => setEditDetailsForm({ ...editDetailsForm, phone: e.target.value })}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'flex-end', p: 2 }}>
           <Button onClick={() => setIsEditDetailsOpen(false)}>Cancel</Button>
           <Button onClick={handleEditDetails} variant="contained">Save</Button>
         </DialogActions>
       </Dialog>
 
       {/* Change Password Dialog */}
-      <Dialog open={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)}>
+      <Dialog open={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)} PaperProps={{ sx: { borderRadius: 3 } }}>
         <DialogTitle>Change Password</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+        <DialogContent sx={{ p: 3 }}>
           <TextField
             label="Current Password"
             type="password"
             fullWidth
             value={passwordForm.currentPassword}
             onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+            sx={{ mb: 2 }}
           />
           <TextField
             label="New Password"
@@ -243,6 +245,7 @@ const Profile: React.FC = () => {
             fullWidth
             value={passwordForm.newPassword}
             onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+            sx={{ mb: 2 }}
           />
           <TextField
             label="Confirm New Password"
@@ -252,19 +255,19 @@ const Profile: React.FC = () => {
             onChange={(e) => setPasswordForm({ ...passwordForm, confirmNewPassword: e.target.value })}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'flex-end', p: 2 }}>
           <Button onClick={() => setIsChangePasswordOpen(false)}>Cancel</Button>
           <Button onClick={handleChangePassword} variant="contained">Change Password</Button>
         </DialogActions>
       </Dialog>
 
       {/* Delete Account Confirmation Dialog */}
-      <Dialog open={isDeleteAccountOpen} onClose={() => setIsDeleteAccountOpen(false)}>
+      <Dialog open={isDeleteAccountOpen} onClose={() => setIsDeleteAccountOpen(false)} PaperProps={{ sx: { borderRadius: 3 } }}>
         <DialogTitle>Confirm Account Deletion</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ p: 3 }}>
           <Typography>Are you sure you want to delete your account? This action cannot be undone.</Typography>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ justifyContent: 'flex-end', p: 2 }}>
           <Button onClick={() => setIsDeleteAccountOpen(false)}>Cancel</Button>
           <Button onClick={handleDeleteAccount} color="error" variant="contained">Delete</Button>
         </DialogActions>
