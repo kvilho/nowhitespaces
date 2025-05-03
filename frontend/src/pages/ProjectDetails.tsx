@@ -19,7 +19,8 @@ import {
   DialogActions,
   Chip,
   Stack,
-  Card
+  Card,
+  Divider
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -196,7 +197,7 @@ const ProjectDetails: React.FC = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  sx={{ mt: 2, borderRadius: 2 }}
+                  sx={{ mt: 2, borderRadius: 2, ml: 2 }}
                   onClick={() => setIsProjectSummaryOpen(true)}
                 >
                   View Project Summary
@@ -474,50 +475,76 @@ const ProjectDetails: React.FC = () => {
         onClose={() => setIsProjectSummaryOpen(false)}
         maxWidth="md"
         fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3, p: 2 },
+        }}
       >
-        <DialogTitle>Project Summary</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, fontSize: '1.5rem', textAlign: 'center' }}>
+          Project Summary
+        </DialogTitle>
         <DialogContent>
           <Box sx={{ mb: 3 }}>
             {entries.length === 0 ? (
               <Typography>No entries yet</Typography>
             ) : (
               <>
-                <Typography variant="body1">Total Hours: {calculateProjectStats().totalHours.toFixed(1)}h</Typography>
-                <Typography variant="body1">Total Entries: {calculateProjectStats().totalEntries}</Typography>
-                <Typography variant="body1">Average Duration: {calculateProjectStats().avgDuration.toFixed(1)}h</Typography>
-                <Typography variant="body1">
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  Total Hours: {calculateProjectStats().totalHours.toFixed(1)}h
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  Total Entries: {calculateProjectStats().totalEntries}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  Average Duration: {calculateProjectStats().avgDuration.toFixed(1)}h
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 2 }}>
                   Latest Entry: {calculateProjectStats().latestEntryDate?.toLocaleDateString() || 'N/A'}
                 </Typography>
               </>
             )}
           </Box>
-          <Typography variant="h6" gutterBottom>Project Members</Typography>
+          <Divider sx={{ my: 2 }} />
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+            Project Members
+          </Typography>
           <List>
-            {members.map(member => {
-              const memberTotalHours = entries
-                .filter(entry => entry.user?.id === member.user.id)
-                .reduce((sum, entry) => sum + (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000, 0);
-
-              return (
-                <ListItem key={member.projectMemberId} sx={{ mb: 2 }}>
-                  <ListItemText
-                    primary={`${member.user?.firstname || ''} ${member.user?.lastname || ''}`}
-                    secondary={`Total Hours: ${memberTotalHours.toFixed(1)}h`}
-                  />
-                  <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() => handleViewEntries(member)}
-                  >
-                    View Entries
-                  </Button>
-                </ListItem>
-              );
-            })}
+            {members.map((member) => (
+              <Card
+                key={member.projectMemberId}
+                elevation={2}
+                sx={{
+                  mb: 2,
+                  p: 2,
+                  borderRadius: 2,
+                  backgroundColor: 'background.default',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <ListItemText
+                  primary={`${member.user?.firstname || ''} ${member.user?.lastname || ''}`}
+                  secondary={`Total Hours: ${entries
+                    .filter((entry) => entry.user?.id === member.user.id)
+                    .reduce((sum, entry) => sum + (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000, 0)
+                    .toFixed(1)}h`}
+                />
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ borderRadius: 2 }}
+                  onClick={() => handleViewEntries(member)}
+                >
+                  View Entries
+                </Button>
+              </Card>
+            ))}
           </List>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setIsProjectSummaryOpen(false)}>Close</Button>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button onClick={() => setIsProjectSummaryOpen(false)} variant="outlined" sx={{ borderRadius: 2 }}>
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -527,26 +554,38 @@ const ProjectDetails: React.FC = () => {
         onClose={() => setSelectedMember(null)}
         maxWidth="sm"
         fullWidth
+        PaperProps={{
+          sx: { borderRadius: 3, p: 2 },
+        }}
       >
-        <DialogTitle>{selectedMember?.user?.firstname} {selectedMember?.user?.lastname}'s Entries</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 700, fontSize: '1.5rem', textAlign: 'center' }}>
+          {selectedMember?.user?.firstname} {selectedMember?.user?.lastname}'s Entries
+        </DialogTitle>
         <DialogContent>
           {memberEntries.length === 0 ? (
             <Typography>No entries for this member</Typography>
           ) : (
             <List>
-              {memberEntries.map(entry => (
+              {memberEntries.map((entry) => (
                 <ListItem key={entry.entryId} sx={{ mb: 2 }}>
-                  <ListItemText
-                    primary={entry.entryDescription || 'No description'}
-                    secondary={`Date: ${new Date(entry.entryStart).toLocaleDateString()} | Duration: ${((new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) / 3600000).toFixed(1)}h`}
-                  />
+                  <Card elevation={2} sx={{ p: 2, borderRadius: 2, backgroundColor: 'background.paper' }}>
+                    <ListItemText
+                      primary={entry.entryDescription || 'No description'}
+                      secondary={`Date: ${new Date(entry.entryStart).toLocaleDateString()} | Duration: ${(
+                        (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) /
+                        3600000
+                      ).toFixed(1)}h`}
+                    />
+                  </Card>
                 </ListItem>
               ))}
             </List>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSelectedMember(null)}>Close</Button>
+        <DialogActions sx={{ justifyContent: 'center', p: 2 }}>
+          <Button onClick={() => setSelectedMember(null)} variant="outlined" sx={{ borderRadius: 2 }}>
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>
