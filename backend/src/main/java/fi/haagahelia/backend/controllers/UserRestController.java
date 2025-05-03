@@ -1,5 +1,6 @@
 package fi.haagahelia.backend.controllers;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,30 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import fi.haagahelia.backend.model.User;
 import fi.haagahelia.backend.repositories.UserRepository;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
-/* 
-import fi.haagahelia.backend.repositories.RoleRepository;
-import fi.haagahelia.backend.repositories.OrganizationRepository; 
-*/
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
+import fi.haagahelia.backend.services.UserProfileService;
+import fi.haagahelia.backend.dto.PasswordChangeRequest;
 import fi.haagahelia.backend.dto.HourSummaryDTO;
 import fi.haagahelia.backend.security.CustomUserDetails;
 import fi.haagahelia.backend.services.HourSummaryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
@@ -38,40 +29,33 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 @RequestMapping("/api/users")
 @Tag(name = "users")
 public class UserRestController {
-    
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private HourSummaryService hourSummaryService;
 
-    /*  VIITTAUKSET ROOLI JA ORGANISAATIO REPOSITOREIHIN VALMIINA KUN NIITÄ TARVITAAN
-    
     @Autowired
-    private RoleRepository roleRepository;
+    private UserProfileService userProfileService;
 
     @Autowired
-    private OrganizationRepository organizationRepository; '
-    
-    */
-    
-    // GET: Get all users
-    @Schema (description = "Get all users")
+    private PasswordEncoder passwordEncoder;
+
+    @Schema(description = "Get all users")
     @GetMapping
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // GET: Get users by ID
     @Schema(description = "Get user by ID")
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById (@PathVariable Long id) {
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.map(ResponseEntity::ok)
             .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    // GET: Get current user's profile
     @Operation(summary = "Get current user's profile")
     @GetMapping("/profile")
     public ResponseEntity<User> getCurrentUserProfile(@AuthenticationPrincipal CustomUserDetails currentUser) {
@@ -81,7 +65,6 @@ public class UserRestController {
         return ResponseEntity.ok(currentUser.getUser());
     }
 
-    // POST: Add new user
     @Schema(description = "Add new user")
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User newUser) {
@@ -89,7 +72,6 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
-    // PUT: Update user by ID
     @Schema(description = "Update user by ID")
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
@@ -111,7 +93,6 @@ public class UserRestController {
         }
     }
 
-    // DELETE: Delete user by ID
     @Schema(description = "Delete user by ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
@@ -121,22 +102,6 @@ public class UserRestController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-    }
-
-    @Operation(summary = "Get user's hour summary")
-    @GetMapping("/profile/hours-summary")
-    public ResponseEntity<HourSummaryDTO> getUserHourSummary(@AuthenticationPrincipal CustomUserDetails currentUser) {
-        if (currentUser == null) {
-            return ResponseEntity.status(401).build();
-        }
-        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(currentUser.getUser().getId()));
-    }
-
-    @Operation(summary = "Get user's hour summary (Admin only)")
-    @GetMapping("/{userId}/hours-summary")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<HourSummaryDTO> getUserHourSummaryAdmin(@PathVariable Long userId) {
-        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(userId));
     }
 
     @Operation(summary = "Update current user's profile")
@@ -149,13 +114,10 @@ public class UserRestController {
         }
 
         User existingUser = currentUser.getUser();
-        
-        // Only allow updating specific fields
         existingUser.setFirstname(userDetails.getFirstname());
         existingUser.setLastname(userDetails.getLastname());
         existingUser.setPhone(userDetails.getPhone());
-        
-        // Only update password if a new one is provided
+
         if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
             existingUser.setPasswordHash(userDetails.getPasswordHash());
         }
@@ -211,5 +173,49 @@ public class UserRestController {
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(user.get().getProfilePicture());
+    }
+
+    @Operation(summary = "Get user's hour summary")
+    @GetMapping("/profile/hours-summary")
+    public ResponseEntity<HourSummaryDTO> getUserHourSummary(@AuthenticationPrincipal CustomUserDetails currentUser) {
+        if (currentUser == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(currentUser.getUser().getId()));
+    }
+
+    @Operation(summary = "Get user's hour summary (Admin only)")
+    @GetMapping("/{userId}/hours-summary")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<HourSummaryDTO> getUserHourSummaryAdmin(@PathVariable Long userId) {
+        return ResponseEntity.ok(hourSummaryService.getUserHourSummary(userId));
+    }
+
+    @Operation(summary = "Change current user's password")
+    @PutMapping("/profile/password")
+    public ResponseEntity<?> changeUserPassword(@RequestBody PasswordChangeRequest request, Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        User user = userProfileService.getUserProfileByUsername(principal.getName());
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Current password is incorrect.");
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return ResponseEntity.ok("Password updated successfully.");
+    }
+
+    @Operation(summary = "Delete current user's account")
+    @DeleteMapping("/profile")
+    public ResponseEntity<?> deleteUserAccount(Principal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        User user = userProfileService.getUserProfileByUsername(principal.getName());
+        userRepository.delete(user);
+        return ResponseEntity.ok("Account deleted successfully.");
     }
 }

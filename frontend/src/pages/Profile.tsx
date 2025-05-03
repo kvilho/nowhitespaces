@@ -10,11 +10,14 @@ import {
   Box,
   Avatar,
   IconButton,
-  Grid,
-  Stack
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
+  Alert as MuiAlert
 } from '@mui/material';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import userService, { UserProfile } from '../services/userService';
 import config from '../config';
 import '../styles/profile.css';
@@ -23,16 +26,20 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [formData, setFormData] = useState({
+  const [isEditDetailsOpen, setIsEditDetailsOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isDeleteAccountOpen, setIsDeleteAccountOpen] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  });
+  const [editDetailsForm, setEditDetailsForm] = useState({
     firstname: '',
     lastname: '',
     phone: '',
-    password: ''
   });
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,29 +48,12 @@ const Profile: React.FC = () => {
         setIsLoading(true);
         const profileData = await userService.getUserProfile();
         setProfile(profileData);
-        setFormData({
+        setEditDetailsForm({
           firstname: profileData.firstname || '',
           lastname: profileData.lastname || '',
           phone: profileData.phone || '',
-          password: ''
         });
-        
-        // Fetch profile picture
-        try {
-          const response = await fetch(`${config.apiUrl}/api/users/profile/picture`, {
-            credentials: 'include'
-          });
-          if (response.ok) {
-            const blob = await response.blob();
-            setProfilePicture(URL.createObjectURL(blob));
-          }
-        } catch (err) {
-          console.error('Error fetching profile picture:', err);
-        }
-        
-        setError(null);
       } catch (err) {
-        console.error('Error fetching profile data:', err);
         setError('Failed to load profile data. Please try again later.');
       } finally {
         setIsLoading(false);
@@ -72,42 +62,6 @@ const Profile: React.FC = () => {
 
     fetchProfileData();
   }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaveError(null);
-    setIsSaving(true);
-
-    try {
-      if (!profile) return;
-
-      const updatedProfile: UserProfile = {
-        ...profile,
-        firstname: formData.firstname,
-        lastname: formData.lastname,
-        phone: formData.phone,
-        password: formData.password || undefined
-      };
-
-      const result = await userService.updateUserProfile(updatedProfile);
-      setProfile(result);
-      setFormData(prev => ({ ...prev, password: '' }));
-      setIsEditing(false);
-    } catch (err) {
-      console.error('Error updating profile:', err);
-      setSaveError('Failed to update profile. Please try again.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
 
   const handleProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -124,20 +78,59 @@ const Profile: React.FC = () => {
       });
 
       if (response.ok) {
-        // Refresh profile picture
         const pictureResponse = await fetch(`${config.apiUrl}/api/users/profile/picture`, {
           credentials: 'include'
         });
         if (pictureResponse.ok) {
           const blob = await pictureResponse.blob();
-          setProfilePicture(URL.createObjectURL(blob));
+          setProfile((prev) => prev ? { ...prev, profilePicture: URL.createObjectURL(blob) } : null);
         }
+        setSnackbar({ open: true, message: 'Profile picture updated successfully!', severity: 'success' });
       } else {
         throw new Error('Failed to upload profile picture');
       }
     } catch (err) {
-      console.error('Error uploading profile picture:', err);
+      setSnackbar({ open: true, message: 'Error uploading profile picture.', severity: 'error' });
     }
+  };
+
+  const handleEditDetails = async () => {
+    try {
+      if (!profile) return;
+      await userService.updateUserProfile({ ...profile, ...editDetailsForm } as UserProfile);
+      setProfile((prev) => prev ? { ...prev, ...editDetailsForm } : null);
+      setIsEditDetailsOpen(false);
+      setSnackbar({ open: true, message: 'Profile updated successfully!', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Error updating profile.', severity: 'error' });
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await userService.deleteUserAccount();
+      window.location.href = '/';
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Error deleting account.', severity: 'error' });
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmNewPassword) {
+      setSnackbar({ open: true, message: 'Passwords do not match!', severity: 'error' });
+      return;
+    }
+    try {
+      await userService.changeUserPassword(passwordForm.currentPassword, passwordForm.newPassword);
+      setIsChangePasswordOpen(false);
+      setSnackbar({ open: true, message: 'Password updated successfully!', severity: 'success' });
+    } catch (err) {
+      setSnackbar({ open: true, message: 'Error changing password.', severity: 'error' });
+    }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   if (isLoading) {
@@ -157,164 +150,137 @@ const Profile: React.FC = () => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Grid container spacing={3}>
-        {/* Profile Header Section */}
-        <Grid item xs={12}>
-          <Paper elevation={2} sx={{ p: 3, borderRadius: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
-              <Box sx={{ position: 'relative' }}>
-                {profilePicture ? (
-                  <Avatar
-                    src={profilePicture}
-                    sx={{ width: 120, height: 120 }}
-                  />
-                ) : (
-                  <Avatar sx={{ width: 120, height: 120 }}>
-                    <AccountCircleIcon sx={{ width: 80, height: 80 }} />
-                  </Avatar>
-                )}
-                <IconButton
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 0,
-                    backgroundColor: 'primary.main',
-                    '&:hover': { backgroundColor: 'primary.dark' },
-                  }}
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  <PhotoCameraIcon sx={{ color: 'white' }} />
-                </IconButton>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  accept="image/*"
-                  style={{ display: 'none' }}
-                  onChange={handleProfilePictureUpload}
-                />
-              </Box>
-              <Box>
-                <Typography variant="h4" gutterBottom>
-                  {profile?.firstname} {profile?.lastname}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {profile?.role?.roleName}
-                </Typography>
-              </Box>
-            </Box>
+    <Container maxWidth="sm" sx={{ py: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 3, textAlign: 'center', maxWidth: 500, mx: 'auto' }}>
+        <Box sx={{ position: 'relative', mb: 3 }}>
+          <Avatar
+            src={profile?.profilePicture || ''}
+            sx={{ width: 120, height: 120, mx: 'auto' }}
+          />
+          <IconButton
+            sx={{
+              position: 'absolute',
+              bottom: 0,
+              right: 'calc(50% - 60px)',
+              backgroundColor: 'primary.main',
+              '&:hover': { backgroundColor: 'primary.dark' },
+            }}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <PhotoCameraIcon sx={{ color: 'white' }} />
+          </IconButton>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            style={{ display: 'none' }}
+            onChange={handleProfilePictureUpload}
+          />
+        </Box>
+        <Typography variant="h5" gutterBottom>
+          {profile?.firstname} {profile?.lastname}
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          {profile?.role?.roleName}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          {profile?.email}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {profile?.phone}
+        </Typography>
+      </Paper>
 
-            {isEditing ? (
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="First Name"
-                      name="firstname"
-                      value={formData.firstname}
-                      onChange={handleInputChange}
-                      fullWidth
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Last Name"
-                      name="lastname"
-                      value={formData.lastname}
-                      onChange={handleInputChange}
-                      fullWidth
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      fullWidth
-                      required
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="New Password (optional)"
-                      name="password"
-                      type="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      fullWidth
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Stack direction="row" spacing={2}>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        disabled={isSaving}
-                      >
-                        {isSaving ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        onClick={() => setIsEditing(false)}
-                      >
-                        Cancel
-                      </Button>
-                    </Stack>
-                  </Grid>
-                </Grid>
-              </form>
-            ) : (
-              <Box>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      First Name
-                    </Typography>
-                    <Typography variant="body1">
-                      {profile?.firstname}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Last Name
-                    </Typography>
-                    <Typography variant="body1">
-                      {profile?.lastname}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Email
-                    </Typography>
-                    <Typography variant="body1">
-                      {profile?.email}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Phone
-                    </Typography>
-                    <Typography variant="body1">
-                      {profile?.phone}
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      variant="contained"
-                      onClick={() => setIsEditing(true)}
-                    >
-                      Edit Profile
-                    </Button>
-                  </Grid>
-                </Grid>
-              </Box>
-            )}
-          </Paper>
-        </Grid>
-      </Grid>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', mt: 3, flexWrap: 'wrap' }}>
+        <Button variant="outlined" onClick={() => setIsEditDetailsOpen(true)}>Edit Details</Button>
+        <Button variant="outlined" onClick={() => setIsChangePasswordOpen(true)}>Change Password</Button>
+        <Button variant="outlined" color="error" onClick={() => setIsDeleteAccountOpen(true)}>Delete Account</Button>
+      </Box>
+
+      {/* Edit Details Dialog */}
+      <Dialog open={isEditDetailsOpen} onClose={() => setIsEditDetailsOpen(false)}>
+        <DialogTitle>Edit Details</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          <TextField
+            label="First Name"
+            fullWidth
+            value={editDetailsForm.firstname}
+            onChange={(e) => setEditDetailsForm({ ...editDetailsForm, firstname: e.target.value })}
+          />
+          <TextField
+            label="Last Name"
+            fullWidth
+            value={editDetailsForm.lastname}
+            onChange={(e) => setEditDetailsForm({ ...editDetailsForm, lastname: e.target.value })}
+          />
+          <TextField
+            label="Phone"
+            fullWidth
+            value={editDetailsForm.phone}
+            onChange={(e) => setEditDetailsForm({ ...editDetailsForm, phone: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsEditDetailsOpen(false)}>Cancel</Button>
+          <Button onClick={handleEditDetails} variant="contained">Save</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Change Password Dialog */}
+      <Dialog open={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)}>
+        <DialogTitle>Change Password</DialogTitle>
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+          <TextField
+            label="Current Password"
+            type="password"
+            fullWidth
+            value={passwordForm.currentPassword}
+            onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+          />
+          <TextField
+            label="New Password"
+            type="password"
+            fullWidth
+            value={passwordForm.newPassword}
+            onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+          />
+          <TextField
+            label="Confirm New Password"
+            type="password"
+            fullWidth
+            value={passwordForm.confirmNewPassword}
+            onChange={(e) => setPasswordForm({ ...passwordForm, confirmNewPassword: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsChangePasswordOpen(false)}>Cancel</Button>
+          <Button onClick={handleChangePassword} variant="contained">Change Password</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Account Confirmation Dialog */}
+      <Dialog open={isDeleteAccountOpen} onClose={() => setIsDeleteAccountOpen(false)}>
+        <DialogTitle>Confirm Account Deletion</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to delete your account? This action cannot be undone.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeleteAccountOpen(false)}>Cancel</Button>
+          <Button onClick={handleDeleteAccount} color="error" variant="contained">Delete</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert onClose={handleSnackbarClose} severity={snackbar.severity} sx={{ width: '100%' }}>
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </Container>
   );
 };

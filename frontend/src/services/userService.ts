@@ -12,6 +12,7 @@ export interface UserProfile {
     roleDescription?: string;
   };
   password?: string;
+  profilePicture?: string; 
 }
 
 export interface ProjectHoursDTO {
@@ -50,6 +51,16 @@ class UserService {
 
   async getUserHourSummary(): Promise<HourSummaryDTO> {
     const response = await api.get("/api/users/profile/hours-summary");
+    return response.data;
+  }
+
+  async changeUserPassword(currentPassword: string, newPassword: string) {
+    const response = await api.put('/api/users/profile/password', { currentPassword, newPassword });
+    return response.data;
+  }
+
+  async deleteUserAccount() {
+    const response = await api.delete('/api/users/profile');
     return response.data;
   }
 }
