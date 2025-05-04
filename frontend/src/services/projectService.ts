@@ -27,6 +27,7 @@ export interface ProjectMember {
         lastname: string;
         username: string;
         email: string;
+        phone: string;
     };
     role: ProjectRole;
     joinedAt: string;

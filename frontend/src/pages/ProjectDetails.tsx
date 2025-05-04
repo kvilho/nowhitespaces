@@ -218,14 +218,17 @@ const ProjectDetails: React.FC = () => {
                 {members.map((member) => (
                   <ListItem key={member.projectMemberId} disablePadding sx={{ mb: 2 }}>
                     <ListItemText
-                      primary={member.user?.username || 'Unknown user'}
+                      primary={`${member.user?.firstname || 'Unknown'} ${member.user?.lastname || ''}`}
                       secondary={
                         <>
                           <Typography variant="body2" color="text.secondary">
-                            Role: {member.role}
+                             {member.role}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
                             {member.user?.email || 'No email'}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {member.user?.phone || 'No phone'}
                           </Typography>
                         </>
                       }
@@ -254,7 +257,9 @@ const ProjectDetails: React.FC = () => {
                       <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
                         <Stack spacing={1}>
                           <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                            {entry.user?.username || 'Unknown user'}
+                          {(entry.user?.firstname || entry.user?.lastname) 
+                              ? `${entry.user?.firstname || ''} ${entry.user?.lastname || ''}`.trim()
+                              : 'Unknown user'}
                           </Typography>
                           <Typography variant="body2">
                             {entry.entryDescription || 'No description'}
