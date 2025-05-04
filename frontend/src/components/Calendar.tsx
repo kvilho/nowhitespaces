@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import "../styles/calendar.css"; // Import the calendar CSS file
-import { Entry } from "../services/entryService"; // Import the Entry type
+import { Entry } from "../types/Entry"; // Import the Entry type
 import config from '../config';
 import authService from '../services/authService';
 import projectService from '../services/projectService';
@@ -154,7 +154,7 @@ const Calendar: React.FC = () => {
     if (date instanceof Date) {
       return date;
     }
-    return new Date(date + 'Z'); // Ensure UTC
+    return new Date(date);
   };
 
   // Helper function to format time display
