@@ -96,21 +96,90 @@ See [📚 REST API Documentation](#-rest-api-documentation) for available endpoi
   - `@emotion/react`, `@emotion/styled` – Styling support
   - `date-fns` – Date utility library
   - `react-big-calendar` – Calendar and scheduling
+  - `axios` – HTTP client for API requests
+  - `recharts` – Data visualization library
+- **Build Tool:** Vite
+- **Styling:** CSS Modules and custom stylesheets (e.g., `navbar.css`, `projects.css`, `calendar.css`)
 
 #### Backend
 - **Language:** Java
 - **Framework:** Spring Boot
 - **Key Frameworks/Libraries:**
-  - `Spring Security` – Authentication and authorization
+  - `Spring Security` – Authentication and authorization (with JWT support)
   - `Spring Data JPA` – ORM and database operations
+  - `Swagger/OpenAPI` – API documentation
+  - `JUnit` and `Mockito` – Testing
+- **Database:** PostgreSQL
 
 ---
 
-### 📁 Project Structure
+## 📁 Project Structure
 
-#### Frontend
+## 📁 Frontend (React + TypeScript)
 
-#### Backend
+The frontend is implemented using **React** with **TypeScript** and **Vite** for fast development. It provides a user-friendly interface for managing projects and tracking work hours.
+
+### Key Directories and Files
+
+- **`src/`**
+  - **`components/`**: Reusable UI components.
+    - `ManageProjectDialog.tsx`: Dialog for managing project details.
+    - `ProjectActions.tsx`: Component for project-related actions (e.g., create, join).
+  - **`pages/`**: Page-level components for routing.
+    - `Projects.tsx`: Displays a list of projects.
+    - `ProjectDetails.tsx`: Displays details of a specific project.
+  - **`services/`**: API service classes for interacting with the backend.
+    - `projectService.ts`: Handles API calls related to projects.
+  - **`styles/`**: CSS files for styling.
+    - `projects.css`: Styles for project-related pages.
+    - `projectDetails.css`: Styles for the project details page.
+    - `calendar.css`: Styles for calendar components.
+
+- **`public/`**
+  - Static assets such as images and icons.
+
+- **`package.json`**
+  - Defines project dependencies and scripts.
+    - `npm run dev`: Starts the development server.
+    - `npm run build`: Builds the production-ready app.
+
+---
+
+## 📁 Backend (Spring Boot)
+
+The backend is implemented using **Java** with the **Spring Boot** framework. It handles business logic, database interactions, and provides RESTful APIs for the frontend.
+
+### Key Directories and Files
+
+- **`src/main/java/fi/haagahelia/backend`**
+  - **`controllers/`**: Contains REST controllers for handling HTTP requests.
+    - `ProjectController.java`: Manages project-related endpoints (e.g., create, update, delete projects).
+    - `OrganizationRestController.java`: Handles organization-related endpoints.
+  - **`dto/`**: Data Transfer Objects for encapsulating data.
+    - `HourSummaryDTO.java`: DTO for summarizing hour data.
+  - **`model/`**: Entity classes representing database tables.
+    - `Project.java`: Represents a project entity.
+    - `ProjectMember.java`: Represents a project member entity.
+    - `ProjectRole.java`: Enum for project roles (e.g., OWNER, EMPLOYEE).
+    - `User.java`: Represents a user entity.
+  - **`repositories/`**: Interfaces for database operations.
+    - `ProjectRepository.java`: Handles CRUD operations for projects.
+    - `ProjectMemberRepository.java`: Handles operations for project members.
+  - **`services/`**: Contains business logic.
+    - `ProjectService.java`: Core service for managing projects.
+    - `HourSummaryService.java`: Service for summarizing hour data.
+  - **`BackendApplication.java`**: Main entry point for the Spring Boot application.
+
+- **`src/main/resources`**
+  - **`db/migration/`**: Database migration scripts.
+    - `V2__Add_Project_Roles.sql`: Adds project roles to the database.
+  - **`application.properties`**: Configuration for the Spring Boot application.
+
+- **`src/test/java/fi/haagahelia/backend`**
+  - **`ProjectServiceTest.java`**: Unit tests for the `ProjectService` class.
+  - **`HourSummaryServiceTest.java`**: Unit tests for the `HourSummaryService` class.
+
+---
 
 ## ⚙️ Setup Instructions
 
