@@ -37,7 +37,7 @@ public class CustomCorsConfig {
             "Access-Control-Request-Headers"
         ));
         
-        // Allow credentials (important for JWT token)
+        // Allow credentials
         config.setAllowCredentials(true);
         
         // Expose necessary headers

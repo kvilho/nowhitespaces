@@ -70,6 +70,7 @@ public class AuthController {
             String token = jwtUtil.generateToken(userDetails);
 
             // Get the user ID from the repository
+            
             User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
