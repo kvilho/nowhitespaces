@@ -1,5 +1,6 @@
 name: Backend CI
 
+# Trigger the workflow on pushes and pull requests to the main branch for backend files
 on:
   push:
     branches: [ main ]
@@ -12,27 +13,35 @@ on:
 
 jobs:
   build:
+    # Use the latest Ubuntu environment
     runs-on: ubuntu-latest
+
+    # Set the working directory to the backend folder for all steps
     defaults:
       run:
         working-directory: ./backend
 
     steps:
+    # Step 1: Check out the code from the repository
     - uses: actions/checkout@v4
-    
+
+    # Step 2: Set up Java Development Kit (JDK) version 17
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-        cache-dependency-path: '**/pom.xml'
-        
+        java-version: '17' # Specify the Java version
+        distribution: 'temurin' # Use the Temurin distribution
+        cache: maven # Cache Maven dependencies
+        cache-dependency-path: '**/pom.xml' # Cache based on the Maven POM file
+
+    # Step 3: Compile the backend code
     - name: Compile
       run: ./mvnw compile
-      
+
+    # Step 4: Run unit tests
     - name: Run unit tests
       run: ./mvnw test
-      
+
+    # Step 5: Build the backend package, skipping tests
     - name: Build package
-      run: ./mvnw package -DskipTests 
+      run: ./mvnw package -DskipTests
