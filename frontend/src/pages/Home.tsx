@@ -9,18 +9,12 @@ import {
   CardContent,
   Chip 
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import "../styles/home.css";
-import authService from "../services/authService";
-import entryService, { Entry } from "../services/entryService";
-import config from "../config";
-
-interface HomeProps {
-  darkMode: boolean;
-}
+import entryService from '../services/entryService';
+import { Entry } from '../types/Entry';
 
 const motivationalMessages = [
   "Keep pushing forward! Every step counts. 💪",
@@ -30,8 +24,7 @@ const motivationalMessages = [
   "Every day is a new opportunity to shine! 🌈"
 ];
 
-const Home: React.FC<HomeProps> = ({ darkMode }) => {
-  const navigate = useNavigate();
+const Home: React.FC = () => {
   const [allEntries, setAllEntries] = useState<Entry[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [motivationalMessage] = useState<string>(
@@ -76,15 +69,13 @@ const Home: React.FC<HomeProps> = ({ darkMode }) => {
     }
   };
 
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+  const formatTime = (date: string | Date) => {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   const filteredEntries = allEntries.filter(entry => {
-    const entryDate = new Date(entry.entryStart);
+    const entryDate = typeof entry.entryStart === 'string' ? new Date(entry.entryStart) : entry.entryStart;
     return (
       entryDate.getFullYear() === selectedDate.getFullYear() &&
       entryDate.getMonth() === selectedDate.getMonth() &&
@@ -149,11 +140,18 @@ const Home: React.FC<HomeProps> = ({ darkMode }) => {
                               {entry.entryDescription || 'No description'}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" display="block">
-                              {entry.project.projectName}
+                              {entry.project?.projectName || 'No project'}
                             </Typography>
                             <Typography variant="caption" color="text.secondary" display="block">
                               {formatTime(entry.entryStart)} - {formatTime(entry.entryEnd)}
                             </Typography>
+                            {entry.status === 'DECLINED' && entry.declineComment && (
+                              <>
+                              <Typography variant="caption" color="error">
+                                Decline Reason: {entry.declineComment}
+                              </Typography>
+                            </>
+                            )}
                           </Grid>
                           <Grid item>
                             <Chip

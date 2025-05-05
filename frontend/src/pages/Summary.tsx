@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Grid, 
-  Paper, 
+import {
+  Container,
+  Typography,
+  Grid,
+  Paper,
   CircularProgress,
   Box,
   Card,
@@ -15,7 +15,8 @@ import {
   Collapse
 } from '@mui/material';
 import VisualInsights from '../components/VisualInsights';
-import entryService, { Entry } from '../services/entryService';
+import entryService from '../services/entryService';
+import { Entry } from '../types/Entry';
 import '../styles/summary.css';
 
 const Summary: React.FC = () => {
@@ -208,11 +209,13 @@ const Summary: React.FC = () => {
                               <Typography variant="body2" sx={{ flex: 1, mx: 1 }}>
                                 {entry.entryDescription || 'No description'}
                               </Typography>
+                              {entry.status === 'DECLINED' && entry.declineComment && (
+                                <Typography variant="body2" color="error">
+                                  Decline Reason: {entry.declineComment}
+                                </Typography>
+                              )}
                               <Typography variant="body2" color="text.secondary">
                                 {entry.project?.projectName || 'Unknown Project'}
-                              </Typography>
-                              <Typography variant="body2" color="text.secondary">
-                                {getEntryHours(entry).toFixed(1)}h
                               </Typography>
                             </Stack>
                           </Box>
@@ -249,8 +252,8 @@ const Summary: React.FC = () => {
                     </Typography>
                     <Typography variant="caption" sx={{ fontWeight: 600 }} color={
                       entry.status === 'APPROVED' ? theme.palette.success.main :
-                      entry.status === 'PENDING' ? theme.palette.warning.main :
-                      theme.palette.error.main
+                        entry.status === 'PENDING' ? theme.palette.warning.main :
+                          theme.palette.error.main
                     }>
                       {entry.status}
                     </Typography>
@@ -259,6 +262,14 @@ const Summary: React.FC = () => {
                       {getEntryHours(entry).toFixed(1)}h
                     </Typography>
                   </Stack>
+                  {entry.status === 'DECLINED' && entry.declineComment && (
+                    <Typography
+                      variant="body2"
+                      color="error"
+                    >
+                      <strong>Decline reason:</strong> {entry.declineComment}
+                    </Typography>
+                  )}
                 </CardContent>
               </Card>
             </Grid>
@@ -286,4 +297,4 @@ const Summary: React.FC = () => {
   );
 };
 
-export default Summary; 
+export default Summary;

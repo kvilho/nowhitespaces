@@ -20,7 +20,8 @@ import {
   Chip,
   Stack,
   Card,
-  Divider
+  Divider,
+  TextField
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -45,6 +46,9 @@ const ProjectDetails: React.FC = () => {
   const [isProjectSummaryOpen, setIsProjectSummaryOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<ProjectMember | null>(null);
   const [memberEntries, setMemberEntries] = useState<Entry[]>([]);
+  const [declineComment, setDeclineComment] = useState<string>("");
+  const [selectedEntryId, setSelectedEntryId] = useState<number | null>(null);
+  const [isDeclineDialogOpen, setIsDeclineDialogOpen] = useState<boolean>(false);
 
   const fetchProjectData = async () => {
     try {
@@ -69,9 +73,9 @@ const ProjectDetails: React.FC = () => {
     fetchProjectData();
   }, [id]);
 
-  const handleEntryStatusUpdate = async (entryId: number, newStatus: string) => {
+  const handleEntryStatusUpdate = async (entryId: number, newStatus: string, comment?: string) => {
     try {
-      await projectService.updateEntryStatus(entryId, newStatus);
+      await projectService.updateEntryStatus(entryId, newStatus, comment);
       const updatedEntries = await projectService.getProjectEntries(id!);
       setEntries(updatedEntries);
     } catch (err) {
@@ -138,6 +142,24 @@ const ProjectDetails: React.FC = () => {
     const memberEntries = entries.filter(entry => entry.user?.id === member.user.id);
     setSelectedMember(member);
     setMemberEntries(memberEntries);
+  };
+
+  const handleOpenDeclineDialog = (entryId: number) => {
+    setSelectedEntryId(entryId);
+    setDeclineComment('');
+    setIsDeclineDialogOpen(true);
+  };
+
+  const handleDecline = async () => {
+    if (selectedEntryId !== null) {
+      try {
+        await projectService.updateEntryStatus(selectedEntryId, 'DECLINED', declineComment);
+        setIsDeclineDialogOpen(false);
+        await fetchProjectData();
+      } catch (err) {
+        console.error('Failed to decline entry:', err);
+      }
+    }
   };
 
   if (loading) {
@@ -264,6 +286,11 @@ const ProjectDetails: React.FC = () => {
                           <Typography variant="body2">
                             {entry.entryDescription || 'No description'}
                           </Typography>
+                          {entry.status === 'DECLINED' && entry.declineComment && (
+                            <Typography variant="body2" color="error">
+                              Decline Reason: {entry.declineComment}
+                            </Typography>
+                          )}
                           <Stack direction="row" spacing={2} alignItems="center">
                             <Typography variant="subtitle2" color="text.secondary">
                               Time: {formatDateTime(entry.entryStart)}
@@ -288,7 +315,7 @@ const ProjectDetails: React.FC = () => {
                                 color="error"
                                 size="small"
                                 sx={{ borderRadius: 2, minWidth: 90 }}
-                                onClick={() => handleEntryStatusUpdate(entry.entryId, 'DECLINED')}
+                                onClick={() => handleOpenDeclineDialog(entry.entryId)}
                               >
                                 Decline
                               </Button>
@@ -331,6 +358,11 @@ const ProjectDetails: React.FC = () => {
                           <Typography variant="body2">
                             {entry.entryDescription || 'No description'}
                           </Typography>
+                          {entry.status === 'DECLINED' && entry.declineComment && (
+                            <Typography variant="body2" color="error">
+                              Decline Reason: {entry.declineComment}
+                            </Typography>
+                          )}
                           <Stack direction="row" spacing={2} alignItems="center">
                             <Typography variant="subtitle2" color="text.secondary">
                               Time: {formatDateTime(entry.entryStart)}
@@ -576,10 +608,19 @@ const ProjectDetails: React.FC = () => {
                   <Card elevation={2} sx={{ p: 2, borderRadius: 2, backgroundColor: 'background.paper' }}>
                     <ListItemText
                       primary={entry.entryDescription || 'No description'}
-                      secondary={`Date: ${new Date(entry.entryStart).toLocaleDateString()} | Duration: ${(
-                        (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) /
-                        3600000
-                      ).toFixed(1)}h`}
+                      secondary={
+                        <>
+                          Date: {new Date(entry.entryStart).toLocaleDateString()} | Duration: {(
+                            (new Date(entry.entryEnd).getTime() - new Date(entry.entryStart).getTime()) /
+                            3600000
+                          ).toFixed(1)}h
+                          {entry.status === 'DECLINED' && entry.declineComment && (
+                            <Typography variant="body2" color="error">
+                              Decline Reason: {entry.declineComment}
+                            </Typography>
+                          )}
+                        </>
+                      }
                     />
                   </Card>
                 </ListItem>
@@ -591,6 +632,25 @@ const ProjectDetails: React.FC = () => {
           <Button onClick={() => setSelectedMember(null)} variant="outlined" sx={{ borderRadius: 2 }}>
             Close
           </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Decline Dialog */}
+      <Dialog open={isDeclineDialogOpen} onClose={() => setIsDeclineDialogOpen(false)}>
+        <DialogTitle>Decline Entry</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Reason for Declining"
+            multiline
+            rows={4}
+            fullWidth
+            value={declineComment}
+            onChange={(e) => setDeclineComment(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsDeclineDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleDecline} color="error">Decline</Button>
         </DialogActions>
       </Dialog>
     </Container>

@@ -3,6 +3,7 @@ import { Entry } from '../types/Entry';
 import config from "../config";
 import { getHeaders } from "../utils/auth";
 import '../styles/employer-dashboard.css';
+import Typography from '@mui/material/Typography';
 
 const EmployerDashboard: React.FC = () => {
     const [entries, setEntries] = useState<Entry[]>([]);
@@ -225,9 +226,11 @@ const EmployerDashboard: React.FC = () => {
                                 Project: {entry.project?.projectName || 'N/A'}
                             </p>
                             <p className="description">{entry.entryDescription}</p>
-                            <div className="status-badge" data-status={entry.status.toLowerCase()}>
-                                {entry.status}
-                            </div>
+                            {entry.status === 'DECLINED' && entry.declineComment && (
+                                <Typography variant="body2" color="error">
+                                    Decline Reason: {entry.declineComment}
+                                </Typography>
+                            )}
                         </div>
                         <div className="entry-actions">
                             <button
@@ -250,4 +253,4 @@ const EmployerDashboard: React.FC = () => {
     );
 };
 
-export default EmployerDashboard; 
+export default EmployerDashboard;

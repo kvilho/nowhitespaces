@@ -74,9 +74,11 @@ class ProjectService {
         }
     }
 
-    async updateEntryStatus(entryId: number, status: string): Promise<void> {
+    async updateEntryStatus(entryId: number, status: string, comment?: string): Promise<void> {
+        const url = `/api/entries/${entryId}/status?status=${status}` + 
+                    (comment ? `&comment=${encodeURIComponent(comment)}` : '');
         try {
-            await api.put(`/api/entries/${entryId}/status?status=${status}`);
+            await api.put(url);
         } catch (error) {
             console.error('Error updating entry status:', error);
             throw error;

@@ -46,6 +46,9 @@ public class Entry {
     @Transient
     private Long projectId;
 
+    @Column(length = 500)
+    private String declineComment;
+
     public Entry() {
     }
 
@@ -128,6 +131,14 @@ public class Entry {
 
     public void setProjectId(Long projectId) {
         this.projectId = projectId;
+    }
+
+    public String getDeclineComment() {
+        return declineComment;
+    }
+
+    public void setDeclineComment(String declineComment) {
+        this.declineComment = declineComment;
     }
 
     @Override

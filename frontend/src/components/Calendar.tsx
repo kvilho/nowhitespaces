@@ -94,8 +94,8 @@ const Calendar: React.FC = () => {
 
       const matchesStatus = filterStatus === 'all' || entry.status === filterStatus;
       const matchesProject = filterProject === 'all' || entry.project?.projectId.toString() === filterProject;
-      const matchesDateRange = (!startDateObj || entryDate >= startDateObj) && 
-                             (!endDateObj || entryDate <= endDateObj);
+      const matchesDateRange = (!startDateObj || entryDate >= startDateObj) &&
+        (!endDateObj || entryDate <= endDateObj);
 
       return matchesStatus && matchesProject && matchesDateRange;
     });
@@ -184,7 +184,7 @@ const Calendar: React.FC = () => {
   };
 
   const handleDayClick = (day: number) => {
-    
+
     const clickedDate = new Date(Date.UTC(currentYear, currentMonth, day));
     setSelectedDate(clickedDate);
     setShowEntryPopup(true);
@@ -199,7 +199,7 @@ const Calendar: React.FC = () => {
     const formattedDate = `${selectedDate.getUTCFullYear()}-${(selectedDate.getUTCMonth() + 1)
       .toString()
       .padStart(2, "0")}-${selectedDate.getUTCDate().toString().padStart(2, "0")}`;
-  
+
     const userId = authService.getUserId();
     if (!userId) {
       console.error('No user ID found');
@@ -224,25 +224,25 @@ const Calendar: React.FC = () => {
       projectId: selectedProject.projectId,
       hours
     };
-  
+
     try {
       const url = editEntry
         ? `${config.apiUrl}/api/entries/${editEntry.entryId}`
         : `${config.apiUrl}/api/entries`;
-  
+
       const response = await fetch(url, {
         ...fetchConfig,
         method: editEntry ? "PUT" : "POST",
         body: JSON.stringify(entryData),
         headers: getHeaders(),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.text();
         console.error("Server error:", errorData);
         throw new Error("Failed to save entry");
       }
-  
+
       await fetchEntries();
       setShowEntryPopup(false);
       setEntryText("");
@@ -253,13 +253,13 @@ const Calendar: React.FC = () => {
   };
 
   const handleEditEvent = (entry: Entry) => {
-    const startDate = Array.isArray(entry.entryStart) 
-        ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2], entry.entryStart[3], entry.entryStart[4])
-        : new Date(entry.entryStart);
-    
+    const startDate = Array.isArray(entry.entryStart)
+      ? new Date(entry.entryStart[0], entry.entryStart[1] - 1, entry.entryStart[2], entry.entryStart[3], entry.entryStart[4])
+      : new Date(entry.entryStart);
+
     const endDate = Array.isArray(entry.entryEnd)
-        ? new Date(entry.entryEnd[0], entry.entryEnd[1] - 1, entry.entryEnd[2], entry.entryEnd[3], entry.entryEnd[4])
-        : new Date(entry.entryEnd);
+      ? new Date(entry.entryEnd[0], entry.entryEnd[1] - 1, entry.entryEnd[2], entry.entryEnd[3], entry.entryEnd[4])
+      : new Date(entry.entryEnd);
 
     setSelectedDate(startDate);
     setStartTime(startDate.toTimeString().slice(0, 5));
@@ -347,7 +347,7 @@ const Calendar: React.FC = () => {
                   currentYear === currentDate.getUTCFullYear()
                   ? "current-day"
                   : ""
-                } ${hasEntry ? "has-entry" : ""}`}
+                  } ${hasEntry ? "has-entry" : ""}`}
                 onClick={() => handleDayClick(day + 1)}
               >
                 {day + 1}
@@ -425,6 +425,11 @@ const Calendar: React.FC = () => {
                 <div className="entry-status" data-status={entry.status.toLowerCase()}>{entry.status}</div>
               </div>
               <div className="entry-text">{entry.entryDescription}</div>
+              {entry.status === 'DECLINED' && entry.declineComment && (
+                <div className="entry-decline-message">
+                  <strong>Decline reason:</strong> {entry.declineComment}
+                </div>
+              )}
               {entry.project && (
                 <div className="entry-project">Project: {entry.project.projectName}</div>
               )}
@@ -500,24 +505,24 @@ const Calendar: React.FC = () => {
       {/* Delete Confirmation Popup */}
       {deleteConfirmation.show && (
         <div className="delete-popup-overlay">
-            <div className="delete-popup">
-                <h3>Delete Entry</h3>
-                <p>Are you sure you want to delete this entry?</p>
-                <div className="delete-popup-buttons">
-                    <button 
-                        className="delete-confirm-btn"
-                        onClick={handleDeleteConfirm}
-                    >
-                        Delete
-                    </button>
-                    <button 
-                        className="delete-cancel-btn"
-                        onClick={() => setDeleteConfirmation({ show: false, entryId: null })}
-                    >
-                        Cancel
-                    </button>
-                </div>
+          <div className="delete-popup">
+            <h3>Delete Entry</h3>
+            <p>Are you sure you want to delete this entry?</p>
+            <div className="delete-popup-buttons">
+              <button
+                className="delete-confirm-btn"
+                onClick={handleDeleteConfirm}
+              >
+                Delete
+              </button>
+              <button
+                className="delete-cancel-btn"
+                onClick={() => setDeleteConfirmation({ show: false, entryId: null })}
+              >
+                Cancel
+              </button>
             </div>
+          </div>
         </div>
       )}
 

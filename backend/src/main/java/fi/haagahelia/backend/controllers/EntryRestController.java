@@ -175,6 +175,7 @@ public class EntryRestController {
     public ResponseEntity<Entry> updateEntryStatus(
             @PathVariable Long id,
             @RequestParam String status,
+            @RequestParam(required = false) String comment,
             @AuthenticationPrincipal CustomUserDetails currentUser) {
         
         if (currentUser == null) {
@@ -194,6 +195,9 @@ public class EntryRestController {
         }
 
         entry.setStatus(Status.valueOf(status));
+        if ("DECLINED".equals(status) && comment != null) {
+            entry.setDeclineComment(comment);
+        }
         Entry updatedEntry = entryRepository.save(entry);
         return ResponseEntity.ok(updatedEntry);
     }

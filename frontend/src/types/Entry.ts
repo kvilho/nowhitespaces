@@ -4,6 +4,7 @@ export interface Entry {
     entryEnd: string | Date;
     entryDescription: string;
     status: 'APPROVED' | 'PENDING' | 'DECLINED' | string; // Allow loose backend values
+    declineComment?: string; // Optional property for declined entries
     user: {
         id: number;
         firstname: string;
