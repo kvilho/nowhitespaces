@@ -345,9 +345,11 @@ const ProjectDetails: React.FC = () => {
                       <Card key={entry.entryId} elevation={2} sx={{ p: 2, borderRadius: 2 }}>
                         <Stack spacing={1}>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
-                            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                              {entry.user?.username || 'Unknown user'}
-                            </Typography>
+                          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                          {(entry.user?.firstname || entry.user?.lastname) 
+                              ? `${entry.user?.firstname || ''} ${entry.user?.lastname || ''}`.trim()
+                              : 'Unknown user'}
+                          </Typography>
                             <Chip
                               label={entry.status}
                               color={entry.status === 'APPROVED' ? 'success' : 'error'}
